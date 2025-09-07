@@ -1,5 +1,6 @@
-program helloworld;
+program useWriteln;
 var a, b: integer;
+var c: integer;
 begin
 
     writeln("Hello, World in minipas!");
