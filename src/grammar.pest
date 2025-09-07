@@ -1,3 +1,4 @@
+// grammar.pest 0.6.0
 //WHITESPACE = _{ (" " | "\t" | NEWLINE | comment | comment_multi)+ }
 //WHITESPACE = _{ " " | "\t" | NEWLINE }
 //
@@ -54,10 +55,11 @@ bool_expr = { expr ~ cmp_op ~ expr }
 
 // Sentencias
 block = { "begin" ~ stmt* ~ "end" }
-stmt  = { comment* ~ (var_decl | assignment | writeln_stmt | if_stmt | block) }
+stmt  = { comment* ~ (assignment | writeln_stmt | if_stmt | block) }
 
 if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ keyword_integer ~ semicolon }
 assignment = { ident ~ assign_op ~ expr ~ semicolon }
 
-program = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ block ~ "." ~ EOI }
+var_section = { var_decl+ }
+program = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ block ~ "." ~ EOI }
