@@ -35,11 +35,11 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut Environment) {
             }
         }
 
-        Stmt::VarDecl(vars) => {
+        /*Stmt::VarDecl(vars) => {
             for v in vars {
                 env.insert(v.clone(), 0.0);
             }
-        }
+        }*/
         Stmt::Assign(name, expr) => {
             let val = eval_expr(expr, env);
             env.insert(name.clone(), val);

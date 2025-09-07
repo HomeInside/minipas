@@ -22,7 +22,7 @@ pub enum Op {
 
 #[derive(Debug)]
 pub enum Stmt {
-    VarDecl(Vec<String>),
+    //VarDecl(Vec<String>),
     Assign(String, Expr),
     WritelnList(Vec<Expr>), // nuevo
     IfElse {
