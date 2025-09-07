@@ -29,7 +29,7 @@ fn main() {
 
     println!("cargando archivo: '{}'", filename);
 
-    if !filename.ends_with(".mp"){
+    if !filename.ends_with(".mp") {
         println!("minipas error: extensión de archivo no valida.");
         println!("utilice `.mp`, para las extensiones de archivo.");
         std::process::exit(1);
@@ -41,7 +41,8 @@ fn main() {
     // Parsear
     let pairs = PascalParser::parse(Rule::program, &input).unwrap_or_else(|e| panic!("Error de parseo: {}", e));
 
-    let program = parse_program(pairs);
+    //let program = parse_program(pairs);
+    let (program, _) = parse_program(pairs);
 
     // Depuración: imprime el AST
     // println!("AST: {:#?}", program);
