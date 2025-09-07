@@ -7,13 +7,13 @@
 {}
 // Programa de prueba con comentarios
 program comentarios;
+var a, b: integer;
 begin
 {
 los comentarios pueden ser multilineas
 como este comentarios
 }
 // o ser para una linea
-var a, b: integer;
 
 a := 12;  { asignamos 10 a 'a' }
 b := 13;   // otro comentario
