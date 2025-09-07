@@ -1,0 +1,63 @@
+//WHITESPACE = _{ (" " | "\t" | NEWLINE | comment | comment_multi)+ }
+//WHITESPACE = _{ " " | "\t" | NEWLINE }
+//
+WHITESPACE = _{ (" " | "\t" | NEWLINE | comment)+ }
+NEWLINE = _{ "\n" | "\r\n" }
+
+comment_single = { "//" ~ (!NEWLINE ~ ANY)* }
+comment_braces = { "{"  ~ (!"}"  ~ ANY)* ~ "}" }  // falla si EOF antes de '}'
+comment        = { comment_single | comment_braces }
+
+// Tokens
+keyword_var = { "var" }
+keyword_integer = { "integer" }
+keyword_writeln = { "writeln" }
+keyword_if = { "if" }
+keyword_then = { "then" }
+keyword_else = { "else" }
+
+ident = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC)* }
+number = @{ ASCII_DIGIT+ }
+
+assign_op = { ":=" }
+add_op = { "+" }
+sub_op = { "-" }
+mul_op = { "*" }
+div_op = { "/" }
+cmp_op = { ">=" | "<=" | "<>" | ">" | "<" | "=" }
+
+semicolon = { ";" }
+comma = { "," }
+colon = { ":" }
+lparen = { "(" }
+rparen = { ")" }
+
+// Expresiones
+// expr = { term ~ ((add_op | sub_op | mul_op | div_op) ~ term)* }
+// term = _{ factor }
+// factor = _{ number | ident | lparen ~ expr ~ rparen }
+//
+expr = { sum }
+sum = { product ~ ((add_op | sub_op) ~ product)* }
+product = { factor ~ ((mul_op | div_op) ~ factor)* }
+factor = { number | ident | "(" ~ expr ~ ")" }
+
+//
+
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+expr_item = { string | expr }
+expr_list = { expr_item ~ (comma ~ expr_item)* }
+writeln_stmt = { keyword_writeln ~ lparen ~ expr_list ~ rparen ~ semicolon }
+
+// Comparación booleana
+bool_expr = { expr ~ cmp_op ~ expr }
+
+// Sentencias
+block = { "begin" ~ stmt* ~ "end" }
+stmt  = { comment* ~ (var_decl | assignment | writeln_stmt | if_stmt | block) }
+
+if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
+var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ keyword_integer ~ semicolon }
+assignment = { ident ~ assign_op ~ expr ~ semicolon }
+
+program = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ block ~ "." ~ EOI }
