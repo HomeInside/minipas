@@ -13,7 +13,6 @@ pub enum Builtin {
 }
 
 pub fn default_builtins() -> HashMap<String, Builtin> {
-    //let mut map = HashMap::new();
     let mut builtin: HashMap<String, Builtin> = HashMap::new();
 
     // Constantes
