@@ -17,14 +17,6 @@ use runtime::std_lib::default_builtins;
 pub struct PascalParser;
 
 type Environment = HashMap<String, Value>;
-// to remove
-fn default_constants() -> HashMap<String, Value> {
-    let mut map = HashMap::new();
-    map.insert("PI".to_string(), Value::Real(std::f64::consts::PI));
-    map.insert("TRUE".to_string(), Value::Boolean(true));
-    map.insert("FALSE".to_string(), Value::Boolean(false));
-    map
-}
 
 fn main() {
     println!("welcome to minipas v{}", env!("CARGO_PKG_VERSION"));
@@ -54,16 +46,14 @@ fn main() {
     let (program, _) = parse_program(pairs);
 
     // Depuración: imprime el AST
-    println!("AST: {:#?}", program);
+    //println!("AST: {:#?}", program);
 
     let mut env = Environment::new();
-    //let consts = default_constants();
     let builtins = default_builtins();
 
     for stmt in &program {
-        //execute_stmt(stmt, &mut env, &consts);
         execute_stmt(stmt, &mut env, &builtins);
     }
 
-    println!("ENV: {:#?}", env);
+    //println!("ENV: {:#?}", env);
 }
