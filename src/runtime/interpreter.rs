@@ -1,3 +1,4 @@
+use crate::runtime::std_lib::Builtin;
 use crate::{Expr, Op, Stmt, Value};
 use std::collections::HashMap;
 
@@ -51,6 +52,7 @@ fn apply_op(l: Value, op: &Op, r: Value) -> Value {
     }
 }
 
+/*
 fn eval_expr(expr: &Expr, env: &mut Environment, consts: &HashMap<String, Value>) -> Value {
     match expr {
         Expr::Number(n) => {
@@ -75,9 +77,97 @@ fn eval_expr(expr: &Expr, env: &mut Environment, consts: &HashMap<String, Value>
             apply_op(l, op, r)
         }
     }
+}*/
+/*
+fn eval_expr(expr: &Expr, env: &mut Environment, builtins: &HashMap<String, Builtin>) -> Value {
+    match expr {
+        Expr::Number(n) => {
+            if n.fract() == 0.0 {
+                Value::Integer(*n as i64)
+            } else {
+                Value::Real(*n)
+            }
+        }
+        Expr::Ident(name) => {
+            if let Some(b) = builtins.get(name) {
+                match b {
+                    Builtin::Const(val) => val.clone(),
+                    Builtin::Func(_) => panic!("La función '{}' debe llamarse con argumentos", name),
+                    Builtin::Proc(_) => panic!("El procedimiento '{}' debe llamarse con paréntesis", name),
+                }
+            } else {
+                env.get(name).cloned().unwrap_or(Value::Real(0.0))
+            }
+        }
+        Expr::Call { name, args } => {
+            let arg_vals: Vec<Value> = args.iter().map(|a| eval_expr(a, env, builtins)).collect();
+
+            if let Some(b) = builtins.get(name) {
+                match b {
+                    Builtin::Func(f) => f(arg_vals),
+                    Builtin::Proc(f) => f(arg_vals), // si quieres que devuelva Value::Str("") o algo neutro
+                    Builtin::Const(_) => panic!("'{}' no es una función", name),
+                }
+            } else {
+                panic!("Función/procedimiento '{}' no definido", name);
+            }
+        }
+        Expr::StringLiteral(s) => Value::Str(s.clone()),
+        Expr::BooleanLiteral(b) => Value::Boolean(*b),
+        Expr::BinaryOp { left, op, right } => {
+            let l = eval_expr(left, env, builtins);
+            let r = eval_expr(right, env, builtins);
+            apply_op(l, op, r)
+        }
+    }
+}*/
+fn eval_expr(expr: &Expr, env: &mut Environment, builtins: &HashMap<String, Builtin>) -> Value {
+    match expr {
+        Expr::Number(n) => {
+            if n.fract() == 0.0 {
+                Value::Integer(*n as i64)
+            } else {
+                Value::Real(*n)
+            }
+        }
+        Expr::Ident(name) => {
+            if let Some(b) = builtins.get(name) {
+                match b {
+                    Builtin::Const(val) => val.clone(),
+                    Builtin::Func(_) => panic!("La función '{}' debe llamarse con argumentos", name),
+                    Builtin::Proc(_) => panic!("El procedimiento '{}' debe llamarse con paréntesis", name),
+                }
+            } else {
+                env.get(name).cloned().unwrap_or(Value::Real(0.0))
+            }
+        }
+        Expr::StringLiteral(s) => Value::Str(s.clone()),
+        Expr::BooleanLiteral(b) => Value::Boolean(*b),
+        Expr::BinaryOp { left, op, right } => {
+            let l = eval_expr(left, env, builtins);
+            let r = eval_expr(right, env, builtins);
+            apply_op(l, op, r)
+        }
+        Expr::Call { name, args } => {
+            //let arg_vals: Vec<Value> = args.into_iter().map(|a| eval_expr(a, env, builtins)).collect();
+            let arg_vals: Vec<Value> = args.iter().map(|a| eval_expr(a, env, builtins)).collect();
+
+            if let Some(b) = builtins.get(name) {
+                println!("eval_expr Expr::Call {:#?}", arg_vals);
+                match b {
+                    Builtin::Func(f) => f(arg_vals),
+                    Builtin::Proc(f) => f(arg_vals),
+                    Builtin::Const(_) => panic!("'{}' no es una función", name),
+                }
+            } else {
+                panic!("Call Función/procedimiento '{}' no definido", name);
+            }
+        }
+    }
 }
 
-pub fn execute_stmt(stmt: &Stmt, env: &mut Environment, consts: &HashMap<String, Value>) {
+/*
+pub fn execute_stmt(stmt: &Stmt, env: &mut Environment, consts: &HashMap<String, Builtin>) {
     match stmt {
         Stmt::Block(stmts) => {
             for s in stmts {
@@ -105,6 +195,41 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut Environment, consts: &HashMap<String,
                     execute_stmt(then_branch, env, consts);
                 } else if let Some(else_stmt) = else_branch {
                     execute_stmt(else_stmt, env, consts);
+                }
+            }
+            _ => panic!("La condición del if no es booleana"),
+        },
+    }
+}
+*/
+pub fn execute_stmt(stmt: &Stmt, env: &mut Environment, builtins: &HashMap<String, Builtin>) {
+    match stmt {
+        Stmt::Block(stmts) => {
+            for s in stmts {
+                execute_stmt(s, env, builtins);
+            }
+        }
+        Stmt::Assign(name, expr) => {
+            let val = eval_expr(expr, env, builtins);
+            env.insert(name.clone(), val);
+        }
+        Stmt::WritelnList(exprs) => {
+            let outputs: Vec<String> = exprs
+                .iter()
+                .map(|e| eval_expr(e, env, builtins).to_string_value())
+                .collect();
+            println!("{}", outputs.join(" "));
+        }
+        Stmt::IfElse {
+            cond,
+            then_branch,
+            else_branch,
+        } => match eval_expr(cond, env, builtins) {
+            Value::Boolean(b) => {
+                if b {
+                    execute_stmt(then_branch, env, builtins);
+                } else if let Some(else_stmt) = else_branch {
+                    execute_stmt(else_stmt, env, builtins);
                 }
             }
             _ => panic!("La condición del if no es booleana"),
