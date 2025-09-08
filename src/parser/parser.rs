@@ -13,14 +13,6 @@ impl SymbolTable {
             variables: HashMap::new(),
         }
     }
-
-    /*pub fn declare(&mut self, name: &str, typ: &str) -> Result<(), String> {
-        if self.variables.contains_key(name) {
-            return Err(format!("Variable '{}' ya declarada", name));
-        }
-        self.variables.insert(name.to_string(), typ.to_string());
-        Ok(())
-    }*/
     pub fn declare(&mut self, name: &str, typ: VarType) -> Result<(), String> {
         if self.variables.contains_key(name) {
             return Err(format!("Variable '{}' ya declarada", name));
@@ -124,7 +116,7 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
         Rule::if_stmt => parse_stmt_if(pair, sym_table),
         Rule::EOI => {
             // Ignorar fin/inicio de input
-            // No devolvemos un Stmt válido aquí
+            // no hay un Stmt válido
             panic!("parse_stmt no debería recibir SOI/EOI directamente");
         }
         other => panic!("Regla inesperada en stmt: {:?}", other),
@@ -175,7 +167,10 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
         Rule::ident => {
             let name = pair.as_str().to_string();
             if !sym_table.exists(&name) {
-                panic!("Variable '{}' no declarada", name);
+                let allowed_consts = ["PI", "TRUE", "FALSE"];
+                if !allowed_consts.contains(&name.as_str()) {
+                    panic!("Variable '{}' no declarada", name);
+                }
             }
             Expr::Ident(name)
         }
@@ -205,44 +200,26 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
             let inner = pair.into_inner().next().unwrap();
             match inner.as_rule() {
                 Rule::func_call => {
-
-
                     let mut ic = inner.into_inner();
-                    let name_pair = ic.next().expect("func_call sin ident");
+                    let name_pair = ic.next().unwrap(); // ident
                     let name = name_pair.as_str().to_string();
 
                     let mut args: Vec<Expr> = Vec::new();
-                    if let Some(arg_list) = ic.next() {
 
-                        if arg_list.as_rule() == Rule::expr_list {
-                            for item in arg_list.into_inner() {
-                                    match item.as_rule() {
-                                        Rule::expr_item => args.push(parse_expr_item(item, sym_table)),
-                                        Rule::comma => {},
-                                        other => panic!("Nodo inesperado en expr_list: {:?}", other),
+                    for node in ic {
+                        match node.as_rule() {
+                            Rule::expr_list => {
+                                for item in node.into_inner() {
+                                    if item.as_rule() == Rule::expr_item {
+                                        args.push(parse_expr_item(item, sym_table));
                                     }
                                 }
-                            /*for item in arg_list.into_inner() {
-                                match item.as_rule() {
-                                    Rule::expr_item => {
-                                        match item.as_rule() {
-                                            Rule::expr => args.push(parse_expr(item, sym_table)),
-                                            Rule::string_literal => {
-                                                let s = item.as_str();
-                                                let s = &s[1..s.len() - 1]; // quitar ' o "
-                                                args.push(Expr::StringLiteral(s.to_string()));
-                                            }
-                                            _ => panic!("Nodo inesperado en expr_item: {:?}", item.as_rule()),
-                                        }
-                                    }
-                                    Rule::comma => {} // ignorar
-                                    other => panic!("Nodo inesperado en expr_list: {:?}", other),
-                                }
-                            }*/
+                            }
+                            Rule::comma => {} // ignorar comas
+                            _ => {}           // ignorar otros nodos (lparen, rparen)
                         }
                     }
 
-                    println!("parse_expr FuncCall name={} args={:?}", name, args);
                     Expr::Call { name, args }
                 }
 
@@ -254,29 +231,20 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     }
                     Expr::Ident(name)
                 }
-
                 Rule::string_literal => {
                     let s = inner.as_str();
-                    Expr::StringLiteral(s[1..s.len() - 1].to_string()) // quitar comillas
+                    Expr::StringLiteral(s[1..s.len() - 1].to_string())
                 }
-
                 Rule::boolean_literal => {
                     let val = inner.as_str().to_lowercase() == "true";
                     Expr::BooleanLiteral(val)
                 }
-
-                Rule::number => {
-                    let n: f64 = inner.as_str().parse().unwrap();
-                    Expr::Number(n)
-                }
-
+                Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
                 Rule::expr => parse_expr(inner, sym_table),
-
                 _ => panic!("Factor inesperado: {:?}", inner.as_rule()),
             }
         }
-
-        _ => panic!("Regla de expr no implementada: {:?}", pair.as_rule()),
+        _ => panic!("parse_expr: Regla de expr no implementada: {:?}", pair.as_rule()),
     }
 }
 
@@ -307,7 +275,7 @@ pub fn parse_stmt_if(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
         else_branch: else_branch.map(Box::new),
     }
 }
-/*
+
 pub fn parse_stmt_writeln(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     let mut exprs = Vec::new();
 
@@ -315,60 +283,17 @@ pub fn parse_stmt_writeln(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
         match p.as_rule() {
             Rule::expr_list => {
                 for item in p.into_inner() {
-                    match item.as_rule() {
-                        Rule::expr_item => {
-                            let mut inner = item.into_inner();
-                            let inner_item = inner.next().unwrap();
-                            match inner_item.as_rule() {
-                                Rule::expr => exprs.push(parse_expr(inner_item, sym_table)),
-                                Rule::string => {
-                                    exprs.push(Expr::StringLiteral(inner_item.as_str().trim_matches('"').to_string()))
-                                }
-                                other => panic!("Nodo inesperado dentro de expr_item: {:?}", other),
-                            }
-                        }
-                        Rule::comma => {}
-                        other => panic!("Nodo inesperado en expr_list: {:?}", other),
-                    }
-                }
-            }
-            Rule::keyword_writeln | Rule::lparen | Rule::rparen | Rule::semicolon => {
-                // ignorar
-            }
-            other => panic!("Nodo inesperado en writeln_stmt: {:?}", other),
-        }
-    }
-
-    //Stmt::Writeln(exprs)
-    Stmt::WritelnList(exprs)
-}
-*/
-pub fn parse_stmt_writeln(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
-    let mut exprs = Vec::new();
-
-    for p in pair.into_inner() {
-        match p.as_rule() {
-            Rule::expr_list => {
-                for item in p.into_inner() {
-                    match item.as_rule() {
-                        Rule::expr_item => {
-                            match item.as_rule() {
-                                Rule::expr => exprs.push(parse_expr(item, sym_table)),
-                                Rule::string_literal => {
-                                    let s = item.as_str();
-                                    let s = &s[1..s.len() - 1]; // quitar ' o "
-                                    exprs.push(Expr::StringLiteral(s.to_string()));
-                                }
-                                _ => panic!("Nodo inesperado dentro de expr_item: {:?}", item.as_rule()),
-                            }
-                        }
-                        Rule::comma => {} // ignorar
-                        other => panic!("Nodo inesperado en expr_list: {:?}", other),
+                    if item.as_rule() == Rule::expr_item {
+                        exprs.push(parse_expr_item(item, sym_table));
+                    } else if item.as_rule() == Rule::comma {
+                        // ignorar
+                    } else {
+                        panic!("parse_stmt_writeln Nodo inesperado en expr_list: {:?}", item.as_rule());
                     }
                 }
             }
             Rule::keyword_writeln | Rule::lparen | Rule::rparen | Rule::semicolon => {}
-            other => panic!("Nodo inesperado en writeln_stmt: {:?}", other),
+            other => panic!("parse_stmt_writeln Nodo inesperado en writeln_stmt: {:?}", other),
         }
     }
 
@@ -376,17 +301,17 @@ pub fn parse_stmt_writeln(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 }
 
 fn parse_expr_item(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
-    match pair.as_rule() {
-        Rule::expr_item => {
-            let inner = pair.into_inner().next().unwrap();
-            parse_expr_item(inner, sym_table)
-        }
-        Rule::expr => parse_expr(pair, sym_table),
+    assert_eq!(pair.as_rule(), Rule::expr_item);
+
+    let inner = pair.into_inner().next().expect("expr_item vacío");
+
+    match inner.as_rule() {
+        Rule::expr => parse_expr(inner, sym_table),
         Rule::string_literal => {
-            let s = pair.as_str();
-            let s = &s[1..s.len()-1]; // quitar comillas
+            let s = inner.as_str();
+            let s = &s[1..s.len() - 1]; // quitar comillas
             Expr::StringLiteral(s.to_string())
         }
-        _ => panic!("Nodo inesperado dentro de expr_item: {:?}", pair.as_rule()),
+        other => panic!("parse_expr_item Nodo inesperado dentro de expr_item: {:?}", other),
     }
 }
