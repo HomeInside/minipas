@@ -52,7 +52,6 @@ fn apply_op(l: Value, op: &Op, r: Value) -> Value {
     }
 }
 
-
 fn eval_expr(expr: &Expr, env: &mut Environment, builtins: &HashMap<String, Builtin>) -> Value {
     match expr {
         Expr::Number(n) => {

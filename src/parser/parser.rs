@@ -225,6 +225,7 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
 
                 Rule::ident => {
                     let name = inner.as_str().to_string();
+                    // TO FIX
                     let allowed_consts = ["PI", "TRUE", "FALSE"];
                     if !sym_table.exists(&name) && !allowed_consts.contains(&name.as_str()) {
                         panic!("Variable '{}' no declarada", name);
