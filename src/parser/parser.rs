@@ -1,10 +1,10 @@
 use crate::Rule;
-use crate::{Expr, Op, Stmt};
+use crate::{Expr, Op, Stmt, VarType};
 use pest::iterators::{Pair, Pairs};
 use std::collections::HashMap;
 
 pub struct SymbolTable {
-    variables: HashMap<String, String>,
+    variables: HashMap<String, VarType>,
 }
 
 impl SymbolTable {
@@ -14,12 +14,23 @@ impl SymbolTable {
         }
     }
 
-    pub fn declare(&mut self, name: &str, typ: &str) -> Result<(), String> {
+    /*pub fn declare(&mut self, name: &str, typ: &str) -> Result<(), String> {
         if self.variables.contains_key(name) {
             return Err(format!("Variable '{}' ya declarada", name));
         }
         self.variables.insert(name.to_string(), typ.to_string());
         Ok(())
+    }*/
+    pub fn declare(&mut self, name: &str, typ: VarType) -> Result<(), String> {
+        if self.variables.contains_key(name) {
+            return Err(format!("Variable '{}' ya declarada", name));
+        }
+        self.variables.insert(name.to_string(), typ);
+        Ok(())
+    }
+
+    pub fn get_type(&self, name: &str) -> Option<&VarType> {
+        self.variables.get(name)
     }
 
     pub fn exists(&self, name: &str) -> bool {
@@ -38,13 +49,31 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
             Rule::var_section => {
                 // Parsear todas las declaraciones y llenar sym_table
                 for decl in p.into_inner() {
-                    for ident_pair in decl.into_inner().filter(|x| x.as_rule() == Rule::ident) {
+                    // cada decl es un var_decl
+                    let mut idents = Vec::new();
+                    let mut var_type = None;
+
+                    for part in decl.into_inner() {
+                        match part.as_rule() {
+                            Rule::ident => idents.push(part.as_str().to_string()),
+                            Rule::keyword_integer => var_type = Some(VarType::Integer),
+                            Rule::keyword_real => var_type = Some(VarType::Real),
+                            Rule::keyword_string => var_type = Some(VarType::Str),
+                            Rule::keyword_boolean => var_type = Some(VarType::Boolean),
+                            _ => {}
+                        }
+                    }
+
+                    let var_type = var_type.expect("Declaración sin tipo");
+
+                    for name in idents {
                         sym_table
-                            .declare(ident_pair.as_str(), "integer")
+                            .declare(&name, var_type.clone())
                             .expect("Error al declarar variable");
                     }
                 }
             }
+
             Rule::block => block_pair_opt = Some(p),
             _ => {}
         }
@@ -142,6 +171,14 @@ pub fn parse_bool_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
 
 fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     match pair.as_rule() {
+        Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
+        Rule::ident => {
+            let name = pair.as_str().to_string();
+            if !sym_table.exists(&name) {
+                panic!("Variable '{}' no declarada", name);
+            }
+            Expr::Ident(name)
+        }
         Rule::expr | Rule::sum | Rule::product => {
             let mut inner = pair.into_inner();
             let first = inner.next().unwrap();
@@ -169,23 +206,39 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
             match inner.as_rule() {
                 Rule::ident => {
                     let name = inner.as_str().to_string();
-                    if !sym_table.exists(&name) {
+                    /*if !sym_table.exists(&name) {
+                        panic!("Variable '{}' no declarada", name);
+                    }*/
+                    // 🔥 Hack rápido: aceptar PI (y otros)
+                    let allowed_consts = ["PI", "TRUE", "FALSE"];
+                    if !sym_table.exists(&name) && !allowed_consts.contains(&name.as_str()) {
                         panic!("Variable '{}' no declarada", name);
                     }
+
+                    /*if !sym_table.exists(&name) && name != "PI" {
+                        // ⚠️ comentar o quitar el panic mientras tanto
+                        panic!("Variable '{}' no declarada", name);
+                    }*/
                     Expr::Ident(name)
                 }
-                Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
+                Rule::string_literal => {
+                    let s = inner.as_str();
+                    Expr::StringLiteral(s[1..s.len() - 1].to_string()) // quitar comillas
+                }
+                Rule::boolean_literal => {
+                    let val = inner.as_str().to_lowercase() == "true";
+                    Expr::BooleanLiteral(val)
+                }
+
+                //Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
+                Rule::number => {
+                    let n: f64 = inner.as_str().parse().unwrap();
+                    Expr::Number(n)
+                }
+
                 Rule::expr => parse_expr(inner, sym_table),
                 _ => panic!("Factor inesperado: {:?}", inner.as_rule()),
             }
-        }
-        Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
-        Rule::ident => {
-            let name = pair.as_str().to_string();
-            if !sym_table.exists(&name) {
-                panic!("Variable '{}' no declarada", name);
-            }
-            Expr::Ident(name)
         }
         _ => panic!("Regla de expr no implementada: {:?}", pair.as_rule()),
     }
