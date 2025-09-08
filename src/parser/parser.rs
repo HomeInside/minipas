@@ -204,42 +204,78 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
         Rule::factor => {
             let inner = pair.into_inner().next().unwrap();
             match inner.as_rule() {
+                Rule::func_call => {
+
+
+                    let mut ic = inner.into_inner();
+                    let name_pair = ic.next().expect("func_call sin ident");
+                    let name = name_pair.as_str().to_string();
+
+                    let mut args: Vec<Expr> = Vec::new();
+                    if let Some(arg_list) = ic.next() {
+
+                        if arg_list.as_rule() == Rule::expr_list {
+                            for item in arg_list.into_inner() {
+                                    match item.as_rule() {
+                                        Rule::expr_item => args.push(parse_expr_item(item, sym_table)),
+                                        Rule::comma => {},
+                                        other => panic!("Nodo inesperado en expr_list: {:?}", other),
+                                    }
+                                }
+                            /*for item in arg_list.into_inner() {
+                                match item.as_rule() {
+                                    Rule::expr_item => {
+                                        match item.as_rule() {
+                                            Rule::expr => args.push(parse_expr(item, sym_table)),
+                                            Rule::string_literal => {
+                                                let s = item.as_str();
+                                                let s = &s[1..s.len() - 1]; // quitar ' o "
+                                                args.push(Expr::StringLiteral(s.to_string()));
+                                            }
+                                            _ => panic!("Nodo inesperado en expr_item: {:?}", item.as_rule()),
+                                        }
+                                    }
+                                    Rule::comma => {} // ignorar
+                                    other => panic!("Nodo inesperado en expr_list: {:?}", other),
+                                }
+                            }*/
+                        }
+                    }
+
+                    println!("parse_expr FuncCall name={} args={:?}", name, args);
+                    Expr::Call { name, args }
+                }
+
                 Rule::ident => {
                     let name = inner.as_str().to_string();
-                    /*if !sym_table.exists(&name) {
-                        panic!("Variable '{}' no declarada", name);
-                    }*/
-                    // 🔥 Hack rápido: aceptar PI (y otros)
                     let allowed_consts = ["PI", "TRUE", "FALSE"];
                     if !sym_table.exists(&name) && !allowed_consts.contains(&name.as_str()) {
                         panic!("Variable '{}' no declarada", name);
                     }
-
-                    /*if !sym_table.exists(&name) && name != "PI" {
-                        // ⚠️ comentar o quitar el panic mientras tanto
-                        panic!("Variable '{}' no declarada", name);
-                    }*/
                     Expr::Ident(name)
                 }
+
                 Rule::string_literal => {
                     let s = inner.as_str();
                     Expr::StringLiteral(s[1..s.len() - 1].to_string()) // quitar comillas
                 }
+
                 Rule::boolean_literal => {
                     let val = inner.as_str().to_lowercase() == "true";
                     Expr::BooleanLiteral(val)
                 }
 
-                //Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
                 Rule::number => {
                     let n: f64 = inner.as_str().parse().unwrap();
                     Expr::Number(n)
                 }
 
                 Rule::expr => parse_expr(inner, sym_table),
+
                 _ => panic!("Factor inesperado: {:?}", inner.as_rule()),
             }
         }
+
         _ => panic!("Regla de expr no implementada: {:?}", pair.as_rule()),
     }
 }
@@ -271,7 +307,7 @@ pub fn parse_stmt_if(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
         else_branch: else_branch.map(Box::new),
     }
 }
-
+/*
 pub fn parse_stmt_writeln(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     let mut exprs = Vec::new();
 
@@ -305,4 +341,52 @@ pub fn parse_stmt_writeln(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 
     //Stmt::Writeln(exprs)
     Stmt::WritelnList(exprs)
+}
+*/
+pub fn parse_stmt_writeln(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
+    let mut exprs = Vec::new();
+
+    for p in pair.into_inner() {
+        match p.as_rule() {
+            Rule::expr_list => {
+                for item in p.into_inner() {
+                    match item.as_rule() {
+                        Rule::expr_item => {
+                            match item.as_rule() {
+                                Rule::expr => exprs.push(parse_expr(item, sym_table)),
+                                Rule::string_literal => {
+                                    let s = item.as_str();
+                                    let s = &s[1..s.len() - 1]; // quitar ' o "
+                                    exprs.push(Expr::StringLiteral(s.to_string()));
+                                }
+                                _ => panic!("Nodo inesperado dentro de expr_item: {:?}", item.as_rule()),
+                            }
+                        }
+                        Rule::comma => {} // ignorar
+                        other => panic!("Nodo inesperado en expr_list: {:?}", other),
+                    }
+                }
+            }
+            Rule::keyword_writeln | Rule::lparen | Rule::rparen | Rule::semicolon => {}
+            other => panic!("Nodo inesperado en writeln_stmt: {:?}", other),
+        }
+    }
+
+    Stmt::WritelnList(exprs)
+}
+
+fn parse_expr_item(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
+    match pair.as_rule() {
+        Rule::expr_item => {
+            let inner = pair.into_inner().next().unwrap();
+            parse_expr_item(inner, sym_table)
+        }
+        Rule::expr => parse_expr(pair, sym_table),
+        Rule::string_literal => {
+            let s = pair.as_str();
+            let s = &s[1..s.len()-1]; // quitar comillas
+            Expr::StringLiteral(s.to_string())
+        }
+        _ => panic!("Nodo inesperado dentro de expr_item: {:?}", pair.as_rule()),
+    }
 }
