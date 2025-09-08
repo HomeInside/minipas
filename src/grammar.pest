@@ -1,4 +1,4 @@
-// grammar.pest 0.6.0
+// grammar.pest 0.7.0
 //WHITESPACE = _{ (" " | "\t" | NEWLINE | comment | comment_multi)+ }
 //WHITESPACE = _{ " " | "\t" | NEWLINE }
 //
@@ -8,17 +8,32 @@ NEWLINE = _{ "\n" | "\r\n" }
 comment_single = { "//" ~ (!NEWLINE ~ ANY)* }
 comment_braces = { "{"  ~ (!"}"  ~ ANY)* ~ "}" }  // falla si EOF antes de '}'
 comment        = { comment_single | comment_braces }
+//string_literal = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+//string_literal = @{ "\"" ~ ( "\\\"" | "\\\\" | (!"\"" ~ ANY) )* ~ "\"" }
+string_literal = @{
+    ("\"" ~ ( "\\\"" | "\\\\" | (!"\"" ~ ANY) )* ~ "\"")
+  | ("'"  ~ ( "\\'"  | "\\\\" | (!"'"  ~ ANY) )* ~ "'")
+}
+boolean_literal = { "true" | "false" }
+
 
 // Tokens
 keyword_var = { "var" }
 keyword_integer = { "integer" }
+keyword_real    = { "real" }
+keyword_string  = { "string" }
+keyword_boolean = { "boolean" }
 keyword_writeln = { "writeln" }
 keyword_if = { "if" }
 keyword_then = { "then" }
 keyword_else = { "else" }
 
 ident = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC)* }
-number = @{ ASCII_DIGIT+ }
+
+//number = @{ ASCII_DIGIT+ }
+number = @{ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
+
+real = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
 assign_op = { ":=" }
 add_op = { "+" }
@@ -41,7 +56,7 @@ rparen = { ")" }
 expr = { sum }
 sum = { product ~ ((add_op | sub_op) ~ product)* }
 product = { factor ~ ((mul_op | div_op) ~ factor)* }
-factor = { number | ident | "(" ~ expr ~ ")" }
+factor = { number | string_literal | boolean_literal| ident | "(" ~ expr ~ ")" }
 
 //
 
@@ -58,7 +73,9 @@ block = { "begin" ~ stmt* ~ "end" }
 stmt  = { comment* ~ (assignment | writeln_stmt | if_stmt | block) }
 
 if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
-var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ keyword_integer ~ semicolon }
+// var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ keyword_integer ~ semicolon }
+var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon }
+
 assignment = { ident ~ assign_op ~ expr ~ semicolon }
 
 var_section = { var_decl+ }
