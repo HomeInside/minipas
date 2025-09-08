@@ -32,6 +32,8 @@ pub enum Expr {
     StringLiteral(String),
     BooleanLiteral(bool), // nuevo
     BinaryOp { left: Box<Expr>, op: Op, right: Box<Expr> },
+    Call { name: String, args: Vec<Expr> }, // 👈 nuevo
+                                            //FuncCall(String, Vec<Expr>),            // <-- nueva rama
 }
 
 #[derive(Debug)]
