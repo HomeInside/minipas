@@ -10,13 +10,14 @@ mod runtime;
 use parser::ast::{Expr, Op, Stmt, Value, VarType};
 use parser::parser::*;
 use runtime::interpreter::*;
+use runtime::std_lib::default_builtins;
 
 #[derive(Parser)]
 #[grammar = "grammar.pest"]
 pub struct PascalParser;
 
 type Environment = HashMap<String, Value>;
-
+// to remove
 fn default_constants() -> HashMap<String, Value> {
     let mut map = HashMap::new();
     map.insert("PI".to_string(), Value::Real(std::f64::consts::PI));
@@ -53,14 +54,16 @@ fn main() {
     let (program, _) = parse_program(pairs);
 
     // Depuración: imprime el AST
-    // println!("AST: {:#?}", program);
+    println!("AST: {:#?}", program);
 
     let mut env = Environment::new();
-    let consts = default_constants();
+    //let consts = default_constants();
+    let builtins = default_builtins();
 
     for stmt in &program {
-        execute_stmt(stmt, &mut env, &consts);
+        //execute_stmt(stmt, &mut env, &consts);
+        execute_stmt(stmt, &mut env, &builtins);
     }
 
-    // println!("ENV: {:#?}", env);
+    println!("ENV: {:#?}", env);
 }
