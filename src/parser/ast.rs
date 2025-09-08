@@ -1,8 +1,36 @@
+#[derive(Debug, Clone, PartialEq)]
+pub enum VarType {
+    Integer,
+    Real,
+    Str,
+    Boolean,
+}
+
+#[derive(Debug, Clone)]
+pub enum Value {
+    Integer(i64),
+    Real(f64),
+    Str(String),
+    Boolean(bool),
+}
+
+impl Value {
+    pub fn to_string_value(&self) -> String {
+        match self {
+            Value::Integer(i) => i.to_string(),
+            Value::Real(f) => format!("{:.4}", f),
+            Value::Str(s) => s.clone(),
+            Value::Boolean(b) => b.to_string(),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum Expr {
-    Number(f64),
+    Number(f64), // integer o real
     Ident(String),
     StringLiteral(String),
+    BooleanLiteral(bool), // nuevo
     BinaryOp { left: Box<Expr>, op: Op, right: Box<Expr> },
 }
 
