@@ -1,5 +1,6 @@
 use crate::Value;
 use crate::runtime::std_lib::date_time::*;
+use crate::runtime::std_lib::in_out::*;
 use crate::runtime::std_lib::math::*;
 use crate::runtime::std_lib::sys::*;
 use std::collections::HashMap;
@@ -15,6 +16,10 @@ pub enum Builtin {
 
 pub fn default_builtins() -> HashMap<String, Builtin> {
     let mut builtin: HashMap<String, Builtin> = HashMap::new();
+
+    // === input/output ===
+    builtin.insert("writeln".to_string(), Builtin::Func(writeln_fn));
+    builtin.insert("format".to_string(), Builtin::Func(format_fn));
 
     // === Constantes ===
     builtin.insert("PI".to_string(), Builtin::Const(Value::Real(std::f64::consts::PI)));
@@ -46,6 +51,7 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("ceil".to_string(), Builtin::Func(ceil_fn));
     builtin.insert("round".to_string(), Builtin::Func(round_fn));
     builtin.insert("trunc".to_string(), Builtin::Func(trunc_fn));
+    builtin.insert("fract".to_string(), Builtin::Func(fract_fn));
     builtin.insert("max".to_string(), Builtin::Func(max_fn));
     builtin.insert("min".to_string(), Builtin::Func(min_fn));
     builtin.insert("sign".to_string(), Builtin::Func(sign_fn));
