@@ -76,6 +76,17 @@ pub fn platform_fn(_args: Vec<Value>) -> Value {
     Value::Str(env::consts::OS.to_string())
 }
 
+pub fn version_fn(_args: Vec<Value>) -> Value {
+    let version = env!("CARGO_PKG_VERSION"); // versión desde Cargo.toml
+    let build_time = option_env!("BUILD_TIME").unwrap_or("unknown");
+    let compiler = option_env!("RUSTC_VERSION").unwrap_or("rustc");
+    let target = env::consts::OS;
+
+    let formatted = format!("{} (MiniPas build, {}, {}) [{}]", version, build_time, target, compiler);
+
+    Value::Str(formatted)
+}
+
 pub fn exit_fn(args: Vec<Value>) -> Value {
     let code = match args.len() {
         0 => 0, // si no hay argumento, salir con 0
@@ -87,16 +98,6 @@ pub fn exit_fn(args: Vec<Value>) -> Value {
     };
 
     process::exit(code)
-}
-pub fn version_fn(_args: Vec<Value>) -> Value {
-    let version = env!("CARGO_PKG_VERSION"); // versión desde Cargo.toml
-    let build_time = option_env!("BUILD_TIME").unwrap_or("unknown");
-    let compiler = option_env!("RUSTC_VERSION").unwrap_or("rustc");
-    let target = env::consts::OS;
-
-    let formatted = format!("{} (MiniPas build, {}, {}) [{}]", version, build_time, target, compiler);
-
-    Value::Str(formatted)
 }
 
 /*

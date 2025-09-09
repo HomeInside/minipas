@@ -53,8 +53,8 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("random".to_string(), Builtin::Func(random_fn));
     builtin.insert("sleep".to_string(), Builtin::Func(sleep_fn));
     builtin.insert("platform".to_string(), Builtin::Func(platform_fn));
-    builtin.insert("exit".to_string(), Builtin::Func(exit_fn));
     builtin.insert("version".to_string(), Builtin::Func(version_fn));
+    builtin.insert("exit".to_string(), Builtin::Func(exit_fn));
 
     // === date_time ===
     // builtin.insert("date".to_string(), Builtin::Func(date_fn));
