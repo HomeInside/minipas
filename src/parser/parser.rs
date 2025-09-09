@@ -93,27 +93,25 @@ fn parse_block(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 
 pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     match pair.as_rule() {
-        Rule::assignment => {
-            let mut inner = pair.into_inner();
-            let name = inner.next().expect("assignment sin ident").as_str().to_string();
-            if !sym_table.exists(&name) {
-                panic!("Variable '{}' no declarada", name);
-            }
-            inner.next(); // saltar assign_op
-            let expr_pair = inner.next().expect("assignment sin expr");
-            let expr = parse_expr(expr_pair, sym_table);
-            Stmt::Assign(name, expr)
-        }
         Rule::var_decl => {
             panic!("Declaración de variables no permitida dentro de begin…end");
         }
-        Rule::block => parse_block(pair, sym_table),
         Rule::stmt => {
-            let inner = pair.into_inner().next().expect("stmt vacío");
-            parse_stmt(inner, sym_table)
+            let inner = pair.into_inner().next().unwrap();
+            match inner.as_rule() {
+                Rule::assignment => parse_assignment(inner, sym_table),
+                Rule::if_stmt => parse_stmt_if(inner, sym_table),
+                Rule::block => parse_block(inner, sym_table), //parse_block(inner),
+                // permite statements de expresiones (como writeln(...);)
+                Rule::expr_stmt => {
+                    let expr_pair = inner.into_inner().next().unwrap();
+                    let expr = parse_expr(expr_pair, sym_table);
+                    Stmt::Expr(expr)
+                }
+
+                other => panic!("Regla inesperada en stmt: {:?}", other),
+            }
         }
-        Rule::writeln_stmt => parse_stmt_writeln(pair, sym_table),
-        Rule::if_stmt => parse_stmt_if(pair, sym_table),
         Rule::EOI => {
             // Ignorar fin/inicio de input
             // no hay un Stmt válido
@@ -254,7 +252,7 @@ pub fn parse_stmt_if(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     while let Some(p) = inner.next() {
         match p.as_rule() {
             Rule::bool_expr => cond = Some(parse_bool_expr(p, sym_table)),
-            Rule::stmt | Rule::writeln_stmt | Rule::assignment | Rule::var_decl | Rule::if_stmt => {
+            Rule::stmt | /*Rule::writeln_stmt |*/ Rule::assignment | Rule::var_decl | Rule::if_stmt => {
                 if then_branch.is_none() {
                     then_branch = Some(parse_stmt(p, sym_table));
                 } else {
@@ -273,30 +271,6 @@ pub fn parse_stmt_if(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     }
 }
 
-pub fn parse_stmt_writeln(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
-    let mut exprs = Vec::new();
-
-    for p in pair.into_inner() {
-        match p.as_rule() {
-            Rule::expr_list => {
-                for item in p.into_inner() {
-                    if item.as_rule() == Rule::expr_item {
-                        exprs.push(parse_expr_item(item, sym_table));
-                    } else if item.as_rule() == Rule::comma {
-                        // ignorar
-                    } else {
-                        panic!("parse_stmt_writeln Nodo inesperado en expr_list: {:?}", item.as_rule());
-                    }
-                }
-            }
-            Rule::keyword_writeln | Rule::lparen | Rule::rparen | Rule::semicolon => {}
-            other => panic!("parse_stmt_writeln Nodo inesperado en writeln_stmt: {:?}", other),
-        }
-    }
-
-    Stmt::WritelnList(exprs)
-}
-
 fn parse_expr_item(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     assert_eq!(pair.as_rule(), Rule::expr_item);
 
@@ -311,4 +285,13 @@ fn parse_expr_item(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
         }
         other => panic!("parse_expr_item Nodo inesperado dentro de expr_item: {:?}", other),
     }
+}
+
+fn parse_assignment(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
+    let mut inner = pair.into_inner(); // ident ~ ":=" ~ expr ~ ";"
+    let ident = inner.next().unwrap().as_str().to_string();
+    inner.next(); // skip ":="
+    let expr_pair = inner.next().unwrap(); // 👈 acá ya es expr
+    let expr = parse_expr(expr_pair, sym_table);
+    Stmt::Assign(ident, expr)
 }
