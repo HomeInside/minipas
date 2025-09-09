@@ -1,4 +1,4 @@
-use crate::runtime::std_lib::Builtin;
+use crate::runtime::std_lib::builtins::Builtin;
 use crate::{Expr, Op, Stmt, Value};
 use std::collections::HashMap;
 

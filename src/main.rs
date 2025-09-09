@@ -10,7 +10,7 @@ mod runtime;
 use parser::ast::{Expr, Op, Stmt, Value, VarType};
 use parser::parser::*;
 use runtime::interpreter::*;
-use runtime::std_lib::default_builtins;
+use runtime::std_lib::builtins::default_builtins;
 
 #[derive(Parser)]
 #[grammar = "grammar.pest"]
