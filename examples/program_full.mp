@@ -37,5 +37,27 @@ writeln("division:", (4/5));
 writeln("todo junto:", 4+1-3*2/5);
 writeln("todo con parentesis:", (4+1-3)*(2/5));
 { con esto finalizamos }
+writeln("todo con parentesis:", ("aa"+"bb"));
+writeln("todo con parentesis:", (1+4));
+writeln("todo con parentesis:", 1+3);
+writeln("funcion random 1:", random());
+//writeln("funcion random 2:", random(0));
+writeln("funcion random 3:", random(1));
+writeln("funcion random 4:", random(10));
+writeln("funcion random 5:", random(1.234));
+//writeln("funcion random 6:", random("1.234"));
+writeln("funcion random 7:", random(1.0));
+writeln("funcion random 8:", random(1.01));
+writeln("funcion random 9:", random(1.001));
+writeln("funcion random 10:", random(1.01));
+writeln("funcion random 11", random(2.564));
+writeln("funcion random 12:", random(3));
+
+writeln("valor de a:", a);
+a:= random();
+writeln("valor de a con random:", a);
+writeln("funcion random:", a);
+a:= random(12);
+writeln("funcion random(12):", a);
 end.
 // aqui va uno al final
