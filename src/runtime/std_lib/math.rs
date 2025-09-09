@@ -138,6 +138,13 @@ pub fn trunc_fn(args: Vec<Value>) -> Value {
     Value::Real(to_real(&args[0]).trunc())
 }
 
+pub fn fract_fn(args: Vec<Value>) -> Value {
+    if args.len() != 1 {
+        panic!("fract() necesita 1 argumento");
+    }
+    Value::Real(to_real(&args[0]).fract())
+}
+
 pub fn max_fn(args: Vec<Value>) -> Value {
     if args.len() != 2 {
         panic!("max() necesita 2 argumentos");
