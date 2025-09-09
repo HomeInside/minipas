@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum VarType {
     Integer,
@@ -12,15 +14,17 @@ pub enum Value {
     Real(f64),
     Str(String),
     Boolean(bool),
+    Nil,
 }
 
-impl Value {
-    pub fn to_string_value(&self) -> String {
+impl fmt::Display for Value {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Value::Integer(i) => i.to_string(),
-            Value::Real(f) => format!("{:.4}", f),
-            Value::Str(s) => s.clone(),
-            Value::Boolean(b) => b.to_string(),
+            Value::Integer(i) => write!(f, "{}", i),
+            Value::Real(r) => write!(f, "{}", r),
+            Value::Str(s) => write!(f, "{}", s),
+            Value::Boolean(b) => write!(f, "{}", b),
+            Value::Nil => write!(f, "nil"),
         }
     }
 }
@@ -54,11 +58,11 @@ pub enum Op {
 pub enum Stmt {
     //VarDecl(Vec<String>),
     Assign(String, Expr),
-    WritelnList(Vec<Expr>), // nuevo
     IfElse {
         cond: Expr,
         then_branch: Box<Stmt>,
         else_branch: Option<Box<Stmt>>,
     },
     Block(Vec<Stmt>),
+    Expr(Expr), // 👈 nueva variante para statements que son solo expresiones
 }
