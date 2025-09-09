@@ -1,4 +1,5 @@
 use crate::Value;
+use crate::runtime::std_lib::date_time::*;
 use crate::runtime::std_lib::math::*;
 use crate::runtime::std_lib::sys::*;
 use std::collections::HashMap;
@@ -57,8 +58,9 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("exit".to_string(), Builtin::Func(exit_fn));
 
     // === date_time ===
-    // builtin.insert("date".to_string(), Builtin::Func(date_fn));
-    // builtin.insert("time".to_string(), Builtin::Func(time_fn));
+    builtin.insert("date".to_string(), Builtin::Func(date_fn));
+    builtin.insert("time".to_string(), Builtin::Func(time_fn));
+    builtin.insert("datetime".to_string(), Builtin::Func(date_time_fn));
 
     // Procedimientos
     // builtin.insert("writeln".to_string(), Builtin::Proc(writeln_fn));
