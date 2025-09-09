@@ -105,13 +105,6 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut Environment, builtins: &HashMap<Strin
             let val = eval_expr(expr, env, builtins);
             env.insert(name.clone(), val);
         }
-        Stmt::WritelnList(exprs) => {
-            let outputs: Vec<String> = exprs
-                .iter()
-                .map(|e| eval_expr(e, env, builtins).to_string_value())
-                .collect();
-            println!("{}", outputs.join(" "));
-        }
         Stmt::IfElse {
             cond,
             then_branch,
@@ -126,5 +119,8 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut Environment, builtins: &HashMap<Strin
             }
             _ => panic!("La condición del if no es booleana"),
         },
+        Stmt::Expr(expr) => {
+            eval_expr(expr, env, builtins);
+        }
     }
 }
