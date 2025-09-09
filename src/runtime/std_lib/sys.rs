@@ -69,7 +69,7 @@ pub fn sleep_fn(args: Vec<Value>) -> Value {
     }
     // devolver algo para cumplir con el tipo
     // Value::None
-    Value::Integer(0)
+    Value::Nil
 }
 
 pub fn platform_fn(_args: Vec<Value>) -> Value {
@@ -99,9 +99,3 @@ pub fn exit_fn(args: Vec<Value>) -> Value {
 
     process::exit(code)
 }
-
-/*
-pub fn stderr_write(msg: &str) {
-    eprint!("{}", msg);
-}
-*/
