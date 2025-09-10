@@ -23,26 +23,23 @@ var
 numero: integer;
 
 begin
-//clear();
-//clearscreen();
-clrscr();
-writeln('Escriba un número');
-//readln(numero);
-writeln();
-numero:= -1;
+	clrscr();
+	writeln('Escriba un número');
+	numero:= toint(readln());
+	//numero:= toreal(readln());
+	writeln();
 
-if numero < 0 then
-    begin
-    	writeln('El número es negativo. Pulse INTRO para seguir.');
-		writeln("con un bloque begin");
-	end
-else if numero > 5 then
-	begin
-		writeln("el numero es positivo:", numero);
-		writeln("otras sentencias");
-		writeln("dentro del bloque");
-    	//readln
-    end
-else if numero = 0 then writeln("el numero es 0:", numero);
-else writeln("el numero es otro:", numero);
+	if numero < 0 then
+		begin
+			writeln('El número es negativo. Pulse INTRO para seguir.');
+			writeln("con un bloque begin");
+		end
+	else if numero > 5 then
+		begin
+			writeln("el numero es mayor que 5:", numero);
+			writeln("otras sentencias");
+			writeln("dentro del bloque");
+		end
+	else if numero = 0 then writeln("el numero es 0:", numero);
+	else writeln("el numero es otro diferente:", numero);
 end.
