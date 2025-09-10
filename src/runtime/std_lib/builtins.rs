@@ -77,7 +77,7 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     // === date_time ===
     builtin.insert("date".to_string(), Builtin::Func(date_fn));
     builtin.insert("time".to_string(), Builtin::Func(time_fn));
-    builtin.insert("datetime".to_string(), Builtin::Func(date_time_fn));
+    builtin.insert("date_time".to_string(), Builtin::Func(date_time_fn));
 
     // === strings ===
     builtin.insert("len".to_string(), Builtin::Func(len_fn));
@@ -89,11 +89,11 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
 
     // === conversiones de tipos ===
     // alias: int(), to_int()
-    builtin.insert("toint".to_string(), Builtin::Func(to_int_fn));
+    builtin.insert("to_int".to_string(), Builtin::Func(to_int_fn));
     // alias: real(), to_real()
-    builtin.insert("toreal".to_string(), Builtin::Func(to_real_fn));
+    builtin.insert("to_real".to_string(), Builtin::Func(to_real_fn));
     // alias: str(), to_str()
-    builtin.insert("tostr".to_string(), Builtin::Func(to_str_fn));
+    builtin.insert("to_str".to_string(), Builtin::Func(to_str_fn));
 
     // Procedimientos
     // builtin.insert("writeln".to_string(), Builtin::Proc(writeln_fn));
