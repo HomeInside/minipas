@@ -8,7 +8,7 @@ pub fn random_fn(args: Vec<Value>) -> Value {
     match args.len() {
         0 => {
             // random sin argumentos -> 0 ≤ r < 1
-            Value::Integer(rng.random_range(0..=1 as i64))
+            Value::Integer(rng.random_range(0..=1_i64))
         }
         1 => {
             // random(N) -> 0 ≤ r < N
@@ -19,7 +19,7 @@ pub fn random_fn(args: Vec<Value>) -> Value {
                     } else if *i == 1 {
                         return Value::Integer(rng.random_range(0..=1));
                     }
-                    Value::Integer(rng.random_range(0..=*i as i64))
+                    Value::Integer(rng.random_range(0..=*i))
                 }
                 Value::Real(f) => {
                     if *f <= 0.0 {
@@ -98,4 +98,8 @@ pub fn exit_fn(args: Vec<Value>) -> Value {
     };
 
     process::exit(code)
+}
+pub fn clear_screen_fn(_args: Vec<Value>) -> Value {
+    print!("\x1B[2J \x1B[0;0f");
+    Value::Nil
 }
