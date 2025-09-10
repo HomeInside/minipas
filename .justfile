@@ -63,7 +63,20 @@ test:
     ./target/debug/minipas ./examples/hello_world.mp
 
 test-rel:
-    ./target/release/minipas ./examples/hello_world.mp
+    ./target/release/minipas examples/comments.mp
+    ./target/release/minipas examples/conditionals.mp
+    ./target/release/minipas examples/constants.mp
+    ./target/release/minipas examples/data_types.mp
+    ./target/release/minipas examples/date_time.mp
+    ./target/release/minipas examples/haversine.mp
+    ./target/release/minipas examples/hello_world.mp
+    ./target/release/minipas examples/program_full.mp
+    ./target/release/minipas examples/std_lib.mp
+    ./target/release/minipas examples/std_math.mp
+    ./target/release/minipas examples/strings.mp
+    ./target/release/minipas examples/sys.mp
+    ./target/release/minipas examples/variables.mp
+    ./target/release/minipas examples/writeln.mp
 
 [doc('Git check repo')]
 gitc:
