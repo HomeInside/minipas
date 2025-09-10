@@ -14,7 +14,9 @@ string_literal  = @{
     ("\"" ~ ("\\\"" | "\\\\" | (!"\"" ~ ANY))* ~ "\"")
   | ("'" ~ ("\\'" | "\\\\" | (!"'" ~ ANY))* ~ "'")
 }
-boolean_literal =  { "true" | "false" }
+
+//boolean_literal =  { "true" | "false" }
+boolean_literal =  { "True" | "False" }
 
 // Tokens
 keyword_var       = { "var" }
@@ -36,6 +38,7 @@ keyword_procedure = { "procedure" }
 keyword_nil       = { "nil" }
 
 ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
+
 
 number = @{ "-"? ~ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
 real   = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
