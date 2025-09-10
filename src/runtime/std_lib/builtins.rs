@@ -1,4 +1,5 @@
 use crate::Value;
+use crate::runtime::std_lib::conv::*;
 use crate::runtime::std_lib::date_time::*;
 use crate::runtime::std_lib::in_out::*;
 use crate::runtime::std_lib::math::*;
@@ -25,6 +26,7 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     // === input/output ===
     builtin.insert("writeln".to_string(), Builtin::Func(writeln_fn));
     builtin.insert("write".to_string(), Builtin::Func(write_fn));
+    builtin.insert("readln".to_string(), Builtin::Func(readln_fn));
     builtin.insert("format".to_string(), Builtin::Func(format_fn));
 
     // === Constantes ===
@@ -84,6 +86,14 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("upper".to_string(), Builtin::Func(upper_fn));
     builtin.insert("lower".to_string(), Builtin::Func(lower_fn));
     builtin.insert("trim".to_string(), Builtin::Func(trim_fn));
+
+    // === conversiones de tipos ===
+    // alias: int(), to_int()
+    builtin.insert("toint".to_string(), Builtin::Func(to_int_fn));
+    // alias: real(), to_real()
+    builtin.insert("toreal".to_string(), Builtin::Func(to_real_fn));
+    // alias: str(), to_str()
+    builtin.insert("tostr".to_string(), Builtin::Func(to_str_fn));
 
     // Procedimientos
     // builtin.insert("writeln".to_string(), Builtin::Proc(writeln_fn));
