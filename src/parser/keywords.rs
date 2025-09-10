@@ -7,6 +7,8 @@ pub static KEYWORDS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
         "integer",
         "real",
         "boolean",
+        //"true",
+        //"false",
         //"writeln",
         //
         "absolute",
