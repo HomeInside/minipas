@@ -17,15 +17,23 @@ string_literal  = @{
 boolean_literal =  { "true" | "false" }
 
 // Tokens
-keyword_var     = { "var" }
-keyword_integer = { "integer" }
-keyword_real    = { "real" }
-keyword_string  = { "string" }
-keyword_boolean = { "boolean" }
-keyword_writeln = { "writeln" }
-keyword_if      = { "if" }
-keyword_then    = { "then" }
-keyword_else    = { "else" }
+keyword_var       = { "var" }
+keyword_program   = { "program" }
+keyword_integer   = { "integer" }
+keyword_real      = { "real" }
+keyword_string    = { "string" }
+keyword_boolean   = { "boolean" }
+keyword_writeln   = { "writeln" }
+keyword_if        = { "if" }
+keyword_then      = { "then" }
+keyword_else      = { "else" }
+keyword_const     = { "const" }
+keyword_and       = { "and" }
+keyword_array     = { "array" }
+keyword_for       = { "for" }
+keyword_function  = { "function" }
+keyword_procedure = { "procedure" }
+keyword_nil       = { "nil" }
 
 ident  = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC)* }
 number = @{ "-"? ~ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
