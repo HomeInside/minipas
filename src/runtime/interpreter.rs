@@ -2,7 +2,7 @@ use crate::runtime::std_lib::builtins::Builtin;
 use crate::{Expr, Op, Stmt, Value};
 use std::collections::HashMap;
 
-type Environment = HashMap<String, Value>;
+pub type Environment = HashMap<String, Value>;
 
 fn apply_op(l: Value, op: &Op, r: Value) -> Value {
     match (l, r) {
