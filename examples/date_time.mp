@@ -6,7 +6,7 @@ begin
     writeln("Fecha actual: ", date());
 	writeln("Hora actual: ", time());
 	//writeln("Fecha y hora: ", date_time());
-	writeln("Fecha y hora: ", datetime());
+	writeln("Fecha y hora: ", date_time());
 
     writeln("terminado");
 end.

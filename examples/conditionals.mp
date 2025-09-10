@@ -25,7 +25,7 @@ numero: integer;
 begin
 	clrscr();
 	writeln('Escriba un número');
-	numero:= toint(readln());
+	numero:= to_int(readln());
 	//numero:= toreal(readln());
 	writeln();
 

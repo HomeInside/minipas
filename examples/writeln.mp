@@ -3,6 +3,11 @@ var a, b: integer;
 var c: integer;
 var x,y: real;
 var numero:real;
+var integers: string;
+var reals:real;
+var strings: string;
+var booleans: boolean;
+var trues: boolean;
 begin
 
     writeln("Hello, World in minipas!");
@@ -59,6 +64,7 @@ begin
 	writeln("otra forma de format", (format("pi ≈ {:.2f}", numero)));
 	write("esto", "va", "en", "la", "misma", "linea");
 	write();
+	write("true es", true);
 	write("...finalizando");
 
 end.
