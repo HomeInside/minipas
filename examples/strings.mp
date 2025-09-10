@@ -17,6 +17,6 @@ begin
 	writeln();
 	writeln("despues del trim");
 	trimmerStr := trim(cadena);
-	//writeln("trim2:", "'",trim(cadena),"'");
-	writeln("trim2:", "'",trimmerStr,"'");
+	writeln("trim2:", "'",trim(cadena),"'");
+	writeln("trim3:", "'",trimmerStr,"'");
 end.

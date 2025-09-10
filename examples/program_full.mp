@@ -7,9 +7,10 @@ program miprograma1;
 
 var a, b: integer;
 begin
+clrscr();
 
 //
-// que pasa aqui
+// comentario de una linea
 // * comentario con asteriscos*
 //
 a := 4;

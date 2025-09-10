@@ -57,5 +57,8 @@ begin
 	writeln();
 	writeln("el numero es format", format(numero));
 	writeln("otra forma de format", (format("pi ≈ {:.2f}", numero)));
+	write("esto", "va", "en", "la", "misma", "linea");
+	write();
+	write("...finalizando");
 
 end.

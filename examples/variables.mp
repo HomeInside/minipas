@@ -1,6 +1,9 @@
 program demoVariables;
-var a,b: integer;
-var c: integer;
+var
+a,b: integer;
+var
+c: integer;
+
 begin
 	a:=47;
 	b:= (a*a);
