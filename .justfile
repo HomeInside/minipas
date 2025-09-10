@@ -59,10 +59,23 @@ dist-d:
 dist-r:
     ./target/release/minipas
 
-test:
-    ./target/debug/minipas ./examples/hello_world.mp
+test:build
+    ./target/debug/minipas examples/comments.mp
+    ./target/debug/minipas examples/conditionals.mp
+    ./target/debug/minipas examples/constants.mp
+    ./target/debug/minipas examples/data_types.mp
+    ./target/debug/minipas examples/date_time.mp
+    ./target/debug/minipas examples/haversine.mp
+    ./target/debug/minipas examples/hello_world.mp
+    ./target/debug/minipas examples/program_full.mp
+    ./target/debug/minipas examples/std_lib.mp
+    ./target/debug/minipas examples/std_math.mp
+    ./target/debug/minipas examples/strings.mp
+    ./target/debug/minipas examples/sys.mp
+    ./target/debug/minipas examples/variables.mp
+    ./target/debug/minipas examples/writeln.mp
 
-test-rel:
+test-rel:release
     ./target/release/minipas examples/comments.mp
     ./target/release/minipas examples/conditionals.mp
     ./target/release/minipas examples/constants.mp
