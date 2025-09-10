@@ -2,8 +2,11 @@ use crate::Value;
 use crate::runtime::std_lib::date_time::*;
 use crate::runtime::std_lib::in_out::*;
 use crate::runtime::std_lib::math::*;
+use crate::runtime::std_lib::strings::*;
 use crate::runtime::std_lib::sys::*;
 use std::collections::HashMap;
+use std::sync::LazyLock;
+pub static BUILTINS: LazyLock<HashMap<String, Builtin>> = LazyLock::new(default_builtins);
 
 pub type RuntimeFn = fn(Vec<Value>) -> Value;
 
@@ -11,6 +14,8 @@ pub type RuntimeFn = fn(Vec<Value>) -> Value;
 pub enum Builtin {
     Const(Value),
     Func(RuntimeFn), // devuelve un Value
+    // TODO
+    #[allow(dead_code)]
     Proc(RuntimeFn), // puede devolver Value::Str("") o Value::Integer(0)
 }
 
@@ -19,11 +24,13 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
 
     // === input/output ===
     builtin.insert("writeln".to_string(), Builtin::Func(writeln_fn));
+    builtin.insert("write".to_string(), Builtin::Func(write_fn));
     builtin.insert("format".to_string(), Builtin::Func(format_fn));
 
     // === Constantes ===
     builtin.insert("PI".to_string(), Builtin::Const(Value::Real(std::f64::consts::PI)));
-    builtin.insert("E".to_string(), Builtin::Const(Value::Real(std::f64::consts::E))); //número de Euler
+    //número de Euler
+    builtin.insert("E".to_string(), Builtin::Const(Value::Real(std::f64::consts::E)));
     builtin.insert("TRUE".to_string(), Builtin::Const(Value::Boolean(true)));
     builtin.insert("FALSE".to_string(), Builtin::Const(Value::Boolean(false)));
 
@@ -58,15 +65,25 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
 
     // === sys ===
     builtin.insert("random".to_string(), Builtin::Func(random_fn));
-    builtin.insert("sleep".to_string(), Builtin::Func(sleep_fn));
+    builtin.insert("sleep".to_string(), Builtin::Func(sleep_fn)); // delay
     builtin.insert("platform".to_string(), Builtin::Func(platform_fn));
     builtin.insert("version".to_string(), Builtin::Func(version_fn));
     builtin.insert("exit".to_string(), Builtin::Func(exit_fn));
+    //alias: clear(), clearscreen()
+    builtin.insert("clrscr".to_string(), Builtin::Func(clear_screen_fn));
 
     // === date_time ===
     builtin.insert("date".to_string(), Builtin::Func(date_fn));
     builtin.insert("time".to_string(), Builtin::Func(time_fn));
     builtin.insert("datetime".to_string(), Builtin::Func(date_time_fn));
+
+    // === strings ===
+    builtin.insert("len".to_string(), Builtin::Func(len_fn));
+    // alias: len()
+    builtin.insert("length".to_string(), Builtin::Func(len_fn));
+    builtin.insert("upper".to_string(), Builtin::Func(upper_fn));
+    builtin.insert("lower".to_string(), Builtin::Func(lower_fn));
+    builtin.insert("trim".to_string(), Builtin::Func(trim_fn));
 
     // Procedimientos
     // builtin.insert("writeln".to_string(), Builtin::Proc(writeln_fn));
