@@ -1,6 +1,5 @@
 use pest::Parser;
 use pest_derive::Parser;
-use std::collections::HashMap;
 use std::env;
 use std::fs;
 
@@ -9,14 +8,12 @@ mod runtime;
 
 use parser::ast::{Expr, Op, Stmt, Value, VarType};
 use parser::parser::*;
-use runtime::interpreter::*;
-use runtime::std_lib::builtins::default_builtins;
+use runtime::interpreter::{Environment, execute_stmt};
+use runtime::std_lib::builtins::BUILTINS;
 
 #[derive(Parser)]
 #[grammar = "grammar.pest"]
-pub struct PascalParser;
-
-type Environment = HashMap<String, Value>;
+pub struct MiniPasParser;
 
 fn main() {
     println!("welcome to minipas v{}", env!("CARGO_PKG_VERSION"));
@@ -40,19 +37,17 @@ fn main() {
     let input = fs::read_to_string(filename).unwrap_or_else(|_| panic!("No se pudo leer el archivo {}", filename));
 
     // Parsear
-    let pairs = PascalParser::parse(Rule::program, &input).unwrap_or_else(|e| panic!("Error de parseo: {}", e));
+    let pairs = MiniPasParser::parse(Rule::program, &input).unwrap_or_else(|e| panic!("Error de parseo: {}", e));
 
-    //let program = parse_program(pairs);
+    let mut env = Environment::new();
+
     let (program, _) = parse_program(pairs);
 
     // Depuración: imprime el AST
     //println!("AST: {:#?}", program);
 
-    let mut env = Environment::new();
-    let builtins = default_builtins();
-
     for stmt in &program {
-        execute_stmt(stmt, &mut env, &builtins);
+        execute_stmt(stmt, &mut env, &BUILTINS);
     }
 
     //println!("ENV: {:#?}", env);
