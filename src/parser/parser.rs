@@ -1,3 +1,4 @@
+use super::keywords::KEYWORDS;
 use crate::Rule;
 use crate::runtime::std_lib::builtins::BUILTINS;
 use crate::{Expr, Op, Stmt, VarType};
@@ -33,6 +34,12 @@ impl SymbolTable {
     }
 }
 
+fn validate_identifier(name: &str) {
+    if KEYWORDS.contains(&name) {
+        panic!("Identificador '{}' no permitido: es una palabra reservada", name);
+    }
+}
+
 pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
     let program_pair = pairs.next().expect("No se encontró program");
     let mut sym_table = SymbolTable::new();
@@ -62,6 +69,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     let var_type = var_type.expect("Declaración sin tipo");
 
                     for name in idents {
+                        validate_identifier(&name);
                         sym_table
                             .declare(&name, var_type.clone())
                             .expect("Error al declarar variable");
@@ -167,6 +175,7 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
         Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
         Rule::ident => {
             let name = pair.as_str().to_string();
+            validate_identifier(&name);
             check_ident(&name, sym_table);
             Expr::Ident(name)
         }
@@ -201,6 +210,7 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     let name = name_pair.as_str().to_string();
 
                     let mut args: Vec<Expr> = Vec::new();
+                    validate_identifier(&name);
 
                     for node in ic {
                         match node.as_rule() {
@@ -221,6 +231,7 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
 
                 Rule::ident => {
                     let name = inner.as_str().to_string();
+                    validate_identifier(&name);
                     check_ident(&name, sym_table);
                     Expr::Ident(name)
                 }
@@ -290,7 +301,11 @@ fn parse_expr_item(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
 fn parse_assignment(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     let mut inner = pair.into_inner(); // ident ~ ":=" ~ expr ~ ";"
     let ident = inner.next().unwrap().as_str().to_string();
+
+    validate_identifier(&ident);
+
     inner.next(); // skip ":="
+
     let expr_pair = inner.next().unwrap(); // 👈 acá ya es expr
     let expr = parse_expr(expr_pair, sym_table);
     Stmt::Assign(ident, expr)
