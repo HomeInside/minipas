@@ -1,6 +1,7 @@
 program demo_variables;
 var
 a,b: integer;
+
 var
 c: integer;
 var demo1: integer;
@@ -14,7 +15,21 @@ var snake_case: string;
 var _snake_case: string;
 var __1_uno_: string;
 var _1234_: string;
+
 var func_tion: string;
+integers, nombre: string;
+reals:real;
+
+var
+is_18: boolean;
+trauesa: boolean;
+
+var btrues, atruesa: boolean;
+sina: boolean;
+formato: boolean;
+
+var truesa, falsea: boolean;
+var beging: boolean;
 
 begin
 	a:=47;
@@ -42,4 +57,19 @@ begin
     writeln("'_1234_' value is:", _1234_);
     //writeln("'function' value is:", function);
     writeln("'fun_ction' value is:", func_tion);
+    writeln();
+	writeln("integers: es", integers);
+	writeln("reals: es", reals);
+	writeln("nombre: es", nombre);
+	writeln("is_18: es", is_18);
+	writeln("atruesa: es", atruesa);
+	writeln("btrues: es", btrues);
+	writeln("formato: es", formato);
+	writeln("sina: es", sina);
+	writeln("truesa: es", truesa);
+	writeln("falsea: es", falsea);
+	writeln("beging: es", beging);
+	writeln("False es", FALSE, "ó es", False);
+	writeln("True es", TRUE, "ó es", True);
+
 end.
