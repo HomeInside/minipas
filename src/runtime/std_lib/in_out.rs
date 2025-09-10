@@ -1,3 +1,4 @@
+use super::utils::get_input_default;
 use crate::Value;
 
 pub fn writeln_fn(args: Vec<Value>) -> Value {
@@ -5,10 +6,22 @@ pub fn writeln_fn(args: Vec<Value>) -> Value {
     println!("{}", parts.join(" "));
     Value::Nil
 }
+
 pub fn write_fn(args: Vec<Value>) -> Value {
     let parts: Vec<String> = args.into_iter().map(|v| v.to_string()).collect();
     print!("{}", parts.join(" "));
     Value::Nil
+}
+
+pub fn readln_fn(args: Vec<Value>) -> Value {
+    if !args.is_empty() {
+        panic!("readln() no acepta argumentos");
+    }
+
+    let value: String = get_input_default("> ");
+    Value::Str(value)
+    //let value: u32 = get_input_default("> ");
+    //Value::Integer(value.into())
 }
 
 pub fn format_fn(args: Vec<Value>) -> Value {
