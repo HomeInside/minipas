@@ -1,4 +1,4 @@
-// grammar.pest 0.9.0
+// Minipas grammar.pest 0.9.0
 // WHITESPACE = _{ (" " | "\t" | NEWLINE | comment | comment_multi)+ }
 // WHITESPACE = _{ " " | "\t" | NEWLINE }
 //
@@ -14,20 +14,32 @@ string_literal  = @{
     ("\"" ~ ("\\\"" | "\\\\" | (!"\"" ~ ANY))* ~ "\"")
   | ("'" ~ ("\\'" | "\\\\" | (!"'" ~ ANY))* ~ "'")
 }
-boolean_literal =  { "true" | "false" }
+
+//boolean_literal =  { "true" | "false" }
+boolean_literal =  { "True" | "False" }
 
 // Tokens
-keyword_var     = { "var" }
-keyword_integer = { "integer" }
-keyword_real    = { "real" }
-keyword_string  = { "string" }
-keyword_boolean = { "boolean" }
-keyword_writeln = { "writeln" }
-keyword_if      = { "if" }
-keyword_then    = { "then" }
-keyword_else    = { "else" }
+keyword_var       = { "var" }
+keyword_program   = { "program" }
+keyword_integer   = { "integer" }
+keyword_real      = { "real" }
+keyword_string    = { "string" }
+keyword_boolean   = { "boolean" }
+keyword_writeln   = { "writeln" }
+keyword_if        = { "if" }
+keyword_then      = { "then" }
+keyword_else      = { "else" }
+keyword_const     = { "const" }
+keyword_and       = { "and" }
+keyword_array     = { "array" }
+keyword_for       = { "for" }
+keyword_function  = { "function" }
+keyword_procedure = { "procedure" }
+keyword_nil       = { "nil" }
 
-ident  = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC)* }
+ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
+
+
 number = @{ "-"? ~ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
 real   = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
@@ -62,8 +74,9 @@ factor = { number | string_literal | boolean_literal | func_call | ident | "(" ~
 //
 // factor = { ("-"? ~ number) | string_literal | boolean_literal | func_call | ident | "(" ~ expr ~ ")" }
 
-string    = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
-expr_item =  { string_literal | expr }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+
+expr_item = { string_literal | expr }
 
 expr_list = { expr_item ~ (comma ~ expr_item)* }
 expr_stmt = { expr ~ semicolon }
@@ -75,10 +88,14 @@ bool_expr = { expr ~ cmp_op ~ expr }
 block = { "begin" ~ stmt* ~ "end" }
 stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt) }
 
-if_stmt  = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
-var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon }
+if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
+
+// var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon }
+var_decl = { ident ~ ("," ~ ident)* ~ ":" ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ ";" }
 
 assignment = { ident ~ assign_op ~ expr ~ semicolon }
 
-var_section = { var_decl+ }
-program     = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ block ~ "." ~ EOI }
+// var_section = { var_decl+ }
+var_section = { ("var" ~ var_decl+)+ }
+
+program = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ block ~ "." ~ EOI }

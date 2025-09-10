@@ -1,8 +1,13 @@
 program useWriteln;
+var
+c: integer;
+x,y: real;
+
 var a, b: integer;
-var c: integer;
-var x,y: real;
+
 var numero:real;
+
+
 begin
 
     writeln("Hello, World in minipas!");
@@ -57,5 +62,11 @@ begin
 	writeln();
 	writeln("el numero es format", format(numero));
 	writeln("otra forma de format", (format("pi ≈ {:.2f}", numero)));
+
+	writeln();
+	write("esto", "va", "en", "la", "misma", "linea");
+	write();
+	write("true es", True);
+	write("...finalizando");
 
 end.

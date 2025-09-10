@@ -1,29 +1,64 @@
 # MiniPas
 
-MiniPas es un lenguaje de programación interpretado **inspirado en Tubo Pascal V7**, diseñado para ser **simple, educativo y fácil de usar**.
+**MiniPas** es un lenguaje de programación interpretado **inspirado en Tubo Pascal V7**, diseñado para ser sencillo, educativo y fácil de usar.
 
-⚠️ MiniPas **no busca ser compatible** con [Pascal](https://es.wikipedia.org/wiki/Pascal_(lenguaje_de_programaci%C3%B3n)), [Turbo Pascal](https://es.wikipedia.org/wiki/Turbo_Pascal) ó [FreePascal](https://www.freepascal.org/): muchas características del Pascal clásico **no están soportadas**.
+⚠️ **MiniPas** **no busca ser compatible** con [Pascal](https://es.wikipedia.org/wiki/Pascal_(lenguaje_de_programaci%C3%B3n)), [Turbo Pascal V7](https://es.wikipedia.org/wiki/Turbo_Pascal) ó [FreePascal](https://www.freepascal.org/): muchas características del Pascal clásico **no están soportadas**.
 
-Su objetivo principal es permitir experimentar con conceptos básicos de programación estructurada y scripting, ideal para aprendizaje o pequeños proyectos.
+Su objetivo principal es permitir experimentar con conceptos básicos de programación estructurada y scripting, ideal para aprendizaje ó pequeños proyectos.
 
-Actualmente es un lenguaje experimental y minimalista.
+☢️ **MiniPas** Es un lenguaje experimental y minimalista.
 
-Ejemplos:
+Ejemplo:
 
 ```mp
+// example.mp
 program helloworld;
+var r: real;
 
 begin
-    writeln("Hello, World in minipas!");
+    // comentarios de una linea
+    writeln("Hello World in minipas!");
+    r := 2.0;
+    writeln(); // un espacio
+    writeln("Circunferencia:", 2 * PI * r);// usamos PI
+    {   comentarios de
+        varias lineas
+    }
+    writeln("uso de pow:", pow(2,3));
+    writeln("uso de sqrt", sqrt(16));
+    writeln();
+    writeln("platform:", platform());
+    writeln("version:", version());
 end.
 ```
+
+proporciona una salida como la siguiente:
+
+```bash
+welcome to minipas v0.9.0
+cargando archivo: 'example.mp'
+Hello, World in minipas!
+
+Circunferencia: 12.566370614359172
+uso de pow: 8
+uso de sqrt 4
+
+platform: linux
+version: 0.9.0 (MiniPas build, unknown, linux) [rustc]
+```
+
+
+## Documentación
+
+La documentación del proyecto, listado de cambios(changelog) y la versión mas reciente y estable de **MiniPas** [por aquí](https://cutt.ly/minipas).
+
 
 ## Como Contribuir
 
 ### Clona este repositorio:
 
 ```bash
-$ git clone git@gitlab.com:HomeInside/minipas.git
+$ git clone git@github.com:HomeInside/minipas.git
 ```
 
 ### Construye
@@ -39,12 +74,12 @@ cargo build --release
 ### Prueba
 
 ```bash
-$ minipas examples/hello_world.mp
+$ minipas example.mp
 ```
 
-Realiza las modificaciones que creas convenientes y envíanos un [pull request.](https://gitlab.com/HomeInside/minipas/-/merge_requests)
+Realiza las modificaciones que creas convenientes y envíanos un [pull request.](https://github.com/HomeInside/minipas/pulls)
 
-Para cualquier duda, comentario, sugerencia ó aporte, dirigete a la seccion de [issues.](https://gitlab.com/HomeInside/minipas/-/issues)
+Para cualquier duda, comentario, sugerencia ó aporte, dirigete a la seccion de [issues.](https://github.com/HomeInside/minipas/issues)
 
 Antes de abrir un issue nuevo, revisa los ya existentes en busca de una solución (posiblemente ya planteada) para el problema que se te presenta.
 

@@ -28,7 +28,7 @@ fn now_utc() -> (i32, u32, u32, u32, u32, u32) {
 }
 
 /// Convierte segundos desde 1970-01-01 UTC a fecha/hora (gregoriano)
-fn unix_to_ymdhms(mut secs: i64) -> (i32, u32, u32, u32, u32, u32) {
+fn unix_to_ymdhms(secs: i64) -> (i32, u32, u32, u32, u32, u32) {
     let sec_per_min = 60;
     let sec_per_hour = 60 * sec_per_min;
     let sec_per_day = 24 * sec_per_hour;
@@ -44,7 +44,7 @@ fn unix_to_ymdhms(mut secs: i64) -> (i32, u32, u32, u32, u32, u32) {
     let sec = (rem_secs % sec_per_min) as u32;
 
     // algoritmo calendario de días julianos
-    let mut z = days + 2440588; // epoch 1970-01-01 → JD
+    let z = days + 2440588; // epoch 1970-01-01 → JD
     let a = z + 32044;
     let b = (4 * a + 3) / 146097;
     let c = a - (146097 * b) / 4;

@@ -9,8 +9,8 @@ begin
     b:='mundo';
     c:=1.234;
     d:=1;
-    e:=false;
-    f:=true;
+    e:=False;
+    f:=True;
     writeln("a de tipo 'string':", a);
     writeln("b de tipo 'string':", b);
     writeln("c de tipo 'real':", c);

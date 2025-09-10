@@ -1,4 +1,6 @@
+use super::keywords::KEYWORDS;
 use crate::Rule;
+use crate::runtime::std_lib::builtins::BUILTINS;
 use crate::{Expr, Op, Stmt, VarType};
 use pest::iterators::{Pair, Pairs};
 use std::collections::HashMap;
@@ -21,12 +23,20 @@ impl SymbolTable {
         Ok(())
     }
 
+    // TO FIX
+    #[allow(dead_code)]
     pub fn get_type(&self, name: &str) -> Option<&VarType> {
         self.variables.get(name)
     }
 
     pub fn exists(&self, name: &str) -> bool {
         self.variables.contains_key(name)
+    }
+}
+
+fn validate_identifier(name: &str) {
+    if KEYWORDS.contains(&name) {
+        panic!("Identificador '{}' no permitido: es una palabra reservada", name);
     }
 }
 
@@ -59,6 +69,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     let var_type = var_type.expect("Declaración sin tipo");
 
                     for name in idents {
+                        validate_identifier(&name);
                         sym_table
                             .declare(&name, var_type.clone())
                             .expect("Error al declarar variable");
@@ -91,7 +102,7 @@ fn parse_block(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     Stmt::Block(stmts)
 }
 
-pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
+fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     match pair.as_rule() {
         Rule::var_decl => {
             panic!("Declaración de variables no permitida dentro de begin…end");
@@ -122,7 +133,7 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     }
 }
 
-pub fn parse_bool_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
+fn parse_bool_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     assert_eq!(pair.as_rule(), Rule::bool_expr);
     let mut inner = pair.into_inner();
     let left_pair = inner.next().expect("bool_expr sin lado izquierdo");
@@ -164,12 +175,8 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
         Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
         Rule::ident => {
             let name = pair.as_str().to_string();
-            if !sym_table.exists(&name) {
-                let allowed_consts = ["PI", "TRUE", "FALSE"];
-                if !allowed_consts.contains(&name.as_str()) {
-                    panic!("Variable '{}' no declarada", name);
-                }
-            }
+            validate_identifier(&name);
+            check_ident(&name, sym_table);
             Expr::Ident(name)
         }
         Rule::expr | Rule::sum | Rule::product => {
@@ -203,6 +210,7 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     let name = name_pair.as_str().to_string();
 
                     let mut args: Vec<Expr> = Vec::new();
+                    validate_identifier(&name);
 
                     for node in ic {
                         match node.as_rule() {
@@ -223,7 +231,8 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
 
                 Rule::ident => {
                     let name = inner.as_str().to_string();
-                    if !sym_table.exists(&name) {}
+                    validate_identifier(&name);
+                    check_ident(&name, sym_table);
                     Expr::Ident(name)
                 }
                 Rule::string_literal => {
@@ -243,12 +252,14 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     }
 }
 
-pub fn parse_stmt_if(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
+fn parse_stmt_if(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     let mut inner = pair.into_inner();
     let mut cond = None;
     let mut then_branch = None;
     let mut else_branch = None;
 
+    // TO FIX
+    #[allow(clippy::while_let_on_iterator)]
     while let Some(p) = inner.next() {
         match p.as_rule() {
             Rule::bool_expr => cond = Some(parse_bool_expr(p, sym_table)),
@@ -290,8 +301,18 @@ fn parse_expr_item(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
 fn parse_assignment(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     let mut inner = pair.into_inner(); // ident ~ ":=" ~ expr ~ ";"
     let ident = inner.next().unwrap().as_str().to_string();
+
+    validate_identifier(&ident);
+
     inner.next(); // skip ":="
+
     let expr_pair = inner.next().unwrap(); // 👈 acá ya es expr
     let expr = parse_expr(expr_pair, sym_table);
     Stmt::Assign(ident, expr)
+}
+
+fn check_ident(name: &str, sym_table: &SymbolTable) {
+    if !sym_table.exists(name) && !BUILTINS.contains_key(name) {
+        panic!("Variable o constante '{}' no declarada", name);
+    }
 }
