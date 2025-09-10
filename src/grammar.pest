@@ -1,4 +1,4 @@
-// grammar.pest 0.9.0
+// Minipas grammar.pest 0.9.0
 // WHITESPACE = _{ (" " | "\t" | NEWLINE | comment | comment_multi)+ }
 // WHITESPACE = _{ " " | "\t" | NEWLINE }
 //
@@ -35,7 +35,8 @@ keyword_function  = { "function" }
 keyword_procedure = { "procedure" }
 keyword_nil       = { "nil" }
 
-ident  = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC)* }
+ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
+
 number = @{ "-"? ~ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
 real   = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
@@ -71,6 +72,7 @@ factor = { number | string_literal | boolean_literal | func_call | ident | "(" ~
 // factor = { ("-"? ~ number) | string_literal | boolean_literal | func_call | ident | "(" ~ expr ~ ")" }
 
 string    = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+
 expr_item =  { string_literal | expr }
 
 expr_list = { expr_item ~ (comma ~ expr_item)* }
@@ -85,7 +87,6 @@ stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt) }
 
 if_stmt  = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon }
-
 assignment = { ident ~ assign_op ~ expr ~ semicolon }
 
 var_section = { var_decl+ }
