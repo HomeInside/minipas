@@ -58,7 +58,7 @@ La documentación del proyecto, listado de cambios(changelog) y la versión mas 
 ### Clona este repositorio:
 
 ```bash
-$ git clone git@gitlab.com:HomeInside/minipas.git
+$ git clone git@github.com:HomeInside/minipas.git
 ```
 
 ### Construye
@@ -77,9 +77,9 @@ cargo build --release
 $ minipas example.mp
 ```
 
-Realiza las modificaciones que creas convenientes y envíanos un [pull request.](https://gitlab.com/HomeInside/minipas/-/merge_requests)
+Realiza las modificaciones que creas convenientes y envíanos un [pull request.](https://github.com/HomeInside/minipas/pulls)
 
-Para cualquier duda, comentario, sugerencia ó aporte, dirigete a la seccion de [issues.](https://gitlab.com/HomeInside/minipas/-/issues)
+Para cualquier duda, comentario, sugerencia ó aporte, dirigete a la seccion de [issues.](https://github.com/HomeInside/minipas/issues)
 
 Antes de abrir un issue nuevo, revisa los ya existentes en busca de una solución (posiblemente ya planteada) para el problema que se te presenta.
 

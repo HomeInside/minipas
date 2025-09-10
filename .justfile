@@ -64,7 +64,6 @@ test:
 
 test-rel:
     ./target/release/minipas examples/comments.mp
-    ./target/release/minipas examples/comments.mp
     ./target/release/minipas examples/conditionals.mp
     ./target/release/minipas examples/constants.mp
     ./target/release/minipas examples/data_types.mp
