@@ -71,9 +71,9 @@ factor = { number | string_literal | boolean_literal | func_call | ident | "(" ~
 //
 // factor = { ("-"? ~ number) | string_literal | boolean_literal | func_call | ident | "(" ~ expr ~ ")" }
 
-string    = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
 
-expr_item =  { string_literal | expr }
+expr_item = { string_literal | expr }
 
 expr_list = { expr_item ~ (comma ~ expr_item)* }
 expr_stmt = { expr ~ semicolon }
@@ -85,9 +85,14 @@ bool_expr = { expr ~ cmp_op ~ expr }
 block = { "begin" ~ stmt* ~ "end" }
 stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt) }
 
-if_stmt  = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
-var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon }
+if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
+
+// var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon }
+var_decl = { ident ~ ("," ~ ident)* ~ ":" ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ ";" }
+
 assignment = { ident ~ assign_op ~ expr ~ semicolon }
 
-var_section = { var_decl+ }
-program     = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ block ~ "." ~ EOI }
+// var_section = { var_decl+ }
+var_section = { ("var" ~ var_decl+)+ }
+
+program = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ block ~ "." ~ EOI }
