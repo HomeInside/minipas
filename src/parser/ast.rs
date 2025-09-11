@@ -64,11 +64,26 @@ pub enum Stmt {
     },
     Block(Vec<Stmt>),
     Expr(Expr),
+    //Return(Expr), // 👈 NUEVO
+    ProcDecl {
+        name: String,
+        params: Vec<String>,
+        body: Vec<Stmt>,
+    },
 }
 
 #[derive(Debug, Clone)]
 pub struct Procedure {
     pub name: String,
     pub params: Vec<String>, // o Vec<(String, VarType)> si quieres tipos
+    pub body: Vec<Stmt>,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub struct Function {
+    pub name: String,
+    pub params: Vec<String>, // después puedes cambiar a Vec<(String, VarType)>
+    pub return_type: VarType,
     pub body: Vec<Stmt>,
 }

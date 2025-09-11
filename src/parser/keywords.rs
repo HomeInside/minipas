@@ -43,7 +43,7 @@ pub static KEYWORDS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
         "operator",
         "or",
         "packed",
-        "procedure",
+        //"procedure",
         "program",
         "record",
         "reintroduce",
