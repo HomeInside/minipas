@@ -89,4 +89,27 @@ assignment = { ident ~ assign_op ~ expr ~ semicolon }
 // var_section = { var_decl+ }
 var_section = { ("var" ~ var_decl+)+ }
 
-program = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ block ~ "." ~ EOI }
+// procedures
+proc_decl = {
+    keyword_procedure ~ ident ~ lparen ~ (param_list)? ~ rparen ~ semicolon
+    ~ block
+    ~ semicolon?
+}
+// functions
+func_decl = {
+    keyword_function ~ ident ~ lparen? ~ (param_list)? ~ rparen?
+    ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean)
+    ~ semicolon
+    ~ block
+    ~ semicolon?
+}
+
+param_list = { ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ (semicolon ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean))* }
+
+program = {
+    SOI ~ comment* ~ "program" ~ ident ~ semicolon
+    ~ var_section?
+    ~ (proc_decl | func_decl)*   // 👈 permitir declaraciones antes del bloque principal
+    ~ block
+    ~ "." ~ EOI
+}
