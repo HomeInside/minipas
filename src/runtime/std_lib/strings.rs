@@ -26,6 +26,5 @@ pub fn trim_fn(args: Vec<Value>) -> Value {
         panic!("trim() necesita 1 argumento");
     }
     let str_trim = args[0].to_string().trim().to_string();
-    //println!("trim_fn: '{}'", str_trim);
     Value::Str(str_trim)
 }

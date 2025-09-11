@@ -129,7 +129,6 @@ fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
             panic!("parse_stmt no debería recibir SOI/EOI directamente");
         }
         other => panic!("Regla inesperada en stmt: {:?}", other),
-        //_ => unimplemented!(),
     }
 }
 
@@ -306,7 +305,7 @@ fn parse_assignment(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 
     inner.next(); // skip ":="
 
-    let expr_pair = inner.next().unwrap(); // 👈 acá ya es expr
+    let expr_pair = inner.next().unwrap();
     let expr = parse_expr(expr_pair, sym_table);
     Stmt::Assign(ident, expr)
 }

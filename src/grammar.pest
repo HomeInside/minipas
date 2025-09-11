@@ -1,6 +1,4 @@
-// Minipas grammar.pest 0.9.0
-// WHITESPACE = _{ (" " | "\t" | NEWLINE | comment | comment_multi)+ }
-// WHITESPACE = _{ " " | "\t" | NEWLINE }
+// Minipas grammar.pest 1.0.0
 //
 WHITESPACE = _{ (" " | "\t" | NEWLINE | comment)+ }
 NEWLINE    = _{ "\n" | "\r\n" }
@@ -9,14 +7,13 @@ comment_single = { "//" ~ (!NEWLINE ~ ANY)* }
 comment_braces = { "{" ~ (!"}" ~ ANY)* ~ "}" }
 // comment_braces = { "{" ~ (!"}" ~ ANY)* ~ ("}" | EOI) }
 
-comment         =  { comment_single | comment_braces }
-string_literal  = @{
+comment        =  { comment_single | comment_braces }
+string_literal = @{
     ("\"" ~ ("\\\"" | "\\\\" | (!"\"" ~ ANY))* ~ "\"")
   | ("'" ~ ("\\'" | "\\\\" | (!"'" ~ ANY))* ~ "'")
 }
 
-//boolean_literal =  { "true" | "false" }
-boolean_literal =  { "True" | "False" }
+boolean_literal = { "True" | "False" }
 
 // Tokens
 keyword_var       = { "var" }
@@ -39,7 +36,6 @@ keyword_nil       = { "nil" }
 
 ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
-
 number = @{ "-"? ~ ASCII_DIGIT+ ~ ("." ~ ASCII_DIGIT+)? }
 real   = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+ }
 
@@ -56,11 +52,6 @@ colon     = { ":" }
 lparen    = { "(" }
 rparen    = { ")" }
 
-// Expresiones
-// expr = { term ~ ((add_op | sub_op | mul_op | div_op) ~ term)* }
-// term = _{ factor }
-// factor = _{ number | ident | lparen ~ expr ~ rparen }
-//
 expr    = { sum }
 sum     = { product ~ ((add_op | sub_op) ~ product)* }
 product = { factor ~ ((mul_op | div_op) ~ factor)* }

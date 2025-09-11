@@ -34,10 +34,9 @@ pub enum Expr {
     Number(f64), // integer o real
     Ident(String),
     StringLiteral(String),
-    BooleanLiteral(bool), // nuevo
+    BooleanLiteral(bool),
     BinaryOp { left: Box<Expr>, op: Op, right: Box<Expr> },
-    Call { name: String, args: Vec<Expr> }, // 👈 nuevo
-                                            //FuncCall(String, Vec<Expr>),            // <-- nueva rama
+    Call { name: String, args: Vec<Expr> },
 }
 
 #[derive(Debug)]
@@ -64,5 +63,5 @@ pub enum Stmt {
         else_branch: Option<Box<Stmt>>,
     },
     Block(Vec<Stmt>),
-    Expr(Expr), // 👈 nueva variante para statements que son solo expresiones
+    Expr(Expr),
 }

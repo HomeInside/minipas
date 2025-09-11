@@ -7,7 +7,6 @@ pub fn to_int_fn(args: Vec<Value>) -> Value {
     match &args[0] {
         Value::Str(s) => Value::Integer(
             s.parse::<i64>()
-                //.expect(format!("No se pudo convertir a int: '{}'", s).as_str()),
                 .unwrap_or_else(|_| panic!("No se pudo convertir a int: '{}'", s)),
         ),
         Value::Real(r) => Value::Integer(*r as i64),
