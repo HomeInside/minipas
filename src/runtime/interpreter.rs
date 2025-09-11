@@ -1,15 +1,18 @@
-use crate::parser::ast::Procedure;
+use crate::parser::ast::{Function, Procedure};
 use crate::runtime::std_lib::builtins::Builtin;
 use crate::{Expr, Op, Stmt, Value};
 use std::collections::HashMap;
 
 pub type Environment = HashMap<String, Value>;
 
-pub type ProcedureEnv = HashMap<String, Procedure>;
+//pub type ProcedureEnv = HashMap<String, Procedure>;
 
 pub struct RuntimeEnv {
     pub vars: Environment,
-    pub procs: ProcedureEnv,
+    //pub procs: ProcedureEnv,
+    pub funcs: HashMap<String, Function>, // 👈 nuevo
+    pub procs: HashMap<String, Procedure>, // 👈 aquí
+                                          //pub scopes: Vec<HashMap<String, Value>>, // si ya lo tienes para manejar scopes
 }
 
 impl RuntimeEnv {
@@ -17,6 +20,8 @@ impl RuntimeEnv {
         Self {
             vars: Environment::new(),
             procs: HashMap::new(),
+            funcs: HashMap::new(),
+            //scopes: HashMap::new(),
         }
     }
 }
@@ -90,17 +95,39 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
             }
         }
         Expr::Call { name, args } => {
-            let arg_vals: Vec<Value> = args.iter().map(|a| eval_expr(a, env, builtins)).collect();
-            if let Some(b) = builtins.get(name) {
-                match b {
-                    Builtin::Func(f) => f(arg_vals),
-                    Builtin::Proc(f) => f(arg_vals),
-                    Builtin::Const(_) => panic!("'{}' no es una función", name),
+            if let Some(proc) = env.procs.get(name).cloned() {
+                //println!("entro al some proc");
+                // --- procedimiento definido por el usuario ---
+                for (param_name, arg_expr) in proc.params.iter().zip(args.iter()) {
+                    let arg_value = eval_expr(arg_expr, env, builtins);
+                    env.vars.insert(param_name.clone(), arg_value);
+                }
+                for stmt in &proc.body {
+                    execute_stmt(stmt, env, builtins);
+                }
+                Value::Nil
+            } else if let Some(_func) = env.funcs.get(name) {
+                // --- función definida por el usuario ---
+                todo!()
+            } else if let Some(builtin) = builtins.get(name) {
+                // --- builtin como writeln, write, read, etc. ---
+                match builtin {
+                    Builtin::Func(f) => {
+                        let arg_values: Vec<Value> = args.iter().map(|a| eval_expr(a, env, builtins)).collect();
+                        f(arg_values) // devuelve Value
+                    }
+                    Builtin::Proc(p) => {
+                        let arg_values: Vec<Value> = args.iter().map(|a| eval_expr(a, env, builtins)).collect();
+                        p(arg_values);
+                        Value::Nil
+                    }
+                    &Builtin::Const(_) => todo!(),
                 }
             } else {
                 panic!("Función/procedimiento '{}' no definido", name);
             }
         }
+
         Expr::StringLiteral(s) => Value::Str(s.clone()),
         Expr::BooleanLiteral(b) => Value::Boolean(*b),
         Expr::BinaryOp { left, op, right } => {
@@ -139,5 +166,21 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         Stmt::Expr(expr) => {
             eval_expr(expr, env, builtins);
         }
+        Stmt::ProcDecl { name, params, body } => {
+            //println!("============");
+            //println!("Stmt::ProcDecl entro");
+            //println!("name {}", name);
+            //println!("params {:?}", params);
+            //println!("body {:?}", body);
+
+            env.procs.insert(
+                name.clone(),
+                Procedure {
+                    name: name.clone(),
+                    params: params.clone(),
+                    body: body.clone(),
+                },
+            );
+        } //Stmt::Return(_) => todo!(),
     }
 }
