@@ -4,12 +4,13 @@ version = "1.0.0"
 authors = ["Jorge Brunal <jorge.brunal@gmail.com>"]
 edition = "2024"
 license = "MIT OR Apache-2.0"
-description = "Dione, a pragmatic BackEnd using Axum and Rust"
+description = "un lenguaje de programación interpretado **inspirado en Turbo Pascal V7**, diseñado para ser sencillo, educativo y fácil de usar."
 readme = "README.md"
-homepage = "https://gitlab.com/HomeInside"
-repository = "https://gitlab.com/HomeInside"
+homepage = "https://github.com/HomeInside/minipas"
+repository = "https://github.com/HomeInside/minipas"
 keywords = ["Pest", "parser", "pascal"]
 categories = ["command-line-utilities", "parser-implementations", "compilers"]
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 pest = "~2.8.1"
