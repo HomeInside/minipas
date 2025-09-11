@@ -1,8 +1,25 @@
+use crate::parser::ast::Procedure;
 use crate::runtime::std_lib::builtins::Builtin;
 use crate::{Expr, Op, Stmt, Value};
 use std::collections::HashMap;
 
 pub type Environment = HashMap<String, Value>;
+
+pub type ProcedureEnv = HashMap<String, Procedure>;
+
+pub struct RuntimeEnv {
+    pub vars: Environment,
+    pub procs: ProcedureEnv,
+}
+
+impl RuntimeEnv {
+    pub fn new() -> Self {
+        Self {
+            vars: Environment::new(),
+            procs: HashMap::new(),
+        }
+    }
+}
 
 fn apply_op(l: Value, op: &Op, r: Value) -> Value {
     match (l, r) {
@@ -52,7 +69,7 @@ fn apply_op(l: Value, op: &Op, r: Value) -> Value {
     }
 }
 
-fn eval_expr(expr: &Expr, env: &mut Environment, builtins: &HashMap<String, Builtin>) -> Value {
+fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Value {
     match expr {
         Expr::Number(n) => {
             if n.fract() == 0.0 {
@@ -69,7 +86,7 @@ fn eval_expr(expr: &Expr, env: &mut Environment, builtins: &HashMap<String, Buil
                     Builtin::Proc(_) => panic!("El procedimiento '{}' debe llamarse con paréntesis", name),
                 }
             } else {
-                env.get(name).cloned().unwrap_or(Value::Real(0.0))
+                env.vars.get(name).cloned().unwrap_or(Value::Real(0.0))
             }
         }
         Expr::Call { name, args } => {
@@ -94,7 +111,7 @@ fn eval_expr(expr: &Expr, env: &mut Environment, builtins: &HashMap<String, Buil
     }
 }
 
-pub fn execute_stmt(stmt: &Stmt, env: &mut Environment, builtins: &HashMap<String, Builtin>) {
+pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) {
     match stmt {
         Stmt::Block(stmts) => {
             for s in stmts {
@@ -103,7 +120,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut Environment, builtins: &HashMap<Strin
         }
         Stmt::Assign(name, expr) => {
             let val = eval_expr(expr, env, builtins);
-            env.insert(name.clone(), val);
+            env.vars.insert(name.clone(), val);
         }
         Stmt::IfElse {
             cond,
