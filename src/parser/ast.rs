@@ -29,7 +29,7 @@ impl fmt::Display for Value {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expr {
     Number(f64), // integer o real
     Ident(String),
@@ -39,7 +39,7 @@ pub enum Expr {
     Call { name: String, args: Vec<Expr> },
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Op {
     Add,
     Sub,
@@ -53,7 +53,7 @@ pub enum Op {
     NotEqual,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Stmt {
     //VarDecl(Vec<String>),
     Assign(String, Expr),
@@ -64,4 +64,11 @@ pub enum Stmt {
     },
     Block(Vec<Stmt>),
     Expr(Expr),
+}
+
+#[derive(Debug, Clone)]
+pub struct Procedure {
+    pub name: String,
+    pub params: Vec<String>, // o Vec<(String, VarType)> si quieres tipos
+    pub body: Vec<Stmt>,
 }
