@@ -1,10 +1,10 @@
 use super::keywords::KEYWORDS;
 use crate::Rule;
+use crate::parser::ast::{/*Function,*/ Procedure};
 use crate::runtime::std_lib::builtins::BUILTINS;
 use crate::{Expr, Op, Stmt, VarType};
 use pest::iterators::{Pair, Pairs};
 use std::collections::HashMap;
-
 pub struct SymbolTable {
     variables: HashMap<String, VarType>,
 }
@@ -43,7 +43,7 @@ fn validate_identifier(name: &str) {
 pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
     let program_pair = pairs.next().expect("No se encontró program");
     let mut sym_table = SymbolTable::new();
-
+    let mut stmts: Vec<Stmt> = Vec::new(); // 👈 AST completo del programa
     let mut block_pair_opt = None;
 
     for p in program_pair.into_inner() {
@@ -78,13 +78,33 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
             }
 
             Rule::block => block_pair_opt = Some(p),
+            Rule::proc_decl => {
+                //println!("============");
+                //println!("Rule::proc_decl entro");
+                //println!("Rule::proc_decl p:{}", p.clone());
+                let proc = parse_proc_decl(p, &sym_table);
+
+                stmts.push(Stmt::ProcDecl {
+                    name: proc.name,
+                    params: proc.params,
+                    body: proc.body,
+                })
+                //env.procs.insert(proc.name.clone(), proc);
+            }
+
+            Rule::func_decl => {
+                todo!()
+                //let func = parse_func_decl(p, &sym_table);
+                // igual que procedure
+            }
             _ => {}
         }
     }
 
     let block_pair = block_pair_opt.expect("No se encontró el bloque principal");
 
-    if let Stmt::Block(stmts) = parse_block(block_pair, &sym_table) {
+    if let Stmt::Block(block_stmts) = parse_block(block_pair, &sym_table) {
+        stmts.push(Stmt::Block(block_stmts)); // 👈 agregamos el bloque principal al final
         (stmts, sym_table)
     } else {
         panic!("El bloque principal no retornó un Block");
@@ -314,4 +334,77 @@ fn check_ident(name: &str, sym_table: &SymbolTable) {
     if !sym_table.exists(name) && !BUILTINS.contains_key(name) {
         panic!("Variable o constante '{}' no declarada", name);
     }
+}
+
+// procedures y functions
+fn parse_proc_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> Procedure {
+    let mut inner = pair.into_inner();
+
+    // el primero siempre es keyword_procedure → lo ignoramos
+    let _kw = inner.next().unwrap();
+
+    // ahora sí, el nombre
+    let name = inner.next().unwrap().as_str().to_string();
+    let mut params = Vec::new();
+    let mut body = Vec::new();
+
+    for p in inner {
+        match p.as_rule() {
+            Rule::param_list => {
+                for id in p.into_inner() {
+                    if id.as_rule() == Rule::ident {
+                        params.push(id.as_str().to_string());
+                    }
+                }
+            }
+            Rule::block => {
+                body = match parse_block(p, sym_table) {
+                    Stmt::Block(stmts) => stmts,
+                    _ => panic!("bloque inválido en procedure"),
+                };
+            }
+            _ => {}
+        }
+    }
+
+    Procedure { name, params, body }
+}
+
+#[allow(dead_code)]
+fn parse_func_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> crate::parser::ast::Function {
+    let mut inner = pair.into_inner();
+    let name = inner.next().unwrap().as_str().to_string();
+    let mut params = Vec::new();
+    let mut return_type = VarType::Integer; // default
+
+    for p in inner.by_ref() {
+        match p.as_rule() {
+            Rule::param_list => {
+                for id in p.into_inner() {
+                    if id.as_rule() == Rule::ident {
+                        params.push(id.as_str().to_string());
+                    }
+                }
+            }
+            Rule::keyword_integer => return_type = VarType::Integer,
+            Rule::keyword_real => return_type = VarType::Real,
+            Rule::keyword_string => return_type = VarType::Str,
+            Rule::keyword_boolean => return_type = VarType::Boolean,
+            Rule::block => {
+                let body = match parse_block(p, sym_table) {
+                    Stmt::Block(stmts) => stmts,
+                    _ => panic!("bloque inválido en function"),
+                };
+                return crate::parser::ast::Function {
+                    name,
+                    params,
+                    return_type,
+                    body,
+                };
+            }
+            _ => {}
+        }
+    }
+
+    panic!("function mal formada");
 }
