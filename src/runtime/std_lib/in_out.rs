@@ -1,14 +1,20 @@
-use super::utils::get_input_default;
+use super::utils::{get_input_default, unescape_string};
 use crate::Value;
 
 pub fn writeln_fn(args: Vec<Value>) -> Value {
-    let parts: Vec<String> = args.into_iter().map(|v| v.to_string()).collect();
+    let parts: Vec<String> = args
+        .into_iter()
+        .map(|v| unescape_string(&v.to_string()))
+        //.map(|v| v.to_string())
+        .collect();
+
     println!("{}", parts.join(" "));
     Value::Nil
 }
 
 pub fn write_fn(args: Vec<Value>) -> Value {
-    let parts: Vec<String> = args.into_iter().map(|v| v.to_string()).collect();
+    let parts: Vec<String> = args.into_iter().map(|v| unescape_string(&v.to_string())).collect();
+
     print!("{}", parts.join(" "));
     Value::Nil
 }
