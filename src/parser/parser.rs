@@ -1,6 +1,6 @@
 use super::keywords::KEYWORDS;
 use crate::Rule;
-use crate::parser::ast::{/*Function,*/ Procedure};
+use crate::parser::ast::{Function, Procedure};
 use crate::runtime::std_lib::builtins::BUILTINS;
 use crate::{Expr, Op, Stmt, VarType};
 use pest::iterators::{Pair, Pairs};
@@ -93,10 +93,20 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
             }
 
             Rule::func_decl => {
-                todo!()
-                //let func = parse_func_decl(p, &sym_table);
-                // igual que procedure
+                // 👈 NUEVO
+                println!("============");
+                println!("parse_program entro al match");
+                println!("Rule::func_decl entro");
+                println!("Rule::func_decl p:{}", p.clone());
+                let func = parse_func_decl(p, &sym_table);
+                stmts.push(Stmt::FuncDecl {
+                    name: func.name,
+                    params: func.params,
+                    return_type: func.return_type,
+                    body: func.body,
+                });
             }
+
             _ => {}
         }
     }
@@ -135,10 +145,12 @@ fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
                 Rule::block => parse_block(inner, sym_table), //parse_block(inner),
                 // permite statements de expresiones (como writeln(...);)
                 Rule::expr_stmt => {
+                    // 👈 NUEVO
                     let expr_pair = inner.into_inner().next().unwrap();
                     let expr = parse_expr(expr_pair, sym_table);
                     Stmt::Expr(expr)
                 }
+                Rule::return_stmt => parse_return_stmt(inner, sym_table),
 
                 other => panic!("Regla inesperada en stmt: {:?}", other),
             }
@@ -264,9 +276,11 @@ fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                 }
                 Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
                 Rule::expr => parse_expr(inner, sym_table),
+
                 _ => panic!("Factor inesperado: {:?}", inner.as_rule()),
             }
         }
+
         _ => panic!("parse_expr: Regla de expr no implementada: {:?}", pair.as_rule()),
     }
 }
@@ -370,14 +384,25 @@ fn parse_proc_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> Procedure {
     Procedure { name, params, body }
 }
 
-#[allow(dead_code)]
-fn parse_func_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> crate::parser::ast::Function {
+// 👈 NUEVO
+fn parse_func_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> Function {
+    println!("parse_func_decl entro");
+    assert_eq!(pair.as_rule(), Rule::func_decl);
     let mut inner = pair.into_inner();
-    let name = inner.next().unwrap().as_str().to_string();
-    let mut params = Vec::new();
-    let mut return_type = VarType::Integer; // default
 
-    for p in inner.by_ref() {
+    // salta el "function"
+    inner.next();
+
+    // ahora sí, el identificador
+    let name_pair = inner.next().unwrap();
+    let name = name_pair.as_str().to_string();
+
+    let mut params = Vec::new();
+    let mut body = Vec::new();
+    let mut return_type = VarType::Nil; // default
+
+    // … luego params, return_type, body, etc
+    for p in inner {
         match p.as_rule() {
             Rule::param_list => {
                 for id in p.into_inner() {
@@ -390,21 +415,38 @@ fn parse_func_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> crate::parser::
             Rule::keyword_real => return_type = VarType::Real,
             Rule::keyword_string => return_type = VarType::Str,
             Rule::keyword_boolean => return_type = VarType::Boolean,
+            Rule::keyword_nil => return_type = VarType::Nil,
             Rule::block => {
-                let body = match parse_block(p, sym_table) {
+                body = match parse_block(p, sym_table) {
                     Stmt::Block(stmts) => stmts,
-                    _ => panic!("bloque inválido en function"),
-                };
-                return crate::parser::ast::Function {
-                    name,
-                    params,
-                    return_type,
-                    body,
+                    _ => panic!("parse_func_decl bloque inválido en function"),
                 };
             }
             _ => {}
         }
     }
+    //println!("==========parse_func_decl block return==========");
+    //println!("parse_func_decl block return name: {}", name);
+    //println!("parse_func_decl block return params: {:?}", params);
+    //println!("parse_func_decl block return return_type: {:?}", return_type);
+    //println!("parse_func_decl block return body: {:?}", body);
+    if matches!(return_type, VarType::Nil) {
+        panic!("Función '{}' sin tipo de retorno", name);
+    }
+    Function {
+        name,
+        params,
+        return_type,
+        body,
+    }
+}
 
-    panic!("function mal formada");
+// 👈 NUEVO
+fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
+    println!("parse_return_stmt entro");
+    assert_eq!(pair.as_rule(), Rule::return_stmt);
+    // return ~ expr ~ semicolon -> el único hijo será expr
+    let expr_pair = pair.into_inner().next().expect("return sin expresión");
+    let expr = parse_expr(expr_pair, sym_table);
+    Stmt::Return(expr)
 }
