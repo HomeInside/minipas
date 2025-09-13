@@ -5,14 +5,11 @@ use std::collections::HashMap;
 
 pub type Environment = HashMap<String, Value>;
 
-//pub type ProcedureEnv = HashMap<String, Procedure>;
-
+#[derive(Debug, Clone)]
 pub struct RuntimeEnv {
     pub vars: Environment,
-    //pub procs: ProcedureEnv,
     pub funcs: HashMap<String, Function>, // 👈 nuevo
-    pub procs: HashMap<String, Procedure>, // 👈 aquí
-                                          //pub scopes: Vec<HashMap<String, Value>>, // si ya lo tienes para manejar scopes
+    pub procs: HashMap<String, Procedure>,
 }
 
 impl RuntimeEnv {
@@ -21,7 +18,6 @@ impl RuntimeEnv {
             vars: Environment::new(),
             procs: HashMap::new(),
             funcs: HashMap::new(),
-            //scopes: HashMap::new(),
         }
     }
 }
@@ -96,8 +92,8 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
         }
         Expr::Call { name, args } => {
             if let Some(proc) = env.procs.get(name).cloned() {
-                //println!("entro al some proc");
                 // --- procedimiento definido por el usuario ---
+                //println!("entro al some proc");
                 for (param_name, arg_expr) in proc.params.iter().zip(args.iter()) {
                     let arg_value = eval_expr(arg_expr, env, builtins);
                     env.vars.insert(param_name.clone(), arg_value);
@@ -106,15 +102,40 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                     execute_stmt(stmt, env, builtins);
                 }
                 Value::Nil
-            } else if let Some(_func) = env.funcs.get(name) {
+            } else if let Some(func) = env.funcs.get(name).cloned() {
                 // --- función definida por el usuario ---
-                todo!()
+                // Crear un entorno local (scope)
+                println!("eval_expr: entro al some func de Expr::Call");
+                let mut local_env = env.clone();
+                /*let mut local_env = RuntimeEnv {
+                    vars: std::collections::HashMap::new(),
+                    procs: env.procs.clone(),
+                    funcs: env.funcs.clone(),
+                };*/
+
+                for (param_name, arg_expr) in func.params.iter().zip(args.iter()) {
+                    let arg_value = eval_expr(arg_expr, env, builtins);
+                    local_env.vars.insert(param_name.clone(), arg_value);
+                }
+
+                // Ejecutar el cuerpo hasta encontrar Return
+                let mut result = Value::Nil;
+                for stmt in &func.body {
+                    match stmt {
+                        Stmt::Return(expr) => {
+                            result = eval_expr(expr, &mut local_env, builtins);
+                            break;
+                        }
+                        _ => execute_stmt(stmt, &mut local_env, builtins),
+                    }
+                }
+                result
             } else if let Some(builtin) = builtins.get(name) {
                 // --- builtin como writeln, write, read, etc. ---
                 match builtin {
                     Builtin::Func(f) => {
                         let arg_values: Vec<Value> = args.iter().map(|a| eval_expr(a, env, builtins)).collect();
-                        f(arg_values) // devuelve Value
+                        f(arg_values)
                     }
                     Builtin::Proc(p) => {
                         let arg_values: Vec<Value> = args.iter().map(|a| eval_expr(a, env, builtins)).collect();
@@ -135,6 +156,7 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
             let r = eval_expr(right, env, builtins);
             apply_op(l, op, r)
         }
+        Expr::Nil => Value::Nil,
     }
 }
 
@@ -167,12 +189,6 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             eval_expr(expr, env, builtins);
         }
         Stmt::ProcDecl { name, params, body } => {
-            //println!("============");
-            //println!("Stmt::ProcDecl entro");
-            //println!("name {}", name);
-            //println!("params {:?}", params);
-            //println!("body {:?}", body);
-
             env.procs.insert(
                 name.clone(),
                 Procedure {
@@ -181,6 +197,31 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                     body: body.clone(),
                 },
             );
-        } //Stmt::Return(_) => todo!(),
+        }
+        Stmt::FuncDecl {
+            name,
+            params,
+            return_type,
+            body,
+        } => {
+            // 👈 NUEVO
+            println!("============");
+            println!("execute_stmt entro al match");
+            println!("Stmt::FuncDecl entro");
+            println!("name {}", name);
+            println!("params {:?}", params);
+            println!("return_type {:?}", return_type);
+            println!("body {:?}", body);
+            env.funcs.insert(
+                name.clone(),
+                Function {
+                    name: name.clone(),
+                    params: params.clone(),
+                    return_type: return_type.clone(),
+                    body: body.clone(),
+                },
+            );
+        }
+        Stmt::Return(_) => todo!(),
     }
 }
