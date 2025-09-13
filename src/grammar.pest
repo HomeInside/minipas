@@ -59,7 +59,7 @@ product = { factor ~ ((mul_op | div_op) ~ factor)* }
 // Nueva regla para llamada a función/ procedimiento
 func_call = { ident ~ lparen ~ (expr_list)? ~ rparen }
 
-factor = { number | string_literal | boolean_literal | func_call | ident | "(" ~ expr ~ ")" }
+factor = { number | string_literal | boolean_literal | func_call | ident | keyword_nil | "(" ~ expr ~ ")" }
 // Aquí el `-` delante del número se reconoce como operador unario.
 // Esto permite -1 y también expresiones como -(2+3).
 //
@@ -77,16 +77,39 @@ bool_expr = { expr ~ cmp_op ~ expr }
 
 // Sentencias
 block = { "begin" ~ stmt* ~ "end" }
-stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt) }
+stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt|return_stmt) }
 
 if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 
-// var_decl = { keyword_var ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon }
 var_decl = { ident ~ ("," ~ ident)* ~ ":" ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ ";" }
 
 assignment = { ident ~ assign_op ~ expr ~ semicolon }
 
-// var_section = { var_decl+ }
 var_section = { ("var" ~ var_decl+)+ }
 
-program = { SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ block ~ "." ~ EOI }
+// procedures
+proc_decl = {
+    keyword_procedure ~ ident ~ lparen ~ (param_list)? ~ rparen ~ semicolon
+    ~ block
+    ~ semicolon?
+}
+// functions
+func_decl = {
+    keyword_function ~ ident ~ lparen? ~ (param_list)? ~ rparen?
+    ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean)
+    ~ semicolon
+    ~ block
+    ~ semicolon?
+}
+//return
+return_stmt = { "return" ~ expr ~ semicolon }
+
+param_list = { ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ (semicolon ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean))* }
+
+program = {
+    SOI ~ comment* ~ "program" ~ ident ~ semicolon
+    ~ var_section?
+    ~ (proc_decl | func_decl)*   // 👈 permitir declaraciones antes del bloque principal
+    ~ block
+    ~ "." ~ EOI
+}

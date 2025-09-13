@@ -6,6 +6,7 @@ pub enum VarType {
     Real,
     Str,
     Boolean,
+    Nil, // 👈 NUEVO
 }
 
 #[derive(Debug, Clone)]
@@ -14,7 +15,7 @@ pub enum Value {
     Real(f64),
     Str(String),
     Boolean(bool),
-    Nil,
+    Nil, // 👈 NUEVO
 }
 
 impl fmt::Display for Value {
@@ -29,7 +30,7 @@ impl fmt::Display for Value {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expr {
     Number(f64), // integer o real
     Ident(String),
@@ -37,9 +38,10 @@ pub enum Expr {
     BooleanLiteral(bool),
     BinaryOp { left: Box<Expr>, op: Op, right: Box<Expr> },
     Call { name: String, args: Vec<Expr> },
+    Nil, // 👈 NUEVO
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Op {
     Add,
     Sub,
@@ -53,7 +55,7 @@ pub enum Op {
     NotEqual,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Stmt {
     //VarDecl(Vec<String>),
     Assign(String, Expr),
@@ -64,4 +66,33 @@ pub enum Stmt {
     },
     Block(Vec<Stmt>),
     Expr(Expr),
+    Return(Expr), // 👈 NUEVO
+    ProcDecl {
+        name: String,
+        params: Vec<String>,
+        body: Vec<Stmt>,
+    },
+    FuncDecl {
+        // 👈 NUEVO
+        name: String,
+        params: Vec<String>,
+        return_type: VarType,
+        body: Vec<Stmt>,
+    },
+}
+
+#[derive(Debug, Clone)]
+pub struct Procedure {
+    pub name: String,
+    pub params: Vec<String>, // o Vec<(String, VarType)> si quieres tipos
+    pub body: Vec<Stmt>,
+}
+
+#[allow(dead_code)]
+#[derive(Debug, Clone)]
+pub struct Function {
+    pub name: String,
+    pub params: Vec<String>, // después puedes cambiar a Vec<(String, VarType)>
+    pub return_type: VarType,
+    pub body: Vec<Stmt>,
 }

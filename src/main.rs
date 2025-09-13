@@ -8,7 +8,7 @@ mod runtime;
 
 use parser::ast::{Expr, Op, Stmt, Value, VarType};
 use parser::parser::*;
-use runtime::interpreter::{Environment, execute_stmt};
+use runtime::interpreter::{RuntimeEnv, execute_stmt};
 use runtime::std_lib::builtins::BUILTINS;
 
 #[derive(Parser)]
@@ -39,7 +39,7 @@ fn main() {
     // Parsear
     let pairs = MiniPasParser::parse(Rule::program, &input).unwrap_or_else(|e| panic!("Error de parseo: {}", e));
 
-    let mut env = Environment::new();
+    let mut env = RuntimeEnv::new();
 
     let (program, _) = parse_program(pairs);
 

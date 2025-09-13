@@ -31,3 +31,44 @@ pub fn get_input_default<U: std::str::FromStr>(prompt: &str) -> U {
         return input;
     }
 }
+
+pub fn unescape_string(s: &str) -> String {
+    let mut result = String::new();
+    let mut chars = s.chars().peekable();
+
+    while let Some(c) = chars.next() {
+        if c == '\\' {
+            match chars.peek() {
+                Some('n') => {
+                    result.push('\n');
+                    chars.next();
+                }
+                Some('r') => {
+                    result.push('\n');
+                    chars.next();
+                }
+                Some('t') => {
+                    result.push('\t');
+                    chars.next();
+                }
+                Some('"') => {
+                    result.push('"');
+                    chars.next();
+                }
+                Some('\\') => {
+                    result.push('\\');
+                    chars.next();
+                }
+                Some(other) => {
+                    // cualquier otro carácter después de \ se toma literal
+                    result.push(*other);
+                    chars.next();
+                }
+                None => result.push('\\'), // \ al final de la cadena
+            }
+        } else {
+            result.push(c);
+        }
+    }
+    result
+}
