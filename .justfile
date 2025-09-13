@@ -65,8 +65,11 @@ test:build
     ./target/debug/minipas examples/constants.mp
     ./target/debug/minipas examples/data_types.mp
     ./target/debug/minipas examples/date_time.mp
+    # ./target/debug/minipas examples/for_loop.mp
+    ./target/debug/minipas examples/functions.mp
     ./target/debug/minipas examples/haversine.mp
     ./target/debug/minipas examples/hello_world.mp
+    ./target/debug/minipas examples/procedures.mp
     ./target/debug/minipas examples/program_full.mp
     ./target/debug/minipas examples/std_lib.mp
     ./target/debug/minipas examples/std_math.mp
@@ -75,14 +78,19 @@ test:build
     ./target/debug/minipas examples/variables.mp
     ./target/debug/minipas examples/writeln.mp
 
+
+
 test-rel:release
     ./target/release/minipas examples/comments.mp
     ./target/release/minipas examples/conditionals.mp
     ./target/release/minipas examples/constants.mp
     ./target/release/minipas examples/data_types.mp
     ./target/release/minipas examples/date_time.mp
+    # ./target/release/minipas examples/for_loop.mp
+    ./target/release/minipas examples/functions.mp
     ./target/release/minipas examples/haversine.mp
     ./target/release/minipas examples/hello_world.mp
+    ./target/release/minipas examples/procedures.mp
     ./target/release/minipas examples/program_full.mp
     ./target/release/minipas examples/std_lib.mp
     ./target/release/minipas examples/std_math.mp
@@ -90,6 +98,7 @@ test-rel:release
     ./target/release/minipas examples/sys.mp
     ./target/release/minipas examples/variables.mp
     ./target/release/minipas examples/writeln.mp
+
 
 [doc('Git check repo')]
 gitc:
