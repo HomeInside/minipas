@@ -6,6 +6,7 @@ pub enum VarType {
     Real,
     Str,
     Boolean,
+    Nil, // 👈 NUEVO
 }
 
 #[derive(Debug, Clone)]
@@ -14,7 +15,7 @@ pub enum Value {
     Real(f64),
     Str(String),
     Boolean(bool),
-    Nil,
+    Nil, // 👈 NUEVO
 }
 
 impl fmt::Display for Value {
@@ -37,6 +38,7 @@ pub enum Expr {
     BooleanLiteral(bool),
     BinaryOp { left: Box<Expr>, op: Op, right: Box<Expr> },
     Call { name: String, args: Vec<Expr> },
+    Nil, // 👈 NUEVO
 }
 
 #[derive(Debug, Clone)]
@@ -64,10 +66,17 @@ pub enum Stmt {
     },
     Block(Vec<Stmt>),
     Expr(Expr),
-    //Return(Expr), // 👈 NUEVO
+    Return(Expr), // 👈 NUEVO
     ProcDecl {
         name: String,
         params: Vec<String>,
+        body: Vec<Stmt>,
+    },
+    FuncDecl {
+        // 👈 NUEVO
+        name: String,
+        params: Vec<String>,
+        return_type: VarType,
         body: Vec<Stmt>,
     },
 }
