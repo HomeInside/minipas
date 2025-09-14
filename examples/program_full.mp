@@ -60,5 +60,16 @@ writeln("valor de a con random:", a);
 writeln("funcion random:", a);
 a:= random(12);
 writeln("funcion random(12):", a);
+writeln("1 / 1 -> ", 1 / 1);
+//writeln("1 / 0 -> ", 1 / 0);
+//writeln("0 / 0 -> ", 0 / 0);
+writeln("1 % 1 -> ", 1 % 1);
+writeln("1.2345 % 2.3456 -> ", 1.2345 % 2.3456);
+writeln("PI % 2.3456 -> ", PI % 2.3456);
+//writeln("1 % 0 -> ", 1 % 0);
+//writeln("0 % 0 -> ", 0 % 0);
+//writeln("1.234 % 0 -> ", 1.234 % 0);
+//writeln("1.234 % 0.0 -> ", 1.234 % 0.0);
+//writeln("1 % 0.0 -> ", 1 % 0.0);
 end.
 // aqui va uno al final
