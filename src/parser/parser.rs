@@ -1,10 +1,12 @@
 use super::keywords::KEYWORDS;
 use crate::Rule;
-use crate::parser::ast::{Function, Procedure};
+use crate::parser::ast::{Function, Param, Procedure};
 use crate::runtime::std_lib::builtins::BUILTINS;
 use crate::{Expr, Op, Stmt, VarType};
 use pest::iterators::{Pair, Pairs};
 use std::collections::HashMap;
+
+#[derive(Clone)]
 pub struct SymbolTable {
     variables: HashMap<String, VarType>,
 }
@@ -31,6 +33,9 @@ impl SymbolTable {
 
     pub fn exists(&self, name: &str) -> bool {
         self.variables.contains_key(name)
+    }
+    pub fn insert(&mut self, name: String, ty: VarType) {
+        self.variables.insert(name, ty);
     }
 }
 
@@ -98,12 +103,13 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                 println!("parse_program entro al match");
                 println!("Rule::func_decl entro");
                 println!("Rule::func_decl p:{}", p.clone());
-                let func = parse_func_decl(p, &sym_table);
+                let func = parse_func_decl(p, &mut sym_table);
                 stmts.push(Stmt::FuncDecl {
-                    name: func.name,
-                    params: func.params,
-                    return_type: func.return_type,
-                    body: func.body,
+                    name: func.name.clone(),
+                    params: func.params.iter().map(|p| (p.name.clone(), p.ty.clone())).collect(), // Vec<(String, VarType)>
+                    locals: func.locals.iter().map(|p| (p.name.clone(), p.ty.clone())).collect(), // Vec<(String, VarType)>
+                    return_type: func.return_type.clone(),                                        // 🟢 agregado
+                    body: func.body.clone(),
                 });
             }
 
@@ -113,7 +119,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
 
     let block_pair = block_pair_opt.expect("No se encontró el bloque principal");
 
-    if let Stmt::Block(block_stmts) = parse_block(block_pair, &sym_table) {
+    if let Stmt::Block(block_stmts) = parse_block(block_pair, &mut sym_table) {
         stmts.push(Stmt::Block(block_stmts)); // 👈 agregamos el bloque principal al final
         (stmts, sym_table)
     } else {
@@ -130,6 +136,7 @@ fn parse_block(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     }
 
     Stmt::Block(stmts)
+    //let body_stmts: Vec<Stmt> = parse_block(Stmt::Block(stmts))?; // devuelve Vec<Stmt>
 }
 
 fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
@@ -346,7 +353,7 @@ fn parse_assignment(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 
 fn check_ident(name: &str, sym_table: &SymbolTable) {
     if !sym_table.exists(name) && !BUILTINS.contains_key(name) {
-        panic!("Variable o constante '{}' no declarada", name);
+        panic!("check_ident Variable o constante '{}' no declarada", name);
     }
 }
 
@@ -385,63 +392,6 @@ fn parse_proc_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> Procedure {
 }
 
 // 👈 NUEVO
-fn parse_func_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> Function {
-    println!("parse_func_decl entro");
-    assert_eq!(pair.as_rule(), Rule::func_decl);
-    let mut inner = pair.into_inner();
-
-    // salta el "function"
-    inner.next();
-
-    // ahora sí, el identificador
-    let name_pair = inner.next().unwrap();
-    let name = name_pair.as_str().to_string();
-
-    let mut params = Vec::new();
-    let mut body = Vec::new();
-    let mut return_type = VarType::Nil; // default
-
-    // … luego params, return_type, body, etc
-    for p in inner {
-        match p.as_rule() {
-            Rule::param_list => {
-                for id in p.into_inner() {
-                    if id.as_rule() == Rule::ident {
-                        params.push(id.as_str().to_string());
-                    }
-                }
-            }
-            Rule::keyword_integer => return_type = VarType::Integer,
-            Rule::keyword_real => return_type = VarType::Real,
-            Rule::keyword_string => return_type = VarType::Str,
-            Rule::keyword_boolean => return_type = VarType::Boolean,
-            Rule::keyword_nil => return_type = VarType::Nil,
-            Rule::block => {
-                body = match parse_block(p, sym_table) {
-                    Stmt::Block(stmts) => stmts,
-                    _ => panic!("parse_func_decl bloque inválido en function"),
-                };
-            }
-            _ => {}
-        }
-    }
-    //println!("==========parse_func_decl block return==========");
-    //println!("parse_func_decl block return name: {}", name);
-    //println!("parse_func_decl block return params: {:?}", params);
-    //println!("parse_func_decl block return return_type: {:?}", return_type);
-    //println!("parse_func_decl block return body: {:?}", body);
-    if matches!(return_type, VarType::Nil) {
-        panic!("Función '{}' sin tipo de retorno", name);
-    }
-    Function {
-        name,
-        params,
-        return_type,
-        body,
-    }
-}
-
-// 👈 NUEVO
 fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     println!("parse_return_stmt entro");
     assert_eq!(pair.as_rule(), Rule::return_stmt);
@@ -449,4 +399,142 @@ fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     let expr_pair = pair.into_inner().next().expect("return sin expresión");
     let expr = parse_expr(expr_pair, sym_table);
     Stmt::Return(expr)
+}
+
+// Parsea un tipo: integer, real, boolean, string
+fn parse_type(pair: Pair<Rule>) -> VarType {
+    println!("parse_type: entro");
+    match pair.as_rule() {
+        Rule::type_keyword => {
+            // tomar el hijo que es realmente keyword_integer, etc.
+            let inner = pair.into_inner().next().unwrap();
+            parse_type(inner)
+        }
+        Rule::keyword_integer => VarType::Integer,
+        Rule::keyword_real => VarType::Real,
+        Rule::keyword_boolean => VarType::Boolean,
+        Rule::keyword_string => VarType::Str,
+        Rule::keyword_nil => VarType::Nil,
+        _ => panic!("parse_type: tipo desconocido `{}`", pair.as_str()),
+    }
+}
+
+// Parsea un parámetro individual: ident : tipo
+fn parse_param(pair: Pair<Rule>) -> Param {
+    println!("parse_param: entro");
+    let mut inner = pair.into_inner();
+
+    let name_pair = inner.next().expect("parse_param: se esperaba un identificador");
+    let name = name_pair.as_str().to_string();
+
+    let colon_pair = inner.next().expect("parse_param: se esperaba ':'");
+    assert_eq!(colon_pair.as_rule(), Rule::colon);
+
+    let type_pair = inner.next().expect("parse_param: se esperaba tipo");
+    let ty = parse_type(type_pair);
+
+    Param { name, ty }
+}
+
+// Parsea la lista de parámetros: param (; param)*
+fn parse_param_list(pair: Pair<Rule>) -> Vec<Param> {
+    println!("parse_param_list: entro");
+    assert_eq!(pair.as_rule(), Rule::param_list);
+    let mut params = Vec::new();
+
+    for p in pair.into_inner() {
+        if p.as_rule() == Rule::param {
+            params.push(parse_param(p));
+        }
+        // ignoramos otros tokens como semicolon
+    }
+
+    params
+}
+
+// Parsea la declaración de función completa
+pub fn parse_func_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Function {
+    println!("parse_func_decl: entro");
+    assert_eq!(pair.as_rule(), Rule::func_decl);
+    let mut inner = pair.into_inner();
+
+    // "function" keyword
+    let _kw = inner.next().unwrap();
+    // nombre de la función
+    let name_pair = inner.next().unwrap();
+    let name = name_pair.as_str().to_string();
+
+    // "("
+    let _lparen = inner.next().unwrap();
+
+    // parámetros opcionales
+    let next = inner.next().unwrap();
+    let params = if next.as_rule() == Rule::param_list {
+        let pl = parse_param_list(next);
+        // ")" siguiente
+        inner.next().unwrap();
+        pl
+    } else {
+        // no hay parámetros, next debería ser ")"
+        assert_eq!(next.as_rule(), Rule::rparen);
+        Vec::new()
+    };
+
+    // ":" tipo de retorno
+    let colon_pair = inner.next().unwrap();
+    assert_eq!(colon_pair.as_rule(), Rule::colon);
+    let type_pair = inner.next().unwrap();
+    let ret_type = parse_type(type_pair);
+
+    // ";" opcional antes del bloque
+    let semicolon_pair = inner.next().unwrap();
+    assert_eq!(semicolon_pair.as_rule(), Rule::semicolon);
+
+    // var_section opcional
+    let mut locals = Vec::new();
+    let mut next_pair = inner.next().unwrap();
+    if next_pair.as_rule() == Rule::var_section {
+        locals = parse_var_section(Some(next_pair), sym_table);
+        // el siguiente es el block
+        next_pair = inner.next().unwrap();
+    }
+
+    // bloque de la función
+    //let body = parse_block(next_pair, sym_table);
+    let body = vec![parse_block(next_pair, sym_table)]; // 🔹 siempre Vec<Stmt>
+    println!("parse_func_decl: saliendo");
+    Function {
+        name,
+        params,
+        locals,
+        return_type: ret_type,
+        body,
+    }
+}
+
+fn parse_var_section(pair: Option<Pair<Rule>>, sym_table: &mut SymbolTable) -> Vec<Param> {
+    println!("parse_var_section: entro");
+    let mut locals = Vec::new();
+
+    if let Some(var_section_pair) = pair {
+        for var_decl_pair in var_section_pair.into_inner() {
+            if var_decl_pair.as_rule() == Rule::var_decl {
+                let mut inner = var_decl_pair.into_inner();
+                let ids_pair = inner.next().unwrap(); // ident list
+                let ty_pair = inner.next().unwrap(); // type
+
+                let ty = parse_type(ty_pair);
+                for id_pair in ids_pair.into_inner() {
+                    let id = id_pair.as_str().to_string();
+                    locals.push(Param {
+                        name: id.clone(),
+                        ty: ty.clone(),
+                    });
+                    sym_table.insert(id, ty.clone());
+                }
+            }
+        }
+    }
+
+    locals
 }

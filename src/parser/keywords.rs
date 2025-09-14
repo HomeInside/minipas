@@ -26,7 +26,7 @@ pub static KEYWORDS: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
         "end",
         "file",
         "for",
-        "function",
+        //"function",
         "goto",
         "if",
         "implementation",
