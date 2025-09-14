@@ -94,6 +94,10 @@ fn apply_op(l: Value, op: &Op, r: Value) -> Value {
             Op::Add => Value::Str(ls + &rs),
             Op::Equal => Value::Boolean(ls == rs),
             Op::NotEqual => Value::Boolean(ls != rs),
+            Op::Less => Value::Boolean(ls < rs),
+            Op::Greater => Value::Boolean(ls > rs),
+            Op::LessEq => Value::Boolean(ls <= rs),
+            Op::GreaterEq => Value::Boolean(ls >= rs),
             _ => panic!("Operador no soportado para strings"),
         },
 
