@@ -10,6 +10,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
         Rule::ident => {
             let name = pair.as_str().to_string();
             validate_identifier(&name);
+            //println!("parse_expr Rule::ident entro");
             check_ident(&name, sym_table);
             Expr::Ident(name)
         }
@@ -66,7 +67,8 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                 Rule::ident => {
                     let name = inner.as_str().to_string();
                     validate_identifier(&name);
-                    check_ident(&name, sym_table);
+                    //println!("parse_expr Rule::factor -> Rule::ident entro");
+                    //check_ident(&name, sym_table);
                     Expr::Ident(name)
                 }
                 Rule::string_literal => {
