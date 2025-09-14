@@ -5,12 +5,13 @@ begin
 	writeln("Hola mundo desde un procedimiento");
 end
 
-{function saludo(nombre:string): integer;
+procedure saludo(nombre:string);
 begin
-	writeln("Hola", nombre, "saludo desde una funcion");
+	writeln("Hola", nombre, "saludos desde un procedimiento");
 	//return 0;
-end}
+end
 
 begin
 	saludar();
+	saludo("minipas!");
 end.
