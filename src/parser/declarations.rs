@@ -5,7 +5,7 @@ use crate::Rule;
 use pest::iterators::Pair;
 
 pub fn parse_var_section(pair: Option<Pair<Rule>>, sym_table: &mut SymbolTable) -> Vec<Param> {
-    println!("parse_var_section: entro");
+    //println!("parse_var_section: entro");
     let mut locals = Vec::new();
 
     if let Some(var_section_pair) = pair {

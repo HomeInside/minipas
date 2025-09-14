@@ -5,7 +5,7 @@ use pest::iterators::Pair;
 
 // Parsea un parámetro individual: ident : tipo
 pub fn parse_param(pair: Pair<Rule>) -> Param {
-    println!("parse_param: entro");
+    //println!("parse_param: entro");
     let mut inner = pair.into_inner();
 
     let name_pair = inner.next().expect("parse_param: se esperaba un identificador");
@@ -22,7 +22,7 @@ pub fn parse_param(pair: Pair<Rule>) -> Param {
 
 // Parsea la lista de parámetros: param (; param)*
 pub fn parse_param_list(pair: Pair<Rule>) -> Vec<Param> {
-    println!("parse_param_list: entro");
+    //println!("parse_param_list: entro");
     assert_eq!(pair.as_rule(), Rule::param_list);
     let mut params = Vec::new();
 
