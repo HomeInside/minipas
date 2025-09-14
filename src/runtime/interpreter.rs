@@ -70,6 +70,8 @@ fn apply_op(l: Value, op: &Op, r: Value) -> Value {
 }
 
 fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Value {
+    println!("eval_expr entro a la funcion");
+    println!("eval_expr expr: {:?}", expr);
     match expr {
         Expr::Number(n) => {
             if n.fract() == 0.0 {
@@ -86,14 +88,13 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                     Builtin::Proc(_) => panic!("El procedimiento '{}' debe llamarse con paréntesis", name),
                 }
             } else {
-                env.vars.get(name).cloned().unwrap_or(Value::Real(0.0))
+                env.vars.get(name).cloned().unwrap_or(Value::Nil)
             }
         }
         Expr::Call { name, args } => {
             println!("eval_expr Expr::Call: entro");
             if let Some(proc) = env.procs.get(name).cloned() {
                 // --- procedimiento definido por el usuario ---
-                //println!("entro al some proc");
                 for (param_name, arg_expr) in proc.params.iter().zip(args.iter()) {
                     let arg_value = eval_expr(arg_expr, env, builtins);
                     env.vars.insert(param_name.clone(), arg_value);
@@ -103,33 +104,36 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                 }
                 Value::Nil
             } else if let Some(func) = env.funcs.get(name).cloned() {
-                println!("eval_expr: entro al some func de Expr::Call");
-                // función definida por el usuario
+                println!("eval_expr: entrando al bloque de función");
+
+                // --- crear un entorno local para la función ---
                 let mut local_env = RuntimeEnv {
-                    vars: env.vars.clone(), // opcional: si quieres heredar globals
+                    vars: HashMap::new(), // 🔑 empieza vacío
                     procs: env.procs.clone(),
                     funcs: env.funcs.clone(),
                 };
 
-                let params = func
-                    .params
-                    .iter()
-                    .map(|p| Param {
-                        name: p.name.clone(),
-                        ty: p.ty.clone(),
-                    })
-                    .collect::<Vec<Param>>();
+                // --- inicializar parámetros con los valores evaluados ---
+                for (param, arg_expr) in func.params.iter().zip(args.iter()) {
+                    let val = eval_expr(arg_expr, env, builtins);
+                    println!("eval_expr Insertando parámetro {} = {:?}", param.name, val);
+                    local_env.vars.insert(param.name.clone(), val);
+                }
 
-                let locals = func
-                    .locals
-                    .iter()
-                    .map(|p| Param {
-                        name: p.name.clone(),
-                        ty: p.ty.clone(),
-                    })
-                    .collect::<Vec<Param>>();
+                // --- inicializar variables locales con valores por defecto ---
+                for local in &func.locals {
+                    let default_val = match &local.ty {
+                        VarType::Integer => Value::Integer(0),
+                        VarType::Real => Value::Real(0.0),
+                        VarType::Boolean => Value::Boolean(false),
+                        VarType::Str => Value::Str(String::new()),
+                        VarType::Nil => Value::Nil,
+                    };
+                    println!("eval_expr Insertando variable local {} = {:?}", local.name, default_val);
+                    local_env.vars.insert(local.name.clone(), default_val);
+                }
 
-                // Ejecutar el cuerpo hasta encontrar Return
+                // --- ejecutar el cuerpo hasta encontrar un Return ---
                 let mut result = Value::Nil;
                 for stmt in &func.body {
                     match stmt {
@@ -140,6 +144,7 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                         _ => execute_stmt(stmt, &mut local_env, builtins),
                     }
                 }
+
                 result
             } else if let Some(builtin) = builtins.get(name) {
                 // --- builtin como writeln, write, read, etc. ---
@@ -217,7 +222,6 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             return_type,
             body,
         } => {
-            // 👈 NUEVO
             println!("============");
             println!("execute_stmt entro al match");
             println!("Stmt::FuncDecl entro");
@@ -225,11 +229,12 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             println!("params {:?}", params);
             println!("return_type {:?}", return_type);
             println!("body {:?}", body);
+
             env.funcs.insert(
                 name.clone(),
                 Function {
                     name: name.clone(),
-                    //params: params.clone(), // Vec<Param>
+                    // Guardamos los parámetros tal como vienen
                     params: params
                         .iter()
                         .map(|(name, ty)| Param {
@@ -237,7 +242,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                             ty: ty.clone(),
                         })
                         .collect(),
-                    //locals: locals.clone(), // Vec<Param>
+                    // Guardamos los locales tal como vienen
                     locals: locals
                         .iter()
                         .map(|(name, ty)| Param {
@@ -250,6 +255,11 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 },
             );
         }
+
         Stmt::Return(_) => todo!(),
+        /*Stmt::Return(expr) => {
+            let val = eval_expr(expr, env, builtins); // evalúa la expresión de retorno
+            return Some(val); // devuelve al contexto de llamada de la función
+        }*/
     }
 }
