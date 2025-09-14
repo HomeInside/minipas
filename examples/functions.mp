@@ -1,30 +1,28 @@
 program test_functions;
-var x:integer;
 
-function saludo(): integer;
+function saludar(): integer;
 begin
-	writeln("Hola mundo desde la funcion saludo");
-	x := saludar();
-	return x;
-end
-
-function saludar():integer;
-begin
-	writeln("Hola mundo desde una función");
+	writeln("hola mundo desde una función");
 	return 0;
 end
 
-{
-// funcion comentada, no funciona actualmente
-function sumar(a:integer): integer;
+function sumar(a:integer; b:integer): integer;
+var c: integer;
 begin
-	writeln("el valor de a:", a);
-	return 0;
+	writeln("el valor de a es:", a);
+	writeln("el valor de b es:", b);
+	writeln("el valor de c es:", c);
+	c := a + b;
+	return c;
 end
-sumar(1);
-}
 
+// bloque principal
 begin
-	x:=saludo();
-	writeln("el valor de X es:", x);
+	writeln();
+	writeln("3 + 5 = ", sumar(3, 5));
+	writeln("10 + 20 = ", sumar(10, 20));
+	writeln();
+	writeln(sumar(2, 9));
+	writeln();
+	saludar();
 end.
