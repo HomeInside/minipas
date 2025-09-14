@@ -16,6 +16,7 @@ pub fn validate_identifier(name: &str) {
     }
 }
 
+//solo debería validar variables globales y builtins.
 pub fn parse_block(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     assert_eq!(pair.as_rule(), Rule::block);
     let mut stmts = Vec::new();
@@ -36,7 +37,7 @@ pub fn check_ident(name: &str, sym_table: &SymbolTable) {
 
 // 👈 NUEVO
 pub fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
-    println!("parse_return_stmt entro");
+    //println!("parse_return_stmt entro");
     assert_eq!(pair.as_rule(), Rule::return_stmt);
     // return ~ expr ~ semicolon -> el único hijo será expr
     let expr_pair = pair.into_inner().next().expect("return sin expresión");
@@ -98,10 +99,10 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
 
             Rule::func_decl => {
                 // 👈 NUEVO
-                println!("============");
-                println!("parse_program entro al match");
-                println!("Rule::func_decl entro");
-                println!("Rule::func_decl p:{}", p.clone());
+                //println!("============");
+                //println!("parse_program entro al match");
+                //println!("Rule::func_decl entro");
+                //println!("Rule::func_decl p:{}", p.clone());
                 let func = parse_func_decl(p, &mut sym_table);
                 stmts.push(Stmt::FuncDecl {
                     name: func.name.clone(),
