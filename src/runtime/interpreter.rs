@@ -261,5 +261,9 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             let val = eval_expr(expr, env, builtins); // evalúa la expresión de retorno
             return Some(val); // devuelve al contexto de llamada de la función
         }*/
+        /*Stmt::Return(expr) => {
+            let val = eval_expr(expr, env, builtins);
+            return; // ¡Detiene la ejecución del bloque actual!
+        }*/
     }
 }
