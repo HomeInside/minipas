@@ -94,18 +94,32 @@ proc_decl = {
     ~ semicolon?
 }
 // functions
+/*
 func_decl = {
     keyword_function ~ ident ~ lparen? ~ (param_list)? ~ rparen?
     ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean)
     ~ semicolon
     ~ block
     ~ semicolon?
+}*/
+func_decl = {
+    keyword_function ~ ident ~ lparen ~ (param_list)? ~ rparen
+    ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean)
+    ~ semicolon
+    ~ var_section?    // 👈 NUEVO
+    ~ block
+    ~ semicolon?
 }
 //return
 return_stmt = { "return" ~ expr ~ semicolon }
 
-param_list = { ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ (semicolon ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean))* }
+//param_list = { ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ (semicolon ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean))* }
+//
+param_list = { param ~ (semicolon ~ param)* }
+param = { ident ~ colon ~ type_keyword }
+type_keyword = { keyword_integer | keyword_real | keyword_string | keyword_boolean }
 
+//
 program = {
     SOI ~ comment* ~ "program" ~ ident ~ semicolon
     ~ var_section?
