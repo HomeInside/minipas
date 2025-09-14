@@ -1,4 +1,4 @@
-use super::ast::Function;
+use super::ast::{Function, Stmt};
 use super::declarations::parse_var_section;
 use super::params::parse_param_list;
 use super::program::parse_block;
@@ -9,7 +9,7 @@ use pest::iterators::Pair;
 
 // Parsea la declaración de función completa
 pub fn parse_func_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Function {
-    println!("parse_func_decl: entro");
+    //println!("parse_func_decl: entro");
     assert_eq!(pair.as_rule(), Rule::func_decl);
     let mut inner = pair.into_inner();
 
@@ -54,15 +54,12 @@ pub fn parse_func_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Functio
         next_pair = inner.next().unwrap();
     }
 
-    // bloque de la función
-    //let body = parse_block(next_pair, sym_table);
-    let body = vec![parse_block(next_pair, sym_table)]; // 🔹 siempre Vec<Stmt>
+    // parse_block devuelve Stmt::Block, extraemos su contenido
+    let Stmt::Block(body) = parse_block(next_pair, sym_table) else {
+        panic!("El cuerpo de la función debe ser un bloque (begin...end)");
+    };
 
-    /*let Stmt::Block(body) = parse_block(next_pair, sym_table) else {
-        panic!("El cuerpo de la función debe ser un bloque");
-    };*/
-
-    println!("parse_func_decl: saliendo");
+    //println!("parse_func_decl: saliendo");
     Function {
         name,
         params,
