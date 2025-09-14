@@ -53,6 +53,7 @@ pub enum Op {
     LessEq,
     Equal,
     NotEqual,
+    Mod,
 }
 
 #[derive(Debug, Clone)]
