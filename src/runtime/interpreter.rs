@@ -1,8 +1,7 @@
-use crate::parser::ast::{Function, Procedure};
+use crate::parser::ast::{Function, Param, Procedure, VarType};
 use crate::runtime::std_lib::builtins::Builtin;
 use crate::{Expr, Op, Stmt, Value};
 use std::collections::HashMap;
-
 pub type Environment = HashMap<String, Value>;
 
 #[derive(Debug, Clone)]
@@ -91,6 +90,7 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
             }
         }
         Expr::Call { name, args } => {
+            println!("eval_expr Expr::Call: entro");
             if let Some(proc) = env.procs.get(name).cloned() {
                 // --- procedimiento definido por el usuario ---
                 //println!("entro al some proc");
@@ -103,20 +103,31 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                 }
                 Value::Nil
             } else if let Some(func) = env.funcs.get(name).cloned() {
-                // --- función definida por el usuario ---
-                // Crear un entorno local (scope)
                 println!("eval_expr: entro al some func de Expr::Call");
-                let mut local_env = env.clone();
-                /*let mut local_env = RuntimeEnv {
-                    vars: std::collections::HashMap::new(),
+                // función definida por el usuario
+                let mut local_env = RuntimeEnv {
+                    vars: env.vars.clone(), // opcional: si quieres heredar globals
                     procs: env.procs.clone(),
                     funcs: env.funcs.clone(),
-                };*/
+                };
 
-                for (param_name, arg_expr) in func.params.iter().zip(args.iter()) {
-                    let arg_value = eval_expr(arg_expr, env, builtins);
-                    local_env.vars.insert(param_name.clone(), arg_value);
-                }
+                let params = func
+                    .params
+                    .iter()
+                    .map(|p| Param {
+                        name: p.name.clone(),
+                        ty: p.ty.clone(),
+                    })
+                    .collect::<Vec<Param>>();
+
+                let locals = func
+                    .locals
+                    .iter()
+                    .map(|p| Param {
+                        name: p.name.clone(),
+                        ty: p.ty.clone(),
+                    })
+                    .collect::<Vec<Param>>();
 
                 // Ejecutar el cuerpo hasta encontrar Return
                 let mut result = Value::Nil;
@@ -145,7 +156,7 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                     &Builtin::Const(_) => todo!(),
                 }
             } else {
-                panic!("Función/procedimiento '{}' no definido", name);
+                panic!("eval_expr Función/procedimiento '{}' no definido", name);
             }
         }
 
@@ -161,6 +172,7 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
 }
 
 pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) {
+    println!("execute_stmt: entro");
     match stmt {
         Stmt::Block(stmts) => {
             for s in stmts {
@@ -201,6 +213,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         Stmt::FuncDecl {
             name,
             params,
+            locals,
             return_type,
             body,
         } => {
@@ -216,7 +229,22 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 name.clone(),
                 Function {
                     name: name.clone(),
-                    params: params.clone(),
+                    //params: params.clone(), // Vec<Param>
+                    params: params
+                        .iter()
+                        .map(|(name, ty)| Param {
+                            name: name.clone(),
+                            ty: ty.clone(),
+                        })
+                        .collect(),
+                    //locals: locals.clone(), // Vec<Param>
+                    locals: locals
+                        .iter()
+                        .map(|(name, ty)| Param {
+                            name: name.clone(),
+                            ty: ty.clone(),
+                        })
+                        .collect(),
                     return_type: return_type.clone(),
                     body: body.clone(),
                 },
