@@ -21,6 +21,17 @@ impl RuntimeEnv {
     }
 }
 
+#[derive(Debug)]
+pub struct ReturnError(pub Value); // wrapper para salir de la función
+
+impl std::fmt::Display for ReturnError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Return: {}", self.0)
+    }
+}
+
+impl std::error::Error for ReturnError {}
+
 fn apply_op(l: Value, op: &Op, r: Value) -> Value {
     match (l, r) {
         (Value::Integer(li), Value::Integer(ri)) => match op {
@@ -70,8 +81,8 @@ fn apply_op(l: Value, op: &Op, r: Value) -> Value {
 }
 
 fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Value {
-    println!("eval_expr entro a la funcion");
-    println!("eval_expr expr: {:?}", expr);
+    //println!("eval_expr entro a la funcion");
+    //println!("eval_expr expr: {:?}", expr);
     match expr {
         Expr::Number(n) => {
             if n.fract() == 0.0 {
@@ -92,7 +103,7 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
             }
         }
         Expr::Call { name, args } => {
-            println!("eval_expr Expr::Call: entro");
+            //println!("eval_expr Expr::Call: entro");
             if let Some(proc) = env.procs.get(name).cloned() {
                 // --- procedimiento definido por el usuario ---
                 for (param_name, arg_expr) in proc.params.iter().zip(args.iter()) {
@@ -100,11 +111,11 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                     env.vars.insert(param_name.clone(), arg_value);
                 }
                 for stmt in &proc.body {
-                    execute_stmt(stmt, env, builtins);
+                    let _ = execute_stmt(stmt, env, builtins);
                 }
                 Value::Nil
             } else if let Some(func) = env.funcs.get(name).cloned() {
-                println!("eval_expr: entrando al bloque de función");
+                //println!("eval_expr: entrando al bloque de función");
 
                 // --- crear un entorno local para la función ---
                 let mut local_env = RuntimeEnv {
@@ -116,7 +127,7 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                 // --- inicializar parámetros con los valores evaluados ---
                 for (param, arg_expr) in func.params.iter().zip(args.iter()) {
                     let val = eval_expr(arg_expr, env, builtins);
-                    println!("eval_expr Insertando parámetro {} = {:?}", param.name, val);
+                    //println!("eval_expr Insertando parámetro {} = {:?}", param.name, val);
                     local_env.vars.insert(param.name.clone(), val);
                 }
 
@@ -129,7 +140,7 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                         VarType::Str => Value::Str(String::new()),
                         VarType::Nil => Value::Nil,
                     };
-                    println!("eval_expr Insertando variable local {} = {:?}", local.name, default_val);
+                    //println!("eval_expr Insertando variable local {} = {:?}", local.name, default_val);
                     local_env.vars.insert(local.name.clone(), default_val);
                 }
 
@@ -139,9 +150,17 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
                     match stmt {
                         Stmt::Return(expr) => {
                             result = eval_expr(expr, &mut local_env, builtins);
+
                             break;
                         }
-                        _ => execute_stmt(stmt, &mut local_env, builtins),
+                        // _ => execute_stmt(stmt, &mut local_env, builtins),
+                        _ => match execute_stmt(stmt, &mut local_env, builtins) {
+                            Ok(_) => continue,
+                            Err(ReturnError(val)) => {
+                                result = val;
+                                break;
+                            }
+                        },
                     }
                 }
 
@@ -176,12 +195,12 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
     }
 }
 
-pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) {
-    println!("execute_stmt: entro");
+pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Result<(), ReturnError> {
+    //println!("execute_stmt: entro");
     match stmt {
         Stmt::Block(stmts) => {
             for s in stmts {
-                execute_stmt(s, env, builtins);
+                execute_stmt(s, env, builtins)?;
             }
         }
         Stmt::Assign(name, expr) => {
@@ -195,9 +214,9 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         } => match eval_expr(cond, env, builtins) {
             Value::Boolean(b) => {
                 if b {
-                    execute_stmt(then_branch, env, builtins);
+                    execute_stmt(then_branch, env, builtins)?;
                 } else if let Some(else_stmt) = else_branch {
-                    execute_stmt(else_stmt, env, builtins);
+                    execute_stmt(else_stmt, env, builtins)?;
                 }
             }
             _ => panic!("La condición del if no es booleana"),
@@ -222,19 +241,18 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             return_type,
             body,
         } => {
-            println!("============");
-            println!("execute_stmt entro al match");
-            println!("Stmt::FuncDecl entro");
-            println!("name {}", name);
-            println!("params {:?}", params);
-            println!("return_type {:?}", return_type);
-            println!("body {:?}", body);
+            //println!("============");
+            //println!("execute_stmt entro al match");
+            //println!("Stmt::FuncDecl entro");
+            //println!("name {}", name);
+            //println!("params {:?}", params);
+            //println!("return_type {:?}", return_type);
+            //println!("body {:?}", body);
 
             env.funcs.insert(
                 name.clone(),
                 Function {
                     name: name.clone(),
-                    // Guardamos los parámetros tal como vienen
                     params: params
                         .iter()
                         .map(|(name, ty)| Param {
@@ -242,7 +260,6 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                             ty: ty.clone(),
                         })
                         .collect(),
-                    // Guardamos los locales tal como vienen
                     locals: locals
                         .iter()
                         .map(|(name, ty)| Param {
@@ -256,14 +273,10 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             );
         }
 
-        Stmt::Return(_) => todo!(),
-        /*Stmt::Return(expr) => {
-            let val = eval_expr(expr, env, builtins); // evalúa la expresión de retorno
-            return Some(val); // devuelve al contexto de llamada de la función
-        }*/
-        /*Stmt::Return(expr) => {
+        Stmt::Return(expr) => {
             let val = eval_expr(expr, env, builtins);
-            return; // ¡Detiene la ejecución del bloque actual!
-        }*/
+            return Err(ReturnError(val));
+        }
     }
+    Ok(())
 }
