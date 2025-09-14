@@ -7,7 +7,7 @@ mod parser;
 mod runtime;
 
 use parser::ast::{Expr, Op, Stmt, Value, VarType};
-use parser::parser::*;
+use parser::program::parse_program;
 use runtime::interpreter::{RuntimeEnv, execute_stmt};
 use runtime::std_lib::builtins::BUILTINS;
 
@@ -17,7 +17,7 @@ pub struct MiniPasParser;
 
 fn main() {
     println!("welcome to minipas v{}", env!("CARGO_PKG_VERSION"));
-    // Tomar el argumento de la línea de comandos (ej: `cargo run ejemplo.pas`)
+    // Tomar el argumento de la línea de comandos (ej: `cargo run ejemplo.mp`)
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         eprintln!("Uso: {} <archivo.mp>", args[0]);
@@ -33,7 +33,7 @@ fn main() {
         std::process::exit(1);
     }
 
-    // Leer el archivo .pas
+    // Leer el archivo .mp
     let input = fs::read_to_string(filename).unwrap_or_else(|_| panic!("No se pudo leer el archivo {}", filename));
 
     // Parsear
@@ -47,7 +47,7 @@ fn main() {
     //println!("AST: {:#?}", program);
 
     for stmt in &program {
-        execute_stmt(stmt, &mut env, &BUILTINS);
+        let _ = execute_stmt(stmt, &mut env, &BUILTINS);
     }
 
     //println!("ENV: {:#?}", env);
