@@ -9,16 +9,6 @@ pub enum VarType {
     Nil, // 👈 NUEVO
 }
 
-// el mismo de VarType?
-#[derive(Debug, Clone)]
-pub enum Type {
-    Integer,
-    Real,
-    Str,
-    Boolean,
-    Nil, // 👈 NUEVO
-}
-
 #[derive(Debug, Clone)]
 pub enum Value {
     Integer(i64),
