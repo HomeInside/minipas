@@ -9,6 +9,16 @@ pub enum VarType {
     Nil, // 👈 NUEVO
 }
 
+// el mismo de VarType?
+#[derive(Debug, Clone)]
+pub enum Type {
+    Integer,
+    Real,
+    Str,
+    Boolean,
+    Nil, // 👈 NUEVO
+}
+
 #[derive(Debug, Clone)]
 pub enum Value {
     Integer(i64),
@@ -75,7 +85,8 @@ pub enum Stmt {
     FuncDecl {
         // 👈 NUEVO
         name: String,
-        params: Vec<String>,
+        params: Vec<(String, VarType)>, // nombre + tipo
+        locals: Vec<(String, VarType)>, // variables locales con tipo
         return_type: VarType,
         body: Vec<Stmt>,
     },
@@ -92,7 +103,15 @@ pub struct Procedure {
 #[derive(Debug, Clone)]
 pub struct Function {
     pub name: String,
-    pub params: Vec<String>, // después puedes cambiar a Vec<(String, VarType)>
+    //pub params: Vec<String>, // después puedes cambiar a Vec<(String, VarType)>
+    pub params: Vec<Param>, // 👈 NUEVO ahora incluyen tipos
+    pub locals: Vec<Param>, // 👈 NUEVO locales
     pub return_type: VarType,
     pub body: Vec<Stmt>,
+}
+
+#[derive(Debug, Clone)]
+pub struct Param {
+    pub name: String,
+    pub ty: VarType,
 }
