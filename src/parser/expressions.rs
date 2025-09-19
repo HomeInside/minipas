@@ -8,6 +8,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     // println!("parse_expr: entro");
     match pair.as_rule() {
         Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
+
         Rule::ident => {
             let name = pair.as_str().to_string();
             validate_identifier(&name);
@@ -15,21 +16,34 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
             check_ident(&name, sym_table);
             Expr::Ident(name)
         }
+
         Rule::expr | Rule::sum | Rule::product => {
-            let mut inner = pair.into_inner();
+            let mut inner = pair.clone().into_inner();
             let first = inner.next().unwrap();
             let mut left = parse_expr(first, sym_table);
 
             while let Some(op_pair) = inner.next() {
+                let op_str = op_pair.as_str();
                 let right = parse_expr(inner.next().unwrap(), sym_table);
+
                 let op = match op_pair.as_rule() {
                     Rule::add_op => Op::Add,
                     Rule::sub_op => Op::Sub,
                     Rule::mul_op => Op::Mul,
                     Rule::div_op => Op::Div,
                     Rule::mod_op => Op::Mod,
+                    Rule::cmp_op => match op_str {
+                        "=" => Op::Equal,
+                        "<>" => Op::NotEqual,
+                        "<" => Op::Less,
+                        "<=" => Op::LessEq,
+                        ">" => Op::Greater,
+                        ">=" => Op::GreaterEq,
+                        _ => panic!("Operador de comparación desconocido: {}", op_str),
+                    },
                     _ => panic!("Operador inesperado en expr: {:?}", op_pair.as_rule()),
                 };
+
                 left = Expr::BinaryOp {
                     left: Box::new(left),
                     op,
@@ -38,6 +52,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
             }
             left
         }
+
         Rule::factor => {
             //println!("parse_expr: brazo Rule::factor entro");
             let inner = pair.into_inner().next().unwrap();
@@ -49,7 +64,6 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     validate_identifier(&name);
 
                     let mut args: Vec<Expr> = Vec::new();
-
                     for node in ic {
                         match node.as_rule() {
                             Rule::expr_list => {
@@ -63,7 +77,6 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                             _ => {}           // ignorar otros nodos (lparen, rparen)
                         }
                     }
-
                     Expr::Call { name, args }
                 }
 
@@ -74,15 +87,19 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     //check_ident(&name, sym_table);
                     Expr::Ident(name)
                 }
+
                 Rule::string_literal => {
                     let s = inner.as_str();
                     Expr::StringLiteral(s[1..s.len() - 1].to_string())
                 }
+
                 Rule::boolean_literal => {
                     let val = inner.as_str().to_lowercase() == "true";
                     Expr::BooleanLiteral(val)
                 }
+
                 Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
+
                 Rule::expr => parse_expr(inner, sym_table),
 
                 _ => panic!("Factor inesperado: {:?}", inner.as_rule()),
