@@ -19,16 +19,67 @@ begin
 	trimmerStr := trim(cadena);
 	writeln("trim2:", "'",trim(cadena),"'");
 	writeln("trim3:", "'",trimmerStr,"'");
+
+	writeln();
 	writeln("concatenar:", concat("concatena", "una", "lista", "de", "cadenas", "de", "caracteres"));
 	writeln("concatenar:", concat("caracteres", "y", PI));
 	writeln("concatenar:", concat("caracteres", "y", E));
 	writeln("concatenar:", concat(PI, E));
 	writeln("concatenar:", concat(TRUE, true));
 	writeln("concatenar:", concat(FALSE, false));
+
+	writeln();
 	writeln(concat("--",trim(cadena), "--"));
 	writeln(concat("\\", "\\"));
 	writeln(concat("caracter \\", "\\"));
 	writeln(concat("caracter \\r", "\r", "y", "otro texto"));
 	writeln(concat("caracter \\n", "\n", "y", "otro texto"));
 	writeln(concat("caracter \\t", "\t", "y", "otro texto"));
+
+	writeln();
+	writeln("uso de expresiones");
+
+	writeln();
+	writeln("1+2 ->", 1+2);
+	writeln("1-2 ->", 1-2);
+	writeln("1*2 ->", 1*2);
+	writeln("1/2 ->", 1/2);
+	writeln("1%2 ->", 1%2);
+
+	writeln();
+	writeln("1=2 ->", 1=2);
+	writeln("1>2 ->", 1>2);
+	writeln("1>=2 ->", 1>=2);
+	writeln("1<2 ->", 1<2);
+	writeln("1<=2 ->", 1<=2);
+	writeln("1<>2 ->", 1<>2);
+
+	writeln();
+	writeln("uso de expresiones con caracteres");
+	writeln("utilizando parentesis");
+
+	writeln();
+	writeln("('a' = 'a') ->", ("a" = "a"));
+	writeln("('a' > 'a') ->", ("a" > "a"));
+	writeln("('a' >= 'a') ->", ("a" >= "a"));
+	writeln("('a' < 'a') ->", ("a" < "a"));
+	writeln("('a' <= 'a') ->", ("a" <= "a"));
+	writeln("('a' <> 'a') ->", ("a" <> "a"));
+
+	writeln();
+	writeln("sin utilizar parentesis");
+	writeln("'a' > 'a' ->", "a" > "a");
+	writeln("'a' >= 'a' ->", "a" >= "a");
+	writeln("'a' < 'a' ->", "a" < "a");
+	writeln("'a' <= 'a' ->", "a" <= "a");
+	writeln("'a' <> 'a' ->", "a" <> "a");
+
+	writeln();
+	writeln("('hola' = 'holanda') ->", ("hola" = "holanda"));
+	writeln("('hola' >= 'holanda') ->", ("hola" > "holanda"));
+	writeln("('holanda' >= 'hola') ->", ("holanda" > "hola"));
+	writeln();
+	writeln("'hola' = 'holanda' ->", "hola" = "holanda");
+	writeln("'hola' >= 'holanda' ->", "hola" > "holanda");
+	writeln("'holanda' >= 'hola' ->", "holanda" > "hola");
 end.
