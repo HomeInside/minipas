@@ -8,10 +8,23 @@ end
 procedure saludo(nombre:string);
 begin
 	writeln("Hola", nombre, "saludos desde un procedimiento");
-	//return 0;
+end
+
+procedure sumar(a:integer; b:integer);
+var c: integer;
+begin
+	writeln("el valor de a es:", a);
+	writeln("el valor de b es:", b);
+	writeln("el valor de c es:", c);
+	c := a + b;
+	writeln("la suma es:", c);
 end
 
 begin
-	saludar();
+	writeln();
 	saludo("minipas!");
+	writeln();
+	saludar();
+	writeln();
+	sumar(5,11);
 end.
