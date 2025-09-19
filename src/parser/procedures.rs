@@ -1,40 +1,62 @@
-use super::ast::Procedure;
-use super::ast::Stmt;
+use super::ast::{Procedure, Stmt};
+use super::declarations::parse_var_section;
+use super::params::parse_param_list;
 use super::program::parse_block;
 use super::symbol_table::SymbolTable;
 use crate::Rule;
 use pest::iterators::Pair;
 
-// procedures y functions
-pub fn parse_proc_decl(pair: Pair<Rule>, sym_table: &SymbolTable) -> Procedure {
+// procedures
+pub fn parse_proc_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Procedure {
+    //println!("parse_proc_decl: entro");
+    assert_eq!(pair.as_rule(), Rule::proc_decl);
     let mut inner = pair.into_inner();
 
-    // el primero siempre es keyword_procedure → lo ignoramos
+    // "procedure" keyword_procedure
     let _kw = inner.next().unwrap();
 
-    // ahora sí, el nombre
+    // nombre del procedure
     let name = inner.next().unwrap().as_str().to_string();
-    let mut params = Vec::new();
-    let mut body = Vec::new();
 
-    for p in inner {
-        match p.as_rule() {
-            Rule::param_list => {
-                for id in p.into_inner() {
-                    if id.as_rule() == Rule::ident {
-                        params.push(id.as_str().to_string());
-                    }
-                }
-            }
-            Rule::block => {
-                body = match parse_block(p, sym_table) {
-                    Stmt::Block(stmts) => stmts,
-                    _ => panic!("bloque inválido en procedure"),
-                };
-            }
-            _ => {}
-        }
+    // "("
+    let _lparen = inner.next().unwrap();
+
+    // parámetros opcionales
+    let next = inner.next().unwrap();
+    let params = if next.as_rule() == Rule::param_list {
+        let pl = parse_param_list(next);
+        // ")" siguiente
+        inner.next().unwrap();
+        pl
+    } else {
+        // no hay parámetros, next debería ser ")"
+        assert_eq!(next.as_rule(), Rule::rparen);
+        Vec::new()
+    };
+
+    // ";" opcional antes del bloque
+    let semicolon_pair = inner.next().unwrap();
+    assert_eq!(semicolon_pair.as_rule(), Rule::semicolon);
+
+    // var_section opcional
+    let mut locals = Vec::new();
+
+    let mut next_pair = inner.next().unwrap();
+    if next_pair.as_rule() == Rule::var_section {
+        locals = parse_var_section(Some(next_pair), sym_table);
+        // el siguiente es el block
+        next_pair = inner.next().unwrap();
     }
 
-    Procedure { name, params, body }
+    // body
+    let Stmt::Block(body) = parse_block(next_pair, sym_table) else {
+        panic!("El cuerpo de la función debe ser un bloque (begin...end)");
+    };
+
+    Procedure {
+        name,
+        params,
+        locals,
+        body,
+    }
 }
