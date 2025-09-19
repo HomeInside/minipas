@@ -74,6 +74,7 @@ test:build
     ./target/debug/minipas examples/procedures.mp
     ./target/debug/minipas examples/program_full.mp
     ./target/debug/minipas examples/recursion.mp
+    ./target/debug/minipas examples/showcase.mp
     ./target/debug/minipas examples/std_lib.mp
     ./target/debug/minipas examples/std_math.mp
     ./target/debug/minipas examples/strings.mp
@@ -96,6 +97,7 @@ test-rel:release
     ./target/release/minipas examples/procedures.mp
     ./target/release/minipas examples/program_full.mp
     ./target/release/minipas examples/recursion.mp
+    ./target/release/minipas examples/showcase.mp
     ./target/release/minipas examples/std_lib.mp
     ./target/release/minipas examples/std_math.mp
     ./target/release/minipas examples/strings.mp
