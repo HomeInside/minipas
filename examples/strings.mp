@@ -19,4 +19,16 @@ begin
 	trimmerStr := trim(cadena);
 	writeln("trim2:", "'",trim(cadena),"'");
 	writeln("trim3:", "'",trimmerStr,"'");
+	writeln("concatenar:", concat("concatena", "una", "lista", "de", "cadenas", "de", "caracteres"));
+	writeln("concatenar:", concat("caracteres", "y", PI));
+	writeln("concatenar:", concat("caracteres", "y", E));
+	writeln("concatenar:", concat(PI, E));
+	writeln("concatenar:", concat(TRUE, true));
+	writeln("concatenar:", concat(FALSE, false));
+	writeln(concat("--",trim(cadena), "--"));
+	writeln(concat("\\", "\\"));
+	writeln(concat("caracter \\", "\\"));
+	writeln(concat("caracter \\r", "\r", "y", "otro texto"));
+	writeln(concat("caracter \\n", "\n", "y", "otro texto"));
+	writeln(concat("caracter \\t", "\t", "y", "otro texto"));
 end.
