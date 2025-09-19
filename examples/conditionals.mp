@@ -42,4 +42,20 @@ begin
 		end
 	else if numero = 0 then writeln("el numero es 0:", numero);
 	else writeln("el numero es otro diferente:", numero);
+
+	writeln();
+	// condición booleana explícita.
+	//if 1 then writeln('ok con 1');      // ❌ error de tipos
+	if 1 =1 then writeln('ok con 1=1');  // ✅ se evalúa como true
+	if (1 =1) then writeln('ok con (1=1)');  // ✅ se evalúa como true
+	//if "hola" then writeln('ok strings'); // ❌ error de tipos
+	//if ("hola") then writeln('ok strings'); // ❌ error de tipos
+	if "hola" > "hol" then writeln('ok strings'); // se evalúa como true
+	if "a" > "b" then writeln('ok con >');  // ✅ igual funciona
+	writeln();
+	if True then writeln('ok con true');  // ✅ se evalúa como true
+	if TRUE then writeln('ok con TRUE');  // ✅ se evalúa como true
+	if False then writeln('ok con False'); else writeln('else con False');  // ✅ se evalúa como true
+	if FALSE then writeln('ok con FALSE'); else writeln('else con FALSE');    // ✅ se evalúa como true
+
 end.
