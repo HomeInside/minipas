@@ -1,5 +1,5 @@
 use super::utils::to_real;
-use crate::Value;
+use crate::parser::ast::Value;
 
 pub fn pow_fn(args: Vec<Value>) -> Value {
     if args.len() != 2 {

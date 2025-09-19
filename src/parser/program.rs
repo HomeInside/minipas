@@ -5,8 +5,8 @@ use super::procedures::parse_proc_decl;
 use super::statements::parse_stmt;
 use super::symbol_table::SymbolTable;
 use crate::Rule;
+use crate::parser::ast::{Stmt, VarType};
 use crate::runtime::std_lib::builtins::BUILTINS;
-use crate::{Stmt, VarType};
 use pest::iterators::{Pair, Pairs};
 
 pub fn validate_identifier(name: &str) {

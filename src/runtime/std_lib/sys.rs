@@ -1,4 +1,4 @@
-use crate::Value;
+use crate::parser::ast::Value;
 use rand::Rng;
 use std::{env, process, thread, time};
 

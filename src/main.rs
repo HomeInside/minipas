@@ -6,7 +6,6 @@ use std::fs;
 mod parser;
 mod runtime;
 
-use parser::ast::{Expr, Op, Stmt, Value, VarType};
 use parser::program::parse_program;
 use runtime::interpreter::{RuntimeEnv, execute_stmt};
 use runtime::std_lib::builtins::BUILTINS;

@@ -1,7 +1,7 @@
 ///
 /// a naive date and time implementation
 ///
-use crate::Value;
+use crate::parser::ast::Value;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
