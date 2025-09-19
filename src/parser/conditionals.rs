@@ -1,8 +1,9 @@
 use super::ast::Stmt;
 use super::statements::parse_stmt;
 use super::symbol_table::SymbolTable;
-use super::types::parse_bool_expr;
+//use super::types::parse_bool_expr;
 use crate::Rule;
+use crate::parser::expressions::parse_expr;
 use pest::iterators::Pair;
 
 pub fn parse_stmt_if(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
@@ -15,7 +16,8 @@ pub fn parse_stmt_if(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     #[allow(clippy::while_let_on_iterator)]
     while let Some(p) = inner.next() {
         match p.as_rule() {
-            Rule::bool_expr => cond = Some(parse_bool_expr(p, sym_table)),
+            //Rule::bool_expr => cond = Some(parse_bool_expr(p, sym_table)),
+            Rule::expr => cond = Some(parse_expr(p, sym_table)),
             Rule::stmt | /*Rule::writeln_stmt |*/ Rule::assignment | Rule::var_decl | Rule::if_stmt => {
                 if then_branch.is_none() {
                     then_branch = Some(parse_stmt(p, sym_table));
