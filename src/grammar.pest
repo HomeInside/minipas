@@ -1,4 +1,4 @@
-// Minipas grammar.pest 1.1.0
+// Minipas grammar.pest 1.3.0
 //
 WHITESPACE = _{ (" " | "\t" | NEWLINE | comment)+ }
 NEWLINE    = _{ "\n" | "\r\n" }
@@ -78,7 +78,7 @@ bool_expr = { expr ~ cmp_op ~ expr }
 
 // Sentencias
 block = { "begin" ~ stmt* ~ "end" }
-stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt|return_stmt) }
+stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt | return_stmt) }
 
 if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 
@@ -90,41 +90,26 @@ var_section = { ("var" ~ var_decl+)+ }
 
 // procedures
 proc_decl = {
-    keyword_procedure ~ ident ~ lparen ~ (param_list)? ~ rparen ~ semicolon
-    ~ block
-    ~ semicolon?
+    keyword_procedure ~ ident ~ lparen ~ (param_list)? ~ rparen ~ semicolon ~ var_section? // 👈 NUEVO
+  ~ block ~ semicolon?
 }
+
 // functions
-/*
 func_decl = {
-    keyword_function ~ ident ~ lparen? ~ (param_list)? ~ rparen?
-    ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean)
-    ~ semicolon
-    ~ block
-    ~ semicolon?
-}*/
-func_decl = {
-    keyword_function ~ ident ~ lparen ~ (param_list)? ~ rparen
-    ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean)
-    ~ semicolon
-    ~ var_section?    // 👈 NUEVO
-    ~ block
-    ~ semicolon?
+    keyword_function ~ ident ~ lparen ~ (param_list)? ~ rparen ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon ~ var_section? ~ block ~ semicolon?
 }
-//return
+
+// return
 return_stmt = { "return" ~ expr ~ semicolon }
 
-//param_list = { ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ (semicolon ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean))* }
+// param_list = { ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ (semicolon ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean))* }
 //
-param_list = { param ~ (semicolon ~ param)* }
-param = { ident ~ colon ~ type_keyword }
+param_list   = { param ~ (semicolon ~ param)* }
+param        = { ident ~ colon ~ type_keyword }
 type_keyword = { keyword_integer | keyword_real | keyword_string | keyword_boolean }
 
 //
 program = {
-    SOI ~ comment* ~ "program" ~ ident ~ semicolon
-    ~ var_section?
-    ~ (proc_decl | func_decl)*   // 👈 permitir declaraciones antes del bloque principal
-    ~ block
-    ~ "." ~ EOI
+    SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ (proc_decl | func_decl)* // 👈 permitir declaraciones antes del bloque principal
+  ~ block ~ "." ~ EOI
 }
