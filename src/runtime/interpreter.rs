@@ -80,7 +80,7 @@ fn apply_op(l: Value, op: &Op, r: Value) -> Value {
     }
 }
 
-fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Value {
+pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Value {
     //println!("eval_expr entro a la funcion");
     //println!("eval_expr expr: {:?}", expr);
     match expr {
@@ -103,18 +103,61 @@ fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Built
             }
         }
         Expr::Call { name, args } => {
-            //println!("eval_expr Expr::Call: entro");
+            //println!("eval_expr brazo Expr::Call: entro");
             if let Some(proc) = env.procs.get(name).cloned() {
                 // --- procedimiento definido por el usuario ---
-                for (param_name, arg_expr) in proc.params.iter().zip(args.iter()) {
-                    let arg_value = eval_expr(arg_expr, env, builtins);
-                    env.vars.insert(param_name.clone(), arg_value);
+                //println!("eval_expr: entrando al bloque de procedures");
+                if proc.params.len() != args.len() {
+                    panic!(
+                        "El procedimiento '{}' esperaba {} argumentos, pero recibió {}",
+                        name,
+                        proc.params.len(),
+                        args.len()
+                    );
                 }
+
+                // crear un entorno local (vacío) que herede las funciones/procedimientos
+                let mut local_env = RuntimeEnv {
+                    vars: HashMap::new(),
+                    procs: env.procs.clone(),
+                    funcs: env.funcs.clone(),
+                };
+
+                // inicializar parámetros (evaluar argumentos en el entorno actual `env`)
+                for (param, arg_expr) in proc.params.iter().zip(args.iter()) {
+                    let val = eval_expr(arg_expr, env, builtins); // evaluar usando el env actual
+                    // println!(
+                    //     "eval_expr Insertando parámetro en el procedure {} = {:?}",
+                    //     param.name, val
+                    // );
+                    local_env.vars.insert(param.name.clone(), val);
+                }
+
+                // --- inicializar variables locales con valores por defecto ---
+                for local in &proc.locals {
+                    let default_val = match &local.ty {
+                        VarType::Integer => Value::Integer(0),
+                        VarType::Real => Value::Real(0.0),
+                        VarType::Boolean => Value::Boolean(false),
+                        VarType::Str => Value::Str(String::new()),
+                        VarType::Nil => Value::Nil,
+                    };
+                    // println!(
+                    //     "eval_expr Insertando variable local en procedure {} = {:?}",
+                    //     local.name, default_val
+                    // );
+                    local_env.vars.insert(local.name.clone(), default_val);
+                }
+
+                // ejecutar el cuerpo del procedimiento en el entorno local
                 for stmt in &proc.body {
-                    let _ = execute_stmt(stmt, env, builtins);
+                    // ignoramos posibles ReturnError: procedimientos no deberían retornar valores
+                    let _ = execute_stmt(stmt, &mut local_env, builtins);
                 }
+
                 Value::Nil
             } else if let Some(func) = env.funcs.get(name).cloned() {
+                // --- funcion definida por el usuario ---
                 //println!("eval_expr: entrando al bloque de función");
 
                 // --- crear un entorno local para la función ---
@@ -224,16 +267,42 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         Stmt::Expr(expr) => {
             eval_expr(expr, env, builtins);
         }
-        Stmt::ProcDecl { name, params, body } => {
+        Stmt::ProcDecl {
+            name,
+            params,
+            locals,
+            body,
+        } => {
+            // params: Vec<(String, VarType)> desde el AST
+            //println!("============");
+            //println!("execute_stmt entro al match brazo Stmt::ProcDecl entro");
+            //println!("name {}", name);
+            //println!("params {:?}", params);
+            //println!("body {:?}", body);
+
             env.procs.insert(
                 name.clone(),
                 Procedure {
                     name: name.clone(),
-                    params: params.clone(),
+                    params: params
+                        .iter()
+                        .map(|(name, ty)| Param {
+                            name: name.clone(),
+                            ty: ty.clone(),
+                        })
+                        .collect(),
+                    locals: locals
+                        .iter()
+                        .map(|(name, ty)| Param {
+                            name: name.clone(),
+                            ty: ty.clone(),
+                        })
+                        .collect(),
                     body: body.clone(),
                 },
             );
         }
+
         Stmt::FuncDecl {
             name,
             params,
