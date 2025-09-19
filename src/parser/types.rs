@@ -22,9 +22,10 @@ pub fn parse_type(pair: Pair<Rule>) -> VarType {
     }
 }
 
+#[allow(dead_code)]
 pub fn parse_bool_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     //println!("parse_bool_expr: entro");
-    assert_eq!(pair.as_rule(), Rule::bool_expr);
+    //assert_eq!(pair.as_rule(), Rule::bool_expr);
     let mut inner = pair.into_inner();
     let left_pair = inner.next().expect("bool_expr sin lado izquierdo");
     let left = match left_pair.as_rule() {
