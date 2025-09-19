@@ -8,7 +8,6 @@ use crate::Rule;
 use crate::runtime::std_lib::builtins::BUILTINS;
 use crate::{Stmt, VarType};
 use pest::iterators::{Pair, Pairs};
-//use std::collections::HashMap;
 
 pub fn validate_identifier(name: &str) {
     if KEYWORDS.contains(&name) {
@@ -35,7 +34,6 @@ pub fn check_ident(name: &str, sym_table: &SymbolTable) {
     }
 }
 
-// 👈 NUEVO
 pub fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     //println!("parse_return_stmt entro");
     assert_eq!(pair.as_rule(), Rule::return_stmt);
@@ -46,6 +44,7 @@ pub fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 }
 
 pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
+    //println!("parse_proc_decl: Rule::param_list entro");
     let program_pair = pairs.next().expect("No se encontró program");
     let mut sym_table = SymbolTable::new();
     let mut stmts: Vec<Stmt> = Vec::new(); // 👈 AST completo del programa
@@ -84,24 +83,25 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
 
             Rule::block => block_pair_opt = Some(p),
             Rule::proc_decl => {
+                // 👈 NUEVO
                 //println!("============");
+                //println!("parse_program entro al match");
                 //println!("Rule::proc_decl entro");
                 //println!("Rule::proc_decl p:{}", p.clone());
-                let proc = parse_proc_decl(p, &sym_table);
 
+                let proc = parse_proc_decl(p, &mut sym_table);
                 stmts.push(Stmt::ProcDecl {
-                    name: proc.name,
-                    params: proc.params,
-                    body: proc.body,
+                    name: proc.name.clone(),
+                    params: proc.params.iter().map(|p| (p.name.clone(), p.ty.clone())).collect(), // Vec<(String, VarType)>
+                    locals: proc.locals.iter().map(|p| (p.name.clone(), p.ty.clone())).collect(), // Vec<(String, VarType)>
+                    body: proc.body.clone(),
                 })
-                //env.procs.insert(proc.name.clone(), proc);
             }
 
             Rule::func_decl => {
                 // 👈 NUEVO
                 //println!("============");
-                //println!("parse_program entro al match");
-                //println!("Rule::func_decl entro");
+                //println!("parse_program entro al match brazo Rule::func_decl entro");
                 //println!("Rule::func_decl p:{}", p.clone());
                 let func = parse_func_decl(p, &mut sym_table);
                 stmts.push(Stmt::FuncDecl {
