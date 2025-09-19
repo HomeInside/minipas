@@ -86,6 +86,7 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("upper".to_string(), Builtin::Func(upper_fn));
     builtin.insert("lower".to_string(), Builtin::Func(lower_fn));
     builtin.insert("trim".to_string(), Builtin::Func(trim_fn));
+    builtin.insert("concat".to_string(), Builtin::Func(concat_fn));
 
     // === conversiones de tipos ===
     // alias: int(), to_int()

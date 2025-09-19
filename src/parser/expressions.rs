@@ -27,6 +27,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     Rule::sub_op => Op::Sub,
                     Rule::mul_op => Op::Mul,
                     Rule::div_op => Op::Div,
+                    Rule::mod_op => Op::Mod,
                     _ => panic!("Operador inesperado en expr: {:?}", op_pair.as_rule()),
                 };
                 left = Expr::BinaryOp {

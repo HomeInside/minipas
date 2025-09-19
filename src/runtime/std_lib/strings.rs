@@ -28,3 +28,10 @@ pub fn trim_fn(args: Vec<Value>) -> Value {
     let str_trim = args[0].to_string().trim().to_string();
     Value::Str(str_trim)
 }
+
+pub fn concat_fn(args: Vec<Value>) -> Value {
+    let parts: Vec<String> = args.into_iter().map(|v| v.to_string()).collect();
+
+    let str_cnct = parts.join(" ");
+    Value::Str(str_cnct)
+}

@@ -44,6 +44,7 @@ add_op    = { "+" }
 sub_op    = { "-" }
 mul_op    = { "*" }
 div_op    = { "/" }
+mod_op    = { "%" }
 cmp_op    = { ">=" | "<=" | "<>" | ">" | "<" | "=" }
 
 semicolon = { ";" }
@@ -54,7 +55,7 @@ rparen    = { ")" }
 
 expr    = { sum }
 sum     = { product ~ ((add_op | sub_op) ~ product)* }
-product = { factor ~ ((mul_op | div_op) ~ factor)* }
+product = { factor ~ ((mul_op | div_op| mod_op) ~ factor)* }
 
 // Nueva regla para llamada a función/ procedimiento
 func_call = { ident ~ lparen ~ (expr_list)? ~ rparen }
