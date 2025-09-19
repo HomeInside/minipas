@@ -6,7 +6,7 @@ pub enum VarType {
     Real,
     Str,
     Boolean,
-    Nil, // 👈 NUEVO
+    Nil,
 }
 
 #[derive(Debug, Clone)]
@@ -15,7 +15,7 @@ pub enum Value {
     Real(f64),
     Str(String),
     Boolean(bool),
-    Nil, // 👈 NUEVO
+    Nil,
 }
 
 impl fmt::Display for Value {
@@ -36,9 +36,17 @@ pub enum Expr {
     Ident(String),
     StringLiteral(String),
     BooleanLiteral(bool),
-    BinaryOp { left: Box<Expr>, op: Op, right: Box<Expr> },
-    Call { name: String, args: Vec<Expr> },
-    Nil, // 👈 NUEVO
+    BinaryOp {
+        left: Box<Expr>,
+        op: Op,
+        right: Box<Expr>,
+    },
+    Call {
+        name: String,
+        args: Vec<Expr>,
+    },
+    #[allow(dead_code)]
+    Nil,
 }
 
 #[derive(Debug, Clone)]
@@ -66,17 +74,18 @@ pub enum Stmt {
     },
     Block(Vec<Stmt>),
     Expr(Expr),
-    Return(Expr), // 👈 NUEVO
+    Return(Expr),
     ProcDecl {
-        name: String,
-        params: Vec<String>,
-        body: Vec<Stmt>,
-    },
-    FuncDecl {
         // 👈 NUEVO
         name: String,
         params: Vec<(String, VarType)>, // nombre + tipo
         locals: Vec<(String, VarType)>, // variables locales con tipo
+        body: Vec<Stmt>,
+    },
+    FuncDecl {
+        name: String,
+        params: Vec<(String, VarType)>,
+        locals: Vec<(String, VarType)>,
         return_type: VarType,
         body: Vec<Stmt>,
     },
@@ -85,7 +94,8 @@ pub enum Stmt {
 #[derive(Debug, Clone)]
 pub struct Procedure {
     pub name: String,
-    pub params: Vec<String>, // o Vec<(String, VarType)> si quieres tipos
+    pub params: Vec<Param>, // 👈 NUEVO ahora incluyen tipos
+    pub locals: Vec<Param>, // 👈 NUEVO locales
     pub body: Vec<Stmt>,
 }
 
@@ -93,9 +103,8 @@ pub struct Procedure {
 #[derive(Debug, Clone)]
 pub struct Function {
     pub name: String,
-    //pub params: Vec<String>, // después puedes cambiar a Vec<(String, VarType)>
-    pub params: Vec<Param>, // 👈 NUEVO ahora incluyen tipos
-    pub locals: Vec<Param>, // 👈 NUEVO locales
+    pub params: Vec<Param>,
+    pub locals: Vec<Param>,
     pub return_type: VarType,
     pub body: Vec<Stmt>,
 }
