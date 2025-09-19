@@ -5,6 +5,7 @@ use crate::Rule;
 use pest::iterators::Pair;
 
 pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
+    // println!("parse_expr: entro");
     match pair.as_rule() {
         Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
         Rule::ident => {
@@ -37,15 +38,16 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
             left
         }
         Rule::factor => {
+            //println!("parse_expr: brazo Rule::factor entro");
             let inner = pair.into_inner().next().unwrap();
             match inner.as_rule() {
                 Rule::func_call => {
                     let mut ic = inner.into_inner();
                     let name_pair = ic.next().unwrap(); // ident
                     let name = name_pair.as_str().to_string();
+                    validate_identifier(&name);
 
                     let mut args: Vec<Expr> = Vec::new();
-                    validate_identifier(&name);
 
                     for node in ic {
                         match node.as_rule() {
