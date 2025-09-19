@@ -53,10 +53,12 @@ colon     = { ":" }
 lparen    = { "(" }
 rparen    = { ")" }
 
-expr    = { sum }
+//expr    = { sum }
+expr = { sum ~ (cmp_op ~ sum)? }
 sum     = { product ~ ((add_op | sub_op) ~ product)* }
 product = { factor ~ ((mul_op | div_op| mod_op) ~ factor)* }
 
+//
 // Nueva regla para llamada a función/ procedimiento
 func_call = { ident ~ lparen ~ (expr_list)? ~ rparen }
 
@@ -67,20 +69,21 @@ factor = { number | string_literal | boolean_literal | func_call | ident | keywo
 // factor = { ("-"? ~ number) | string_literal | boolean_literal | func_call | ident | "(" ~ expr ~ ")" }
 
 string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
-
-expr_item = { string_literal | expr }
+//expr_item = { string_literal | expr }
+expr_item = { expr| string_literal }
 
 expr_list = { expr_item ~ (comma ~ expr_item)* }
 expr_stmt = { expr ~ semicolon }
 
 // Comparación booleana
-bool_expr = { expr ~ cmp_op ~ expr }
+//bool_expr = { expr ~ cmp_op ~ expr }
 
 // Sentencias
 block = { "begin" ~ stmt* ~ "end" }
 stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt | return_stmt) }
 
-if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
+//if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
+if_stmt = { keyword_if ~ expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 
 var_decl = { ident ~ ("," ~ ident)* ~ ":" ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ ";" }
 
