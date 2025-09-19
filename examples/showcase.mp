@@ -1,29 +1,27 @@
 {
   programming in Minipas
-  Minipas showcase
+  Minipas showcase program
   Author: diniremix <diniremix@gmail.com>
   Minipas version: 1.3.0
 }
 
 program showcase;
 var
-    a, b, c : integer;
-    r       : real;
+    a, b, c    : integer;
+    r          : real;
     s1, s2, s3 : string;
-    flag    : boolean;
+    flag       : boolean;
 
 // -------------------------
 // Funciones
 // -------------------------
 function suma(x: integer; y: integer): integer;
 begin
-    // simple suma
     return x + y;
 end
 
 function es_par(n: integer): boolean;
 begin
-    // usa el operador % que implementaste (rem_euclid)
     if (n % 2) = 0 then
         return True;
     else
@@ -32,8 +30,7 @@ end
 
 function division_real(x: integer; y: integer): real;
 begin
-    // forzamos real dividendo: tus reglas convierten int->real en apply_op
-    return x / y; // si ambos son enteros y tu runtime hace integer division, ajusta si quieres real: return (x as real) / y;
+    return x / y;
 end
 
 function cmp_str(a: string; b: string): string;
@@ -48,11 +45,38 @@ begin
 end
 
 // -------------------------
+// Recursividad
+// -------------------------
+function mcd(a:integer; b:integer) : integer;
+begin
+	if b = 0 then
+		return a;
+	else
+		return mcd(b, a%b);
+end
+
+// -------------------------
+// Procedimientos
+// -------------------------
+procedure saludar();
+begin
+	writeln("Hola mundo desde un procedimiento");
+end
+
+procedure saludo(nombre:string);
+begin
+	writeln("Hola", nombre, "saludos desde un procedimiento");
+end
+
+// -------------------------
 // Procedimiento de impresión / demostración
 // -------------------------
 procedure mostrar_estadisticas();
-var
-    t : integer;
+var t: integer;
+var result: integer;
+var num1: integer;
+var num2: integer;
+
 begin
     writeln("----- Demo de expresiones -----");
     writeln();
@@ -64,8 +88,8 @@ begin
     writeln("a + b ->", a + b);
     writeln("a - b ->", a - b);
     writeln("a * b ->", a * b);
-    writeln("a / b ->", a / b);    // según tu runtime puede ser integer-div
-    writeln("a % b ->", a % b);    // resto positivo con rem_euclid
+    writeln("a / b ->", a / b);
+    writeln("a % b ->", a % b);
     writeln();
 
     // uso de funciones
@@ -75,6 +99,11 @@ begin
     r := division_real(a, b);
     writeln("division_real(a,b) ->", r);
     writeln();
+
+    // uso de procedimientos
+    writeln();
+    saludar();
+    saludo("minipas");
 
     // comparaciones numéricas
     writeln("1 = 2 ->", 1 = 2);
@@ -88,9 +117,9 @@ begin
     s3 := s1 + " " + s2;
     writeln("s1 ->", s1, ", s2 ->", s2);
     writeln("concat ->", s3);
-    writeln("'hola' = 'hola' ->", ("hola" = "hola"));          // con paréntesis (seguro en arg list)
+    writeln("'hola' = 'hola' ->", ("hola" = "hola"));
     writeln("('a' > 'b') ->", ("a" > "b"));
-    writeln("'hola' > 'holanda' ->", (s1 > s2));
+    writeln("'hola' > 'holanda' ->", s1 > s2);
     writeln("cmp_str(s1, s2) ->", cmp_str(s1, s2));
     writeln();
 
@@ -106,7 +135,25 @@ begin
     // combinación: usar expresiones complejas como argumentos
     // -- notar cuándo pongo paréntesis para no confundir el parser en expr_list
     writeln("combinado ->", (1 + 2 = 3), ", texto ->", "uno" + "dos");
+
+    // ejemplo de recursividad
     writeln();
+    writeln("hallar el MCD (recursivo)");
+    writeln("escriba el primer numero para hallar el MCD");
+    num1 := to_int(readln());
+
+    writeln();
+    writeln("escriba el segundo numero para hallar el MCD");
+    num2 := to_int(readln());
+    resultado := mcd(num1, num2);
+    writeln("el MCD de:", num1, "y", num2, "es:", resultado);
+
+    writeln();
+    writeln("usando el modulo date_time");
+
+    writeln("Fecha actual: ", date());
+	writeln("Hora actual: ", time());
+	writeln("Fecha y hora: ", date_time());
 
     writeln("----- fin del demo -----");
 end
@@ -121,7 +168,7 @@ begin
 	input := to_int(readln());
     writeln("el numero es:", input);
 
-    // inicializa y llama al procedimiento demo
+    // inicializa y llama al procedimiento ppal
     mostrar_estadisticas();
 
     writeln();
