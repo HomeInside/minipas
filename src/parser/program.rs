@@ -114,7 +114,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
             Rule::for_stmt => {
                 // 👈 NUEVO
                 //println!("parse_program: brazo Rule::for_stmt entro");
-                let mut inner = pairs.clone().into_iter();
+                let mut inner = pairs.clone();
 
                 let var = inner.next().unwrap().as_str().to_string(); // ident
                 inner.next(); // := (assign_op)
