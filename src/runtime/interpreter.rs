@@ -24,6 +24,7 @@ impl RuntimeEnv {
 
     // TO FIX
     // obtener el valor de una variable, falla si no existe
+    #[allow(dead_code)]
     pub fn get(&self, name: &str) -> Value {
         self.vars
             .get(name)
@@ -33,6 +34,7 @@ impl RuntimeEnv {
 
     // TO FIX
     // Asignar valor a variable, falla si no existe
+    #[allow(dead_code)]
     pub fn set(&mut self, name: &str, val: Value) {
         if !self.vars.contains_key(name) {
             panic!("Variable '{}' no declarada", name);
@@ -42,6 +44,7 @@ impl RuntimeEnv {
 
     // TO FIX
     // Declarar una variable nueva (por ejemplo en var_decl)
+    #[allow(dead_code)]
     pub fn declare(&mut self, name: &str, val: Value) {
         if self.vars.contains_key(name) {
             panic!("Variable '{}' ya declarada", name);
