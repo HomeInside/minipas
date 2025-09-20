@@ -4,7 +4,7 @@ use crate::runtime::std_lib::builtins::Builtin;
 use std::collections::HashMap;
 pub type Environment = HashMap<String, Value>;
 use super::operators::apply_op;
-use crate::parser::ast::{Expr, Stmt, Value};
+use crate::parser::ast::{Expr, ForDir, Stmt, Value};
 
 #[derive(Debug, Clone)]
 pub struct RuntimeEnv {
@@ -299,6 +299,42 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         Stmt::Return(expr) => {
             let val = eval_expr(expr, env, builtins);
             return Err(ReturnError(val));
+        }
+        Stmt::For {
+            var,
+            start,
+            end,
+            direction,
+            body,
+        } => {
+            // 👈 NUEVO
+            // println!("============");
+            // println!("execute_stmt entro al match brazo Stmt::For entro");
+            // println!("var {:?}", var);
+            // println!("start {:?}", start);
+            // println!("end {:?}", end);
+            // println!("direction {:?}", direction);
+            // println!("body {:?}", body);
+
+            let mut i = eval_expr(start, env, builtins).as_int();
+            let end_val = eval_expr(end, env, builtins).as_int();
+
+            match direction {
+                ForDir::To => {
+                    while i <= end_val {
+                        env.vars.insert(var.clone(), Value::Integer(i));
+                        execute_stmt(body, env, builtins)?;
+                        i += 1;
+                    }
+                }
+                ForDir::DownTo => {
+                    while i >= end_val {
+                        env.vars.insert(var.clone(), Value::Integer(i));
+                        execute_stmt(body, env, builtins)?;
+                        i -= 1;
+                    }
+                }
+            }
         }
     }
     Ok(())
