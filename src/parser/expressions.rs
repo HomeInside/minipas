@@ -5,7 +5,7 @@ use crate::Rule;
 use pest::iterators::Pair;
 
 pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
-    // println!("parse_expr: entro");
+    //println!("parse_expr: entro {:?}", pair.as_rule());
     match pair.as_rule() {
         Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
 

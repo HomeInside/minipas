@@ -1,6 +1,9 @@
 use crate::parser::ast::{Op, Value};
 
 pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
+    //println!("apply_op entro");
+    //println!("l: {}", l);
+    //println!("r: {}", r);
     match (l, r) {
         (Value::Integer(li), Value::Integer(ri)) => match op {
             Op::Add => Value::Integer(li + ri),
