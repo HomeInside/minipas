@@ -80,6 +80,7 @@ test:build
     ./target/debug/minipas examples/strings.mp
     ./target/debug/minipas examples/sys.mp
     ./target/debug/minipas examples/variables.mp
+    ./target/debug/minipas examples/while_loop.mp
     ./target/debug/minipas examples/writeln.mp
 
 test-rel:release
@@ -103,6 +104,7 @@ test-rel:release
     ./target/release/minipas examples/strings.mp
     ./target/release/minipas examples/sys.mp
     ./target/release/minipas examples/variables.mp
+    ./target/release/minipas examples/while_loop.mp
     ./target/release/minipas examples/writeln.mp
 
 [doc('Git check repo')]
