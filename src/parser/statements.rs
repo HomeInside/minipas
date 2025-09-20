@@ -1,5 +1,5 @@
 use super::assignment::parse_assignment;
-use super::ast::{ForDir, Stmt};
+use super::ast::{ForDir, Stmt, WhileStmt};
 use super::conditionals::parse_stmt_if;
 use super::expressions::parse_expr;
 use super::program::parse_block;
@@ -76,6 +76,28 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
                         direction,
                         body: Box::new(body),
                     }
+                }
+                Rule::while_stmt => {
+                    let mut inner_pairs = inner.into_inner();
+
+                    // keyword_while
+                    let _while_kw = inner_pairs.next().unwrap();
+
+                    // condición
+                    let cond_pair = inner_pairs.next().expect("Se esperaba la condición del while");
+                    let condition = parse_expr(cond_pair, sym_table);
+
+                    // keyword_do
+                    let _do_kw = inner_pairs.next().unwrap();
+
+                    // Cuerpo del while
+                    let body_pair = inner_pairs.next().expect("Se esperaba el cuerpo del while");
+                    let body = parse_stmt(body_pair, sym_table);
+
+                    Stmt::While(WhileStmt {
+                        condition,
+                        body: Box::new(body),
+                    })
                 }
 
                 Rule::return_stmt => parse_return_stmt(inner, sym_table),
