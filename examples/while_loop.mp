@@ -68,6 +68,7 @@ begin
   end
 
   writeln();
+  writeln("sumatorias con while");
   writeln("para salir escriba 0");
   total := 0;
   n := to_int(readln());
