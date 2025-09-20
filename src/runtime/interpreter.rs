@@ -21,6 +21,33 @@ impl RuntimeEnv {
             funcs: HashMap::new(),
         }
     }
+
+    // TO FIX
+    // obtener el valor de una variable, falla si no existe
+    pub fn get(&self, name: &str) -> Value {
+        self.vars
+            .get(name)
+            .unwrap_or_else(|| panic!("Variable '{}' no declarada o no inicializada", name))
+            .clone()
+    }
+
+    // TO FIX
+    // Asignar valor a variable, falla si no existe
+    pub fn set(&mut self, name: &str, val: Value) {
+        if !self.vars.contains_key(name) {
+            panic!("Variable '{}' no declarada", name);
+        }
+        self.vars.insert(name.to_string(), val);
+    }
+
+    // TO FIX
+    // Declarar una variable nueva (por ejemplo en var_decl)
+    pub fn declare(&mut self, name: &str, val: Value) {
+        if self.vars.contains_key(name) {
+            panic!("Variable '{}' ya declarada", name);
+        }
+        self.vars.insert(name.to_string(), val);
+    }
 }
 
 #[derive(Debug)]
@@ -202,7 +229,9 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         }
         Stmt::Assign(name, expr) => {
             let val = eval_expr(expr, env, builtins);
-            env.vars.insert(name.clone(), val);
+            env.vars.insert(name.clone(), val.clone());
+            // TO FIX
+            //env.set(name, val); // usa set() para validar que exista
         }
         Stmt::IfElse {
             cond,
@@ -323,6 +352,8 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 ForDir::To => {
                     while i <= end_val {
                         env.vars.insert(var.clone(), Value::Integer(i));
+                        // TO FIX
+                        // env.set(var, Value::Integer(i)); // valida existencia
                         execute_stmt(body, env, builtins)?;
                         i += 1;
                     }
@@ -330,10 +361,21 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 ForDir::DownTo => {
                     while i >= end_val {
                         env.vars.insert(var.clone(), Value::Integer(i));
+                        // TO FIX
+                        // env.set(var, Value::Integer(i)); // valida existencia
                         execute_stmt(body, env, builtins)?;
                         i -= 1;
                     }
                 }
+            }
+        }
+        Stmt::While(ws) => {
+            // 👈 NUEVO
+            //println!("============");
+            //println!("execute_stmt entro al match brazo Stmt::While entro");
+            //println!("ws {:?}", ws);
+            while eval_expr(&ws.condition, env, builtins).as_bool() {
+                execute_stmt(&ws.body, env, builtins)?;
             }
         }
     }
