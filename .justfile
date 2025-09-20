@@ -67,7 +67,7 @@ test:build
     ./target/debug/minipas examples/date_time.mp
     ./target/debug/minipas examples/euclides.mp
     ./target/debug/minipas examples/fibonacci.mp
-    # ./target/debug/minipas examples/for_loop.mp
+    ./target/debug/minipas examples/for_loop.mp
     ./target/debug/minipas examples/functions.mp
     ./target/debug/minipas examples/haversine.mp
     ./target/debug/minipas examples/hello_world.mp
@@ -90,7 +90,7 @@ test-rel:release
     ./target/release/minipas examples/date_time.mp
     ./target/release/minipas examples/euclides.mp
     ./target/release/minipas examples/fibonacci.mp
-    # ./target/release/minipas examples/for_loop.mp
+    ./target/release/minipas examples/for_loop.mp
     ./target/release/minipas examples/functions.mp
     ./target/release/minipas examples/haversine.mp
     ./target/release/minipas examples/hello_world.mp
