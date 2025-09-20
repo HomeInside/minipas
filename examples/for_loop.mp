@@ -1,17 +1,14 @@
 program testFor;
 
-var
-tabla, numero: integer;
+var tabla, num: integer;
 
 begin
-  for tabla := 1 to 5 do
+  for tabla := 1 to 10 do
   begin
-    for numero := 1 to 10 do
+    for num := 1 to 10 do
     begin
-      writeln( tabla, ' por ', numero ,' es ', tabla * numero );
-      writeln("algo aqui");
+      writeln(tabla,'*', num, ' = ', (tabla*num));
     end
+    writeln();
   end
-  writeln("aqui al final");
 end.
-
