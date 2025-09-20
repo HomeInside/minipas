@@ -9,7 +9,7 @@ pub enum VarType {
     Nil,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Integer(i64),
     Real(f64),
@@ -26,6 +26,40 @@ impl fmt::Display for Value {
             Value::Str(s) => write!(f, "{}", s),
             Value::Boolean(b) => write!(f, "{}", b),
             Value::Nil => write!(f, "nil"),
+        }
+    }
+}
+impl Value {
+    pub fn as_int(&self) -> i64 {
+        match self {
+            Value::Integer(i) => *i,
+            Value::Real(f) => *f as i64,
+            _ => panic!("No se puede convertir {:?} a Integer", self),
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn as_real(&self) -> f64 {
+        match self {
+            Value::Real(f) => *f,
+            Value::Integer(i) => *i as f64,
+            _ => panic!("No se puede convertir {:?} a Real", self),
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn as_bool(&self) -> bool {
+        match self {
+            Value::Boolean(b) => *b,
+            _ => panic!("No se puede convertir {:?} a Boolean", self),
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn as_str(&self) -> String {
+        match self {
+            Value::Str(s) => s.clone(),
+            _ => panic!("No se puede convertir {:?} a String", self),
         }
     }
 }
@@ -77,7 +111,6 @@ pub enum Stmt {
     Expr(Expr),
     Return(Expr),
     ProcDecl {
-        // 👈 NUEVO
         name: String,
         params: Vec<(String, VarType)>, // nombre + tipo
         locals: Vec<(String, VarType)>, // variables locales con tipo
@@ -90,13 +123,26 @@ pub enum Stmt {
         return_type: VarType,
         body: Vec<Stmt>,
     },
+    // 👇 Nuevo
+    For {
+        var: String,       // variable de control
+        start: Expr,       // expresión inicial
+        end: Expr,         // expresión final
+        direction: ForDir, // to o downto
+        body: Box<Stmt>,   // cuerpo (una stmt o bloque)
+    },
+}
+#[derive(Debug, Clone, PartialEq)]
+pub enum ForDir {
+    To,
+    DownTo,
 }
 
 #[derive(Debug, Clone)]
 pub struct Procedure {
     pub name: String,
-    pub params: Vec<Param>, // 👈 NUEVO ahora incluyen tipos
-    pub locals: Vec<Param>, // 👈 NUEVO locales
+    pub params: Vec<Param>,
+    pub locals: Vec<Param>,
     pub body: Vec<Stmt>,
 }
 
