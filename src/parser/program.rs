@@ -5,7 +5,7 @@ use super::procedures::parse_proc_decl;
 use super::statements::parse_stmt;
 use super::symbol_table::SymbolTable;
 use crate::Rule;
-use crate::parser::ast::{ForDir, Stmt, VarType};
+use crate::parser::ast::{ForDir, Stmt, VarType, WhileStmt};
 use crate::runtime::std_lib::builtins::BUILTINS;
 use pest::iterators::{Pair, Pairs};
 
@@ -140,6 +140,24 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     body: Box::new(body),
                 })
             }
+            // while loop
+            Rule::while_stmt => {
+                // 👈 NUEVO
+                //println!("parse_program: brazo Rule::while_stmt entro");
+                let mut inner = p.into_inner();
+
+                let cond_pair = inner.next().expect("Se esperaba condición en while");
+                let condition = parse_expr(cond_pair, &sym_table);
+
+                let body_pair = inner.next().expect("Se esperaba cuerpo del while");
+                let body = parse_stmt(body_pair, &sym_table);
+
+                stmts.push(Stmt::While(WhileStmt {
+                    condition,
+                    body: Box::new(body),
+                }));
+            }
+
             _ => {}
         }
     }
