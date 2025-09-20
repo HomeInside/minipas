@@ -131,7 +131,17 @@ pub enum Stmt {
         direction: ForDir, // to o downto
         body: Box<Stmt>,   // cuerpo (una stmt o bloque)
     },
+    // 👇 Nuevo
+    While(WhileStmt),
 }
+
+// 👇 Nuevo
+#[derive(Debug, Clone)]
+pub struct WhileStmt {
+    pub condition: Expr, // la expresión booleana
+    pub body: Box<Stmt>, // el bloque o statement a ejecutar
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum ForDir {
     To,
