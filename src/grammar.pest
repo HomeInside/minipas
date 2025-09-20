@@ -30,6 +30,7 @@ keyword_const     = { "const" }
 keyword_and       = { "and" }
 keyword_array     = { "array" }
 keyword_for       = { "for" }
+keyword_while       = { "while" }
 keyword_function  = { "function" }
 keyword_procedure = { "procedure" }
 keyword_nil       = { "nil" }
@@ -84,8 +85,7 @@ expr_stmt = { expr ~ semicolon }
 
 // Sentencias
 block = { "begin" ~ stmt* ~ "end" }
-//stmt  = { comment* ~ (if_stmt | block | assignment | expr_stmt | return_stmt) }
-stmt = { comment* ~ (if_stmt | for_stmt | block | assignment | expr_stmt | return_stmt)}
+stmt = { comment* ~ (if_stmt | for_stmt | while_stmt | block | assignment | expr_stmt | return_stmt) }
 
 //if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 if_stmt = { keyword_if ~ expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
@@ -98,7 +98,7 @@ var_section = { ("var" ~ var_decl+)+ }
 
 // procedures
 proc_decl = {
-    keyword_procedure ~ ident ~ lparen ~ (param_list)? ~ rparen ~ semicolon ~ var_section? // 👈 NUEVO
+  keyword_procedure ~ ident ~ lparen ~ (param_list)? ~ rparen ~ semicolon ~ var_section?
   ~ block ~ semicolon?
 }
 
@@ -112,11 +112,18 @@ return_stmt = { "return" ~ expr ~ semicolon }
 
 // FOR LOOP
 for_stmt = {
-    keyword_for ~ ident ~ assign_op ~ expr
-    //~ ("to" | "downto") ~ expr
-    ~ (keyword_to | keyword_downto) ~ expr
-    ~ keyword_do ~ stmt
+  keyword_for ~ ident ~ assign_op ~ expr
+  //~ ("to" | "downto") ~ expr
+  ~ (keyword_to | keyword_downto) ~ expr
+  ~ keyword_do ~ stmt
 }
+
+// WHILE LOOP 👈 NUEVO
+while_stmt = {
+  keyword_while ~ expr_boolean ~ keyword_do ~ stmt
+}
+//expr_boolean = { expr ~ (keyword_and ~ expr)* }
+expr_boolean = _{ expr }
 
 // param_list = { ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ (semicolon ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean))* }
 //
