@@ -5,7 +5,7 @@ use super::procedures::parse_proc_decl;
 use super::statements::parse_stmt;
 use super::symbol_table::SymbolTable;
 use crate::Rule;
-use crate::parser::ast::{Stmt, VarType};
+use crate::parser::ast::{ForDir, Stmt, VarType};
 use crate::runtime::std_lib::builtins::BUILTINS;
 use pest::iterators::{Pair, Pairs};
 
@@ -44,7 +44,7 @@ pub fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 }
 
 pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
-    //println!("parse_proc_decl: Rule::param_list entro");
+    //println!("parse_program entro");
     let program_pair = pairs.next().expect("No se encontró program");
     let mut sym_table = SymbolTable::new();
     let mut stmts: Vec<Stmt> = Vec::new(); // 👈 AST completo del programa
@@ -83,7 +83,6 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
 
             Rule::block => block_pair_opt = Some(p),
             Rule::proc_decl => {
-                // 👈 NUEVO
                 //println!("============");
                 //println!("parse_program entro al match");
                 //println!("Rule::proc_decl entro");
@@ -99,7 +98,6 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
             }
 
             Rule::func_decl => {
-                // 👈 NUEVO
                 //println!("============");
                 //println!("parse_program entro al match brazo Rule::func_decl entro");
                 //println!("Rule::func_decl p:{}", p.clone());
@@ -112,7 +110,36 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     body: func.body.clone(),
                 });
             }
+            // for loop
+            Rule::for_stmt => {
+                // 👈 NUEVO
+                //println!("parse_program: brazo Rule::for_stmt entro");
+                let mut inner = pairs.clone().into_iter();
 
+                let var = inner.next().unwrap().as_str().to_string(); // ident
+                inner.next(); // := (assign_op)
+
+                let start = parse_expr(inner.next().unwrap(), &sym_table);
+                let dir_token = inner.next().unwrap(); // "to" o "downto"
+
+                let direction = if dir_token.as_rule() == Rule::keyword_to {
+                    ForDir::To
+                } else {
+                    ForDir::DownTo
+                };
+
+                let end = parse_expr(inner.next().unwrap(), &sym_table);
+                inner.next(); // "do"
+                let body = parse_stmt(inner.next().unwrap(), &sym_table);
+
+                stmts.push(Stmt::For {
+                    var,
+                    start,
+                    end,
+                    direction,
+                    body: Box::new(body),
+                })
+            }
             _ => {}
         }
     }
