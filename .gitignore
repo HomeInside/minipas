@@ -54,3 +54,8 @@ rust-project.json
 *.sublime-workspace
 .env.*
 .env
+
+# minipas files
+*.mpc
+*.mpp
+*.mpa
