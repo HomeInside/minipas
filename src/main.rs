@@ -85,7 +85,6 @@ fn parse_args() -> Result<AppArgs, pico_args::Error> {
     Ok(args)
 }
 
-
 fn main() {
     println!("minipas v.{}", env!("CARGO_PKG_VERSION"));
     match parse_args() {
