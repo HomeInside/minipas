@@ -1,3 +1,4 @@
+use super::binary::{save_ast_as_text, save_pairs_as_text};
 use super::core::read_source;
 use crate::parser::{gen_ast, gen_pairs};
 use std::path::PathBuf;
@@ -20,12 +21,20 @@ pub fn emit_cmd(input: Option<PathBuf>) {
 
     let src = read_source(&input);
     let pairs = gen_pairs(&src);
-    println!();
-    println!("Pairs");
-    println!("{:#?}", pairs);
 
     let (ast, _) = gen_ast(&src);
     println!();
-    println!("AST");
-    println!("{:#?}", ast);
+
+    let stem = input.file_stem().unwrap().to_string_lossy();
+    let pairs_file = input.with_file_name(format!("{}.mpp", stem)); // mp pairs file
+    let ast_file = input.with_file_name(format!("{}.mpa", stem)); // mp ast file
+
+    println!("generating Pairs file: {:?}", pairs_file);
+    save_pairs_as_text(&pairs, &pairs_file);
+
+    println!("generating AST file (text): {:?}", ast_file);
+    save_ast_as_text(ast, &ast_file);
+
+    println!();
+    println!("OK.");
 }
