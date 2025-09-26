@@ -78,6 +78,37 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
             _ => panic!("Operador no soportado para booleanos"),
         },
 
+        // nil usage
+        (Value::Nil, Value::Nil) => match op {
+            Op::Equal => Value::Boolean(true),
+            Op::NotEqual => Value::Boolean(false),
+            // <, <=, >, >= no tienen sentido
+            Op::Less | Op::LessEq | Op::Greater | Op::GreaterEq => {
+                panic!("can't compare `nil` with `nil`")
+            }
+            _ => panic!("Operador no soportado para nil"),
+        },
+
+        (Value::Nil, rv) => match op {
+            Op::Equal => Value::Boolean(false),
+            Op::NotEqual => Value::Boolean(true),
+            // <, <=, >, >= no tienen sentido
+            Op::Less | Op::LessEq | Op::Greater | Op::GreaterEq => {
+                panic!("can't compare `nil` with `{:?}`", rv)
+            }
+            _ => panic!("Operador no soportado con nil"),
+        },
+
+        (lv, Value::Nil) => match op {
+            Op::Equal => Value::Boolean(false),
+            Op::NotEqual => Value::Boolean(true),
+            // <, <=, >, >= no tienen sentido
+            Op::Less | Op::LessEq | Op::Greater | Op::GreaterEq => {
+                panic!("can't compare `{:?}` with `nil`", lv)
+            }
+            _ => panic!("Operador no soportado con nil"),
+        },
+
         _ => panic!("Operación inválida entre tipos"),
     }
 }
