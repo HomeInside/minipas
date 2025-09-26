@@ -12,14 +12,13 @@ use std::sync::LazyLock;
 pub static BUILTINS: LazyLock<HashMap<String, Builtin>> = LazyLock::new(default_builtins);
 
 pub type RuntimeFn = fn(Vec<Value>) -> Value;
+pub type RuntimeProc = fn(Vec<Value>) -> ();
 
 #[derive(Clone)]
 pub enum Builtin {
     Const(Value),
-    Func(RuntimeFn), // devuelve un Value
-    // TODO
-    #[allow(dead_code)]
-    Proc(RuntimeFn), // puede devolver Value::Str("") o Value::Integer(0)
+    Func(RuntimeFn),
+    Proc(RuntimeProc),
 }
 
 pub fn default_builtins() -> HashMap<String, Builtin> {
@@ -98,8 +97,6 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     // alias: str(), to_str()
     builtin.insert("to_str".to_string(), Builtin::Func(to_str_fn));
 
-    // Procedimientos
-    // builtin.insert("writeln".to_string(), Builtin::Proc(writeln_fn));
     // === testing ===
     builtin.insert("assert".to_string(), Builtin::Proc(assert_fn));
     builtin.insert("assert_equals".to_string(), Builtin::Proc(assert_eq_fn));
