@@ -1,7 +1,7 @@
 use super::utils::{get_input_default, unescape_string};
 use crate::parser::ast::Value;
 
-pub fn writeln_fn(args: Vec<Value>) -> Value {
+pub fn writeln_fn(args: Vec<Value>) {
     let parts: Vec<String> = args
         .into_iter()
         .map(|v| unescape_string(&v.to_string()))
@@ -9,14 +9,12 @@ pub fn writeln_fn(args: Vec<Value>) -> Value {
         .collect();
 
     println!("{}", parts.join(" "));
-    Value::Nil
 }
 
-pub fn write_fn(args: Vec<Value>) -> Value {
+pub fn write_fn(args: Vec<Value>) {
     let parts: Vec<String> = args.into_iter().map(|v| unescape_string(&v.to_string())).collect();
 
     print!("{}", parts.join(" "));
-    Value::Nil
 }
 
 pub fn readln_fn(args: Vec<Value>) -> Value {

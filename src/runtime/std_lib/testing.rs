@@ -1,6 +1,6 @@
 use crate::parser::ast::Value;
 
-pub fn assert_fn(args: Vec<Value>) -> Value {
+pub fn assert_fn(args: Vec<Value>) {
     if args.len() != 1 {
         panic!("assert() necesita exactamente 1 argumento");
     }
@@ -12,11 +12,9 @@ pub fn assert_fn(args: Vec<Value>) -> Value {
         }
         _ => panic!("assert() solo acepta un valor booleano"),
     };
-
-    Value::Nil
 }
 
-pub fn assert_eq_fn(args: Vec<Value>) -> Value {
+pub fn assert_eq_fn(args: Vec<Value>) {
     if args.len() != 2 {
         panic!("assert_eq() necesita exactamente 2 argumentos");
     }
@@ -24,11 +22,9 @@ pub fn assert_eq_fn(args: Vec<Value>) -> Value {
     if args[0] != args[1] {
         panic!("Assertion failed: expected `{}`, got `{}`\n", args[0], args[1]);
     }
-
-    Value::Nil
 }
 
-pub fn panic_fn(args: Vec<Value>) -> Value {
+pub fn panic_fn(args: Vec<Value>) {
     if args.len() != 1 {
         panic!("panic() necesita exactamente 1 argumento");
     }
