@@ -79,6 +79,7 @@ test:build
     ./target/debug/minipas run examples/std_math.mp
     ./target/debug/minipas run examples/strings.mp
     ./target/debug/minipas run examples/sys.mp
+    ./target/debug/minipas run examples/testing.mp
     ./target/debug/minipas run examples/variables.mp
     ./target/debug/minipas run examples/while_loop.mp
     ./target/debug/minipas run examples/writeln.mp
@@ -118,6 +119,7 @@ test-rel:release
     ./target/release/minipas run examples/std_math.mp
     ./target/release/minipas run examples/strings.mp
     ./target/release/minipas run examples/sys.mp
+    ./target/release/minipas run examples/testing.mp
     ./target/release/minipas run examples/variables.mp
     ./target/release/minipas run examples/while_loop.mp
     ./target/release/minipas run examples/writeln.mp
