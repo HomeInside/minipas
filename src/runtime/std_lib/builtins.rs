@@ -5,6 +5,8 @@ use crate::runtime::std_lib::in_out::*;
 use crate::runtime::std_lib::math::*;
 use crate::runtime::std_lib::strings::*;
 use crate::runtime::std_lib::sys::*;
+use crate::runtime::std_lib::testing::*;
+
 use std::collections::HashMap;
 use std::sync::LazyLock;
 pub static BUILTINS: LazyLock<HashMap<String, Builtin>> = LazyLock::new(default_builtins);
@@ -24,8 +26,8 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     let mut builtin: HashMap<String, Builtin> = HashMap::new();
 
     // === input/output ===
-    builtin.insert("writeln".to_string(), Builtin::Func(writeln_fn));
-    builtin.insert("write".to_string(), Builtin::Func(write_fn));
+    builtin.insert("writeln".to_string(), Builtin::Proc(writeln_fn));
+    builtin.insert("write".to_string(), Builtin::Proc(write_fn));
     builtin.insert("readln".to_string(), Builtin::Func(readln_fn));
     builtin.insert("format".to_string(), Builtin::Func(format_fn));
 
@@ -67,12 +69,12 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
 
     // === sys ===
     builtin.insert("random".to_string(), Builtin::Func(random_fn));
-    builtin.insert("sleep".to_string(), Builtin::Func(sleep_fn)); // delay
+    builtin.insert("sleep".to_string(), Builtin::Func(sleep_fn)); // delay // Proc
     builtin.insert("platform".to_string(), Builtin::Func(platform_fn));
     builtin.insert("version".to_string(), Builtin::Func(version_fn));
-    builtin.insert("exit".to_string(), Builtin::Func(exit_fn));
+    builtin.insert("exit".to_string(), Builtin::Func(exit_fn)); // Proc
     //alias: clear(), clearscreen()
-    builtin.insert("clrscr".to_string(), Builtin::Func(clear_screen_fn));
+    builtin.insert("clrscr".to_string(), Builtin::Func(clear_screen_fn)); // Proc
 
     // === date_time ===
     builtin.insert("date".to_string(), Builtin::Func(date_fn));
@@ -98,6 +100,10 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
 
     // Procedimientos
     // builtin.insert("writeln".to_string(), Builtin::Proc(writeln_fn));
+    // === testing ===
+    builtin.insert("assert".to_string(), Builtin::Proc(assert_fn));
+    builtin.insert("assert_equals".to_string(), Builtin::Proc(assert_eq_fn));
+    builtin.insert("panic".to_string(), Builtin::Proc(panic_fn));
 
     builtin
 }
