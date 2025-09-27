@@ -24,13 +24,20 @@ impl fmt::Display for Value {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Value::Integer(i) => write!(f, "{}", i),
-            Value::Real(r) => write!(f, "{}", r),
+            Value::Real(r) => {
+                if r.fract() == 0.0 {
+                    write!(f, "{:.1}", r)
+                } else {
+                    write!(f, "{}", r)
+                }
+            }
             Value::Str(s) => write!(f, "{}", s),
             Value::Boolean(b) => write!(f, "{}", b),
             Value::Nil => write!(f, "nil"),
         }
     }
 }
+
 impl Value {
     pub fn as_int(&self) -> i64 {
         match self {
