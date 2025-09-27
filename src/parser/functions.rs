@@ -7,7 +7,6 @@ use super::types::parse_type;
 use crate::Rule;
 use pest::iterators::Pair;
 
-// Parsea la declaración de función completa
 pub fn parse_func_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Function {
     //println!("parse_func_decl: entro");
     assert_eq!(pair.as_rule(), Rule::func_decl);
@@ -15,6 +14,7 @@ pub fn parse_func_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Functio
 
     // "function" keyword
     let _kw = inner.next().unwrap();
+
     // nombre de la función
     let name_pair = inner.next().unwrap();
     let name = name_pair.as_str().to_string();
@@ -24,8 +24,14 @@ pub fn parse_func_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Functio
 
     // parámetros opcionales
     let next = inner.next().unwrap();
+
     let params = if next.as_rule() == Rule::param_list {
         let pl = parse_param_list(next);
+        // agregar params aqui
+        for p in &pl {
+            sym_table.insert(p.name.clone(), p.ty.clone());
+        }
+
         // ")" siguiente
         inner.next().unwrap();
         pl
@@ -38,6 +44,7 @@ pub fn parse_func_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Functio
     // ":" tipo de retorno
     let colon_pair = inner.next().unwrap();
     assert_eq!(colon_pair.as_rule(), Rule::colon);
+
     let type_pair = inner.next().unwrap();
     let ret_type = parse_type(type_pair);
 
@@ -45,21 +52,23 @@ pub fn parse_func_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Functio
     let semicolon_pair = inner.next().unwrap();
     assert_eq!(semicolon_pair.as_rule(), Rule::semicolon);
 
-    // var_section opcional
     let mut locals = Vec::new();
     let mut next_pair = inner.next().unwrap();
-    if next_pair.as_rule() == Rule::var_section {
-        locals = parse_var_section(Some(next_pair), sym_table);
-        // el siguiente es el block
+
+    // consumir posibles var_section(s)
+    while next_pair.as_rule() == Rule::var_section {
+        let pv = parse_var_section(Some(next_pair), sym_table);
+        locals.extend(pv);
+
+        // avanzar al siguiente par
         next_pair = inner.next().unwrap();
     }
 
-    // parse_block devuelve Stmt::Block, extraemos su contenido
+    // parse_block devuelve Stmt::Block, extraemos el contenido
     let Stmt::Block(body) = parse_block(next_pair, sym_table) else {
         panic!("El cuerpo de la función debe ser un bloque (begin...end)");
     };
 
-    //println!("parse_func_decl: saliendo");
     Function {
         name,
         params,
