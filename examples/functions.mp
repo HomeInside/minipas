@@ -1,4 +1,8 @@
 program test_functions;
+var i, j: integer;
+var x: boolean;
+var
+y,z:string;
 
 function saludar(): integer;
 begin
@@ -7,11 +11,17 @@ begin
 end
 
 function sumar(a:integer; b:integer): integer;
-var c: integer;
+var
+c: integer;
+d: integer;
+var e,f:string;
+
 begin
 	writeln("el valor de a es:", a);
 	writeln("el valor de b es:", b);
 	writeln("el valor de c es:", c);
+	writeln("el valor de d es:", d);
+	writeln("el valor de e es:", e);
 	c := a + b;
 	return c;
 end
