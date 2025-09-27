@@ -1,6 +1,5 @@
 use crate::parser::ast::{Function, Param, Procedure, VarType};
 use crate::runtime::std_lib::builtins::Builtin;
-//use crate::{Expr, Op, Stmt, Value};
 use std::collections::HashMap;
 pub type Environment = HashMap<String, Value>;
 use super::operators::apply_op;
@@ -42,14 +41,21 @@ impl RuntimeEnv {
         self.vars.insert(name.to_string(), val);
     }
 
-    // TO FIX
     // Declarar una variable nueva (por ejemplo en var_decl)
-    #[allow(dead_code)]
-    pub fn declare(&mut self, name: &str, val: Value) {
+    pub fn declare(&mut self, name: &str, val: VarType) {
         if self.vars.contains_key(name) {
             panic!("Variable '{}' ya declarada", name);
         }
-        self.vars.insert(name.to_string(), val);
+
+        let default_val = match val {
+            VarType::Integer => Value::Integer(0),
+            VarType::Real => Value::Real(0.0),
+            VarType::Boolean => Value::Boolean(false),
+            VarType::Str => Value::Str(String::new()),
+            VarType::Nil => Value::Nil,
+        };
+
+        self.vars.insert(name.to_string(), default_val);
     }
 }
 
