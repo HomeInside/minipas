@@ -143,3 +143,19 @@ test-rel:release
 gitc:
 	git fsck
 	git gc
+
+[doc('clean some files')]
+clean:
+    rm -fv *.mpc
+    rm -fv *.mpp
+    rm -fv *.mpa
+    rm -fv examples/*.mpc
+    rm -fv examples/*.mpp
+    rm -fv examples/*.mpa
+    rm -fv test/*.mpc
+    rm -fv test/*.mpp
+    rm -fv test/*.mpa
+
+[doc('cleaning the house')]
+clean-all:clean
+    cargo clean
