@@ -20,6 +20,20 @@ begin
 	writeln("la suma es:", c);
 end
 
+// - https://www.nachocabanes.com/pascal/curso/cupas08.php
+// forward
+procedure B(n: integer);
+begin
+  writeln('Entrando a B, con parámetro ', n);
+  if n>0 then A (n-1);
+end
+
+procedure A(n:integer);
+begin
+  writeln('Entrando a A, con parámetro ', n);
+  if n>0 then B(n-1);
+end
+
 begin
 	writeln();
 	saludo("minipas!");
@@ -27,4 +41,6 @@ begin
 	saludar();
 	writeln();
 	sumar(5,11);
+	writeln();
+  	A(10);
 end.
