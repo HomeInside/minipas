@@ -22,6 +22,7 @@ else
 end
 
 begin
+	writeln( 'factorial de un numero' );
 	writeln( 'Introduce un número entero (no muy grande)  ;-)' );
 	numero := to_int(readln());
 	result := factorial(numero);

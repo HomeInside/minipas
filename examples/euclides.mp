@@ -45,6 +45,7 @@ end
 }
 
 function mcd(a:integer; b:integer) : integer;
+var b:integer;
 begin
 	if b = 0 then
 		return a;

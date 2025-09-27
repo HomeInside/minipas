@@ -67,6 +67,7 @@ begin
 	write("esto", "va", "en", "la", "misma", "linea");
 	write();
 	write("true es", True);
+	write("false es", False);
 	write("...finalizando");
 
 end.

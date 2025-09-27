@@ -18,6 +18,7 @@ begin
 end
 
 begin
+	writeln( 'calcular numeros de fibonacci' );
 	writeln( 'Introduce un número entero (no muy grande)  ;-)' );
 	numero := to_int(readln());
 	result := fibonacci(numero);
