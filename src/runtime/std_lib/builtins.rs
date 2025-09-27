@@ -66,12 +66,13 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
 
     // === sys ===
     builtin.insert("random".to_string(), Builtin::Func(random_fn));
-    builtin.insert("sleep".to_string(), Builtin::Func(sleep_fn)); // delay // Proc
+    // alias: delay()
+    builtin.insert("sleep".to_string(), Builtin::Proc(sleep_fn));
     builtin.insert("platform".to_string(), Builtin::Func(platform_fn));
     builtin.insert("version".to_string(), Builtin::Func(version_fn));
-    builtin.insert("exit".to_string(), Builtin::Func(exit_fn)); // Proc
+    builtin.insert("exit".to_string(), Builtin::Proc(exit_fn));
     //alias: clear(), clearscreen()
-    builtin.insert("clrscr".to_string(), Builtin::Func(clear_screen_fn)); // Proc
+    builtin.insert("clrscr".to_string(), Builtin::Proc(clear_screen_fn));
 
     // === date_time ===
     builtin.insert("date".to_string(), Builtin::Func(date_fn));

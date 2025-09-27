@@ -36,7 +36,7 @@ pub fn random_fn(args: Vec<Value>) -> Value {
     }
 }
 
-pub fn sleep_fn(args: Vec<Value>) -> Value {
+pub fn sleep_fn(args: Vec<Value>) {
     match args.len() {
         0 => {
             // Let's sleep for 1 second:
@@ -67,9 +67,6 @@ pub fn sleep_fn(args: Vec<Value>) -> Value {
         }
         _ => panic!("sleep() acepta como máximo 1 argumento"),
     }
-    // devolver algo para cumplir con el tipo
-    // Value::None
-    Value::Nil
 }
 
 pub fn platform_fn(_args: Vec<Value>) -> Value {
@@ -87,7 +84,7 @@ pub fn version_fn(_args: Vec<Value>) -> Value {
     Value::Str(formatted)
 }
 
-pub fn exit_fn(args: Vec<Value>) -> Value {
+pub fn exit_fn(args: Vec<Value>) {
     let code = match args.len() {
         0 => 0, // si no hay argumento, salir con 0
         1 => match &args[0] {
@@ -99,7 +96,7 @@ pub fn exit_fn(args: Vec<Value>) -> Value {
 
     process::exit(code)
 }
-pub fn clear_screen_fn(_args: Vec<Value>) -> Value {
+
+pub fn clear_screen_fn(_args: Vec<Value>) {
     print!("\x1B[2J \x1B[0;0f");
-    Value::Nil
 }
