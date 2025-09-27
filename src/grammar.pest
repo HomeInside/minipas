@@ -13,7 +13,7 @@ string_literal = @{
   | ("'" ~ ("\\'" | "\\\\" | (!"'" ~ ANY))* ~ "'")
 }
 
-boolean_literal = { "True" | "False" }
+boolean_literal = { "True" | "False" | "TRUE" | "FALSE"} // 👈 nuevo
 
 // Tokens
 keyword_var       = { "var" }
@@ -103,7 +103,7 @@ proc_decl = {
 
 // functions
 func_decl = {
-    keyword_function ~ ident ~ lparen ~ (param_list)? ~ rparen ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon ~ var_section? ~ block ~ semicolon?
+    keyword_function ~ ident ~ lparen ~ (param_list)? ~ rparen ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ semicolon ~ (var_section)? ~ block ~ semicolon?
 }
 
 // return
