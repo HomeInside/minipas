@@ -9,6 +9,8 @@ use pest::iterators::Pairs;
 
 use crate::Rule;
 
+// TODO
+// guardar la tabla de simbolos
 pub fn gen_bincode_from_ast(code: Vec<Stmt>, output: &PathBuf) {
     let config = config::standard();
 
@@ -19,6 +21,8 @@ pub fn gen_bincode_from_ast(code: Vec<Stmt>, output: &PathBuf) {
     std::fs::write(output, encoded).expect("Error escribiendo binario");
 }
 
+// TODO
+// leer la tabla de simbolos
 pub fn read_ast_from_bincode(input: &PathBuf) -> Vec<Stmt> {
     let bytes = std::fs::read(input).expect("No se pudo leer el archivo .mpc");
     let config = bincode::config::standard();
