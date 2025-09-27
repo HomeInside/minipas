@@ -126,14 +126,14 @@ test-rel:release
     #
     # crear un dump de varios archivos
     #
-    ./target/debug/minipas build examples/program_full.mp -o examples/program_full.mpc
+    ./target/release/minipas build examples/program_full.mp -o examples/program_full.mpc
     test -f examples/program_full.mpc || (echo "Error: El archivo 'examples/program_full.mpc' no existe." && exit 1)
     #
-    ./target/debug/minipas emit examples/program_full.mp
+    ./target/release/minipas emit examples/program_full.mp
     test -f examples/program_full.mpp || (echo "Error: El archivo 'examples/program_full.mpp' no existe." && exit 1)
     test -f examples/program_full.mpa || (echo "Error: El archivo 'examples/program_full.mpa' no existe." && exit 1)
     #
-    ./target/debug/minipas check examples/program_full.mp
+    ./target/release/minipas check examples/program_full.mp
     #
     rm -v examples/program_full.mpc
     rm -v examples/program_full.mpp

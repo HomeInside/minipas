@@ -1,11 +1,10 @@
-// Minipas grammar.pest 1.5.0
+// Minipas grammar.pest 1.7.0
 //
 WHITESPACE = _{ (" " | "\t" | NEWLINE | comment)+ }
 NEWLINE    = _{ "\n" | "\r\n" }
 
 comment_single = { "//" ~ (!NEWLINE ~ ANY)* }
 comment_braces = { "{" ~ (!"}" ~ ANY)* ~ "}" }
-// comment_braces = { "{" ~ (!"}" ~ ANY)* ~ ("}" | EOI) }
 
 comment        =  { comment_single | comment_braces }
 string_literal = @{
@@ -13,7 +12,8 @@ string_literal = @{
   | ("'" ~ ("\\'" | "\\\\" | (!"'" ~ ANY))* ~ "'")
 }
 
-boolean_literal = { "True" | "False" | "TRUE" | "FALSE"} // 👈 nuevo
+boolean_literal = { "True" | "False" | "TRUE" | "FALSE" }
+// 👈 nuevo
 
 // Tokens
 keyword_var       = { "var" }
@@ -58,13 +58,12 @@ colon     = { ":" }
 lparen    = { "(" }
 rparen    = { ")" }
 
-// expr    = { sum }
 expr    = { sum ~ (cmp_op ~ sum)? }
 sum     = { product ~ ((add_op | sub_op) ~ product)* }
 product = { factor ~ ((mul_op | div_op | mod_op) ~ factor)* }
 
 //
-// Nueva regla para llamada a función/ procedimiento
+// llamadas a función/ procedimiento
 func_call = { ident ~ lparen ~ (expr_list)? ~ rparen }
 
 factor = { number | string_literal | boolean_literal | func_call | ident | keyword_nil | "(" ~ expr ~ ")" }
@@ -73,21 +72,16 @@ factor = { number | string_literal | boolean_literal | func_call | ident | keywo
 //
 // factor = { ("-"? ~ number) | string_literal | boolean_literal | func_call | ident | "(" ~ expr ~ ")" }
 
-string = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
-// expr_item = { string_literal | expr }
-expr_item = { expr | string_literal }
+string    = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+expr_item =  { expr | string_literal }
 
 expr_list = { expr_item ~ (comma ~ expr_item)* }
 expr_stmt = { expr ~ semicolon }
-
-// Comparación booleana
-// bool_expr = { expr ~ cmp_op ~ expr }
 
 // Sentencias
 block = { "begin" ~ stmt* ~ "end" }
 stmt  = { comment* ~ (if_stmt | for_stmt | while_stmt | block | assignment | expr_stmt | return_stmt) }
 
-// if_stmt = { keyword_if ~ bool_expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 if_stmt = { keyword_if ~ expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 
 var_decl = { ident ~ ("," ~ ident)* ~ ":" ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ ";" }
@@ -115,14 +109,12 @@ for_stmt = {
   ~ (keyword_to | keyword_downto) ~ expr ~ keyword_do ~ stmt
 }
 
-// WHILE LOOP 👈 NUEVO
-while_stmt = {
+// WHILE LOOP
+while_stmt   =  {
     keyword_while ~ expr_boolean ~ keyword_do ~ stmt
 }
-// expr_boolean = { expr ~ (keyword_and ~ expr)* }
 expr_boolean = _{ expr }
 
-// param_list = { ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean) ~ (semicolon ~ ident ~ (comma ~ ident)* ~ colon ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean))* }
 //
 param_list   = { param ~ (semicolon ~ param)* }
 param        = { ident ~ colon ~ type_keyword }
@@ -130,6 +122,5 @@ type_keyword = { keyword_integer | keyword_real | keyword_string | keyword_boole
 
 //
 program = {
-    SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ (proc_decl | func_decl)* // 👈 permitir declaraciones antes del bloque principal
-  ~ block ~ "." ~ EOI
+    SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ (proc_decl | func_decl)* ~ block ~ "." ~ EOI
 }
