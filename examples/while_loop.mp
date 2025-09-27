@@ -2,14 +2,16 @@ program testWhile;
 
 var
   frase: string;
-  i: integer;
+  i,j,n,
+  total: integer;
+  resultado: integer;
 
 function factorial(num:integer) : integer;
 begin
-	if num = 1 then
-	return 1; //Aseguramos que tenga salida siempre
-else
-	return num * factorial( num-1 ); // Caso general
+  if num = 1 then
+    return 1; //Aseguramos que tenga salida siempre
+  else
+    return num * factorial( num-1 ); // Caso general
 end
 
 function sumar(a:integer; b:integer): integer;

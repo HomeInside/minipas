@@ -25,8 +25,8 @@ begin
 	writeln("concatenar:", concat("caracteres", "y", PI));
 	writeln("concatenar:", concat("caracteres", "y", E));
 	writeln("concatenar:", concat(PI, E));
-	writeln("concatenar:", concat(TRUE, true));
-	writeln("concatenar:", concat(FALSE, false));
+	writeln("concatenar:", concat(TRUE, True));
+	writeln("concatenar:", concat(FALSE, False));
 
 	writeln();
 	writeln(concat("--",trim(cadena), "--"));
