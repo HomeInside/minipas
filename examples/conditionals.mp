@@ -14,7 +14,7 @@
 {    - Turbo Pascal 7.0    }
 {    - Turbo Pascal 5.0    }
 {    - Surpas 1.00         }
-{    - Minipas 0.9.0       }
+{    - Minipas 1.7.0       }
 {--------------------------}
 
 program testConditionals;

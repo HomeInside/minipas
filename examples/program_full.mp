@@ -2,7 +2,9 @@
   programming in Minipas
   demo with all
   Author: diniremix <diniremix@gmail.com>
+  Minipas version: 1.7.0
 }
+
 program miprograma1;
 
 var a, b: integer;
