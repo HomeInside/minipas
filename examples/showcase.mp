@@ -2,7 +2,7 @@
   programming in Minipas
   Minipas showcase program
   Author: diniremix <diniremix@gmail.com>
-  Minipas version: 1.3.0
+  Minipas version: 1.7.0
 }
 
 program showcase;
@@ -11,6 +11,7 @@ var
     r          : real;
     s1, s2, s3 : string;
     flag       : boolean;
+    input      : integer;
 
 // -------------------------
 // Funciones
@@ -71,11 +72,13 @@ end
 // -------------------------
 // Procedimiento de impresión / demostración
 // -------------------------
+
 procedure mostrar_estadisticas();
 var t: integer;
 var result: integer;
 var num1: integer;
 var num2: integer;
+var resultado: real;
 
 begin
     writeln("----- Demo de expresiones -----");
@@ -155,6 +158,19 @@ begin
 	writeln("Hora actual: ", time());
 	writeln("Fecha y hora: ", date_time());
 
+    // uso de booleanos
+    writeln("True es:", True);
+    writeln("False es:", False);
+    writeln("TRUE es:", TRUE);
+    writeln("FALSE es:", FALSE);
+    writeln("nulo es:", nil);
+
+    writeln();
+    writeln("usando assert y assert_equals");
+    assert((4 % 2) = 0);
+    assert_equals(1, 1);
+    //panic("esto genera panico y detiene el programa");
+
     writeln("----- fin del demo -----");
 end
 
@@ -162,8 +178,10 @@ end
 // Programa principal
 // -------------------------
 begin
+    writeln("=============");
     writeln("Inicio del demo_all");
     writeln();
+    writeln("=============");
     writeln("escribe un numero");
 	input := to_int(readln());
     writeln("el numero es:", input);
