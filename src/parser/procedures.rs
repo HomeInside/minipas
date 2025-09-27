@@ -23,8 +23,14 @@ pub fn parse_proc_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Procedu
 
     // parámetros opcionales
     let next = inner.next().unwrap();
+
     let params = if next.as_rule() == Rule::param_list {
         let pl = parse_param_list(next);
+
+        for p in &pl {
+            sym_table.insert(p.name.clone(), p.ty.clone());
+        }
+
         // ")" siguiente
         inner.next().unwrap();
         pl
@@ -42,8 +48,10 @@ pub fn parse_proc_decl(pair: Pair<Rule>, sym_table: &mut SymbolTable) -> Procedu
     let mut locals = Vec::new();
 
     let mut next_pair = inner.next().unwrap();
+
     if next_pair.as_rule() == Rule::var_section {
-        locals = parse_var_section(Some(next_pair), sym_table);
+        let pv = parse_var_section(Some(next_pair), sym_table);
+        locals.extend(pv);
         // el siguiente es el block
         next_pair = inner.next().unwrap();
     }
