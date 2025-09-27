@@ -1,15 +1,15 @@
 program demo_variables;
-var
-a,b: integer;
+var a:integer;
+var b:real;
+var c:string;
+var d:boolean;
 
-var
-c: integer;
-var demo1: integer;
-var demo2: integer;
-var demoEs3: integer;
-var DemoEs4: integer;
-var DEMOES5: integer;
-var DeMo3Es6: integer;
+var demo1,
+demo2,
+demoEs3,
+DemoEs4,
+DEMOES5,
+DeMo3Es6: integer;
 
 var snake_case: string;
 var _snake_case: string;
@@ -31,13 +31,56 @@ formato: boolean;
 var truesa, falsea: boolean;
 var beging: boolean;
 
+
+function funcion(): integer;
+var e:integer; f:real; g:string; h:boolean;
+var i:integer;
 begin
-	a:=47;
-	b:= (a*a);
-	c:= (b*b)*(a)+1;
+    writeln("dentro de la funcion");
+    writeln("e es:", e);
+    writeln("f es:", f);
+    writeln("g es:", g);
+    writeln("h es:", h);
+    writeln("i es:", i);
+    return 0;
+end
+
+function sumar(a:integer; b: integer): integer;
+var c: integer;
+begin
+	writeln("el valor de a es:", a);
+	writeln("el valor de b es:", b);
+	c := a + b;
+	return c;
+end
+
+procedure procedimiento();
+var j:integer; k:real; l:string; m:boolean;
+var n:integer;
+begin
+    writeln("dentro del procedimiento");
+    writeln("j es:", j);
+    writeln("k es:", k);
+    writeln("l es:", l);
+    writeln("m es:", m);
+    writeln("n es:", n);
+end
+
+begin
+    writeln("la suma es:", sumar(1,2));
     writeln("'a' value is:", a);
     writeln("'b' value is:", b);
     writeln("'c' value is:", c);
+    writeln("'d' value is:", d);
+
+	a:=47;
+	b:= (a*a);
+	c:= (b*b)*(a)+1;
+	c:= c % 3;
+    writeln();
+    funcion();
+    procedimiento();
+
     writeln();
     writeln("'demo1' value is:", demo1);
     writeln("'demo2' value is:", demo2);
@@ -49,7 +92,7 @@ begin
 
     snake_case := "soy snake_case";
     _snake_case := "soy _snake_case";
-    __1_uno_ := "soy __1_uno_";
+    __1_uno_ := 1.234;
 
     writeln("'snake_case' value is:", snake_case);
     writeln("'_snake_case' value is:", _snake_case);
@@ -71,5 +114,4 @@ begin
 	writeln("beging: es", beging);
 	writeln("False es", FALSE, "ó es", False);
 	writeln("True es", TRUE, "ó es", True);
-
 end.
