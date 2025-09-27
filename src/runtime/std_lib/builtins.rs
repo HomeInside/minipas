@@ -34,8 +34,6 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("PI".to_string(), Builtin::Const(Value::Real(std::f64::consts::PI)));
     //número de Euler
     builtin.insert("E".to_string(), Builtin::Const(Value::Real(std::f64::consts::E)));
-    builtin.insert("TRUE".to_string(), Builtin::Const(Value::Boolean(true)));
-    builtin.insert("FALSE".to_string(), Builtin::Const(Value::Boolean(false)));
 
     // === Funciones matemáticas básicas ===
     builtin.insert("pow".to_string(), Builtin::Func(pow_fn));
