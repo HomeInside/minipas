@@ -99,6 +99,39 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
                         body: Box::new(body),
                     })
                 }
+                // repeat loop // 👈 NUEVO
+                Rule::repeat_stmt => {
+                    //println!("============");
+                    //println!("parse_stmt entro al match brazo Rule::repeat_stmt entro");
+                    //let mut inner = inner.into_inner().peekable();
+                    let mut inner = inner.into_inner();
+
+                    // consumir 'repeat'
+                    let _repeat_kw = inner.next().expect("Se esperaba 'repeat'");
+
+                    // recoger sentencias hasta 'until'
+                    let mut body = Vec::new();
+                    while let Some(next) = inner.peek() {
+                        if next.as_rule() == Rule::keyword_until {
+                            break;
+                        }
+                        let stmt_pair = inner.next().unwrap();
+                        body.push(parse_stmt(stmt_pair, sym_table));
+                    }
+
+                    // consumir 'until'
+                    let _until_kw = inner.next().expect("Se esperaba 'until' en repeat");
+
+                    // condición
+                    let cond_pair = inner.next().expect("Se esperaba expresión en repeat...until");
+                    let condition = parse_expr(cond_pair, sym_table);
+
+                    // consumir ';'
+                    let _semicolon = inner.next().expect("Se esperaba ';' en repeat");
+                    assert_eq!(_semicolon.as_rule(), Rule::semicolon);
+
+                    Stmt::Repeat { body, condition }
+                } //repeat_stmt
 
                 Rule::return_stmt => parse_return_stmt(inner, sym_table),
                 other => panic!("Regla inesperada en stmt: {:?}", other),
