@@ -48,7 +48,6 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
             Op::LessEq => Value::Boolean(lf <= rf),
             Op::Equal => Value::Boolean(lf == rf),
             Op::NotEqual => Value::Boolean(lf != rf),
-            //Op::Mod => Value::Real((lf % & rf) as f64),
             Op::Mod => {
                 if rf == 0.0 {
                     panic!("attempt to divide by zero");
@@ -60,6 +59,53 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
 
         (Value::Integer(li), Value::Real(rf)) => apply_op(Value::Real(li as f64), op, Value::Real(rf)),
         (Value::Real(lf), Value::Integer(ri)) => apply_op(Value::Real(lf), op, Value::Real(ri as f64)),
+
+        (Value::Integer(lf), Value::Byte(ri)) => apply_op(Value::Integer(lf), op, Value::Integer(ri as i64)),
+        (Value::Byte(lf), Value::Integer(ri)) => apply_op(Value::Integer(lf as i64), op, Value::Integer(ri)),
+        (Value::Byte(lf), Value::Real(ri)) => apply_op(Value::Real(lf as f64), op, Value::Real(ri)),
+        (Value::Real(lf), Value::Byte(ri)) => apply_op(Value::Real(lf), op, Value::Real(ri as f64)),
+
+        (Value::Byte(li), Value::Byte(ri)) => match op {
+            Op::Add => {
+                let res = li as i16 + ri as i16;
+                if res > u8::MAX as i16 {
+                    panic!("overflow en operación Byte + Byte: {} + {}", li, ri);
+                }
+                Value::Byte(res as u8)
+            }
+            Op::Sub => {
+                let res = li as i16 - ri as i16;
+                if res < 0 {
+                    panic!("underflow en operación Byte - Byte: {} - {}", li, ri);
+                }
+                Value::Byte(res as u8)
+            }
+            Op::Mul => {
+                let res = li as i16 * ri as i16;
+                if res > u8::MAX as i16 {
+                    panic!("overflow en operación Byte * Byte: {} * {}", li, ri);
+                }
+                Value::Byte(res as u8)
+            }
+            Op::Div => {
+                if ri == 0 {
+                    panic!("attempt to divide by zero");
+                }
+                Value::Byte(li / ri)
+            }
+            Op::Mod => {
+                if ri == 0 {
+                    panic!("attempt to divide by zero");
+                }
+                Value::Byte(li % ri)
+            }
+            Op::Greater => Value::Boolean(li > ri),
+            Op::Less => Value::Boolean(li < ri),
+            Op::GreaterEq => Value::Boolean(li >= ri),
+            Op::LessEq => Value::Boolean(li <= ri),
+            Op::Equal => Value::Boolean(li == ri),
+            Op::NotEqual => Value::Boolean(li != ri),
+        },
 
         (Value::Str(ls), Value::Str(rs)) => match op {
             Op::Add => Value::Str(ls + &rs),
