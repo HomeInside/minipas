@@ -17,6 +17,14 @@ begin
 	writeln();
 	writeln("platform:", platform());
 	writeln("version:", version());
+	writeln();
+	assert_equals(typeinfo(54321), "Integer");
+	assert_equals(typeinfo(1.234), "Real");
+	assert_equals(typeinfo("aloha"), "String");
+	assert_equals(typeinfo(True), "Boolean");
+  	assert_equals(typeinfo(nil), "Nil");
+
+	writeln();
 	writeln("exit:", exit());
 	writeln("terminado");
 end.
