@@ -1,21 +1,23 @@
 use bincode::{Decode, Encode};
 use std::fmt;
 
-#[derive(Encode, Decode, Debug, Clone, PartialEq)]
+#[derive(Encode, Decode, Debug, Clone, PartialEq, PartialOrd)]
 pub enum VarType {
     Integer,
     Real,
     Str,
     Boolean,
+    Byte,
     Nil,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub enum Value {
     Integer(i64),
     Real(f64),
     Str(String),
     Boolean(bool),
+    Byte(u8),
     Nil,
 }
 
@@ -32,6 +34,7 @@ impl fmt::Display for Value {
             }
             Value::Str(s) => write!(f, "{}", s),
             Value::Boolean(b) => write!(f, "{}", b),
+            Value::Byte(b) => write!(f, "{}", b),
             Value::Nil => write!(f, "nil"),
         }
     }

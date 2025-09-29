@@ -111,6 +111,7 @@ pub fn typeinfo_fn(args: Vec<Value>) -> Value {
         Value::Real(_) => "Real",
         Value::Str(_) => "String",
         Value::Boolean(_) => "Boolean",
+        Value::Byte(_) => "Byte",
         Value::Nil => "Nil",
     };
 

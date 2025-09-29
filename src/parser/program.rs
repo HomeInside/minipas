@@ -67,6 +67,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                             Rule::keyword_real => var_type = Some(VarType::Real),
                             Rule::keyword_string => var_type = Some(VarType::Str),
                             Rule::keyword_boolean => var_type = Some(VarType::Boolean),
+                            Rule::keyword_byte => var_type = Some(VarType::Byte),
                             _ => {}
                         }
                     }
