@@ -29,7 +29,6 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
                     Stmt::Expr(expr)
                 }
                 Rule::for_stmt => {
-                    // 👈 NUEVO
                     //println!("parse_stmt brazo Rule::stmt -> Rule::for_stmt entro");
                     let mut for_inner = inner.into_inner();
 
@@ -105,9 +104,11 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
                     //println!("parse_stmt entro al match brazo Rule::repeat_stmt entro");
                     //let mut inner = inner.into_inner().peekable();
                     let mut inner = inner.into_inner();
+                    //println!("parse_stmt Rule::repeat_stmt inner: {:?}", inner);
 
                     // consumir 'repeat'
                     let _repeat_kw = inner.next().expect("Se esperaba 'repeat'");
+                    //println!("parse_stmt Rule::repeat_stmt _repeat_kw: {:?}", _repeat_kw);
 
                     // recoger sentencias hasta 'until'
                     let mut body = Vec::new();
@@ -121,13 +122,18 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 
                     // consumir 'until'
                     let _until_kw = inner.next().expect("Se esperaba 'until' en repeat");
+                    //println!("parse_stmt Rule::repeat_stmt _until_kw: {:?}", _until_kw);
 
                     // condición
                     let cond_pair = inner.next().expect("Se esperaba expresión en repeat...until");
+                    //println!("parse_stmt Rule::repeat_stmt cond_pair: {:?}", cond_pair);
                     let condition = parse_expr(cond_pair, sym_table);
+                    //println!("parse_stmt Rule::repeat_stmt condition: {:?}", condition);
 
                     // consumir ';'
+                    //let _semicolon = inner.next();
                     let _semicolon = inner.next().expect("Se esperaba ';' en repeat");
+                    //println!("parse_stmt Rule::repeat_stmt _semicolon: {:?}", _semicolon);
                     assert_eq!(_semicolon.as_rule(), Rule::semicolon);
 
                     Stmt::Repeat { body, condition }

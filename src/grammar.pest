@@ -13,7 +13,6 @@ string_literal = @{
 }
 
 boolean_literal = { "True" | "False" | "TRUE" | "FALSE" }
-// 👈 nuevo
 
 // Tokens
 keyword_var       = { "var" }
@@ -63,11 +62,9 @@ rparen    = { ")" }
 expr    = { sum ~ (cmp_op ~ sum)? }
 sum     = { product ~ ((add_op | sub_op) ~ product)* }
 product = { factor ~ ((mul_op | div_op | mod_op) ~ factor)* }
-
 //
 // llamadas a función/ procedimiento
 func_call = { ident ~ lparen ~ (expr_list)? ~ rparen }
-
 factor = { number | string_literal | boolean_literal | func_call | ident | keyword_nil | "(" ~ expr ~ ")" }
 // Aquí el `-` delante del número se reconoce como operador unario.
 // Esto permite -1 y también expresiones como -(2+3).
@@ -122,7 +119,6 @@ repeat_stmt = {
     keyword_repeat ~ stmt+ ~ keyword_until ~ expr ~ semicolon
 }
 
-//
 param_list   = { param ~ (semicolon ~ param)* }
 param        = { ident ~ colon ~ type_keyword }
 type_keyword = { keyword_integer | keyword_real | keyword_string | keyword_boolean }

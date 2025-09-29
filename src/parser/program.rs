@@ -113,7 +113,6 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
             }
             // for loop
             Rule::for_stmt => {
-                // 👈 NUEVO
                 //println!("parse_program: brazo Rule::for_stmt entro");
                 let mut inner = pairs.clone();
 
@@ -143,7 +142,6 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
             }
             // while loop
             Rule::while_stmt => {
-                // 👈 NUEVO
                 //println!("parse_program: brazo Rule::while_stmt entro");
                 let mut inner = p.into_inner();
 
@@ -163,6 +161,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                 //println!("============");
                 //println!("parse_program entro al match brazo Rule::repeat_stmt entro");
                 let stmt = parse_stmt(p, &sym_table);
+                //println!("parse_program stmt {:?}", stmt);
                 stmts.push(stmt);
             }
 

@@ -1,7 +1,6 @@
 use bincode::{Decode, Encode};
 use std::fmt;
 
-//#[derive(Debug, Clone, PartialEq)]
 #[derive(Encode, Decode, Debug, Clone, PartialEq)]
 pub enum VarType {
     Integer,
@@ -73,7 +72,6 @@ impl Value {
     }
 }
 
-//#[derive(Debug, Clone)]
 #[derive(Encode, Decode, Debug, Clone)]
 pub enum Expr {
     Number(f64), // integer o real
@@ -93,7 +91,6 @@ pub enum Expr {
     Nil,
 }
 
-//#[derive(Debug, Clone)]
 #[derive(Encode, Decode, Debug, Clone)]
 pub enum Op {
     Add,
@@ -109,7 +106,6 @@ pub enum Op {
     Mod,
 }
 
-//#[derive(Debug, Clone)]
 #[derive(Encode, Decode, Debug, Clone)]
 pub enum Stmt {
     //VarDecl(Vec<String>),
@@ -150,23 +146,18 @@ pub enum Stmt {
     },
 }
 
-// 👇 Nuevo
-// #[derive(Debug, Clone)]
-//#[derive(Encode, Decode, Debug, Clone)]
 #[derive(Encode, Decode, Debug, Clone)]
 pub struct WhileStmt {
     pub condition: Expr, // la expresión booleana
     pub body: Box<Stmt>, // el bloque o statement a ejecutar
 }
 
-//#[derive(Debug, Clone, PartialEq)]
 #[derive(Encode, Decode, Debug, Clone, PartialEq)]
 pub enum ForDir {
     To,
     DownTo,
 }
 
-//#[derive(Debug, Clone)]
 #[derive(Encode, Decode, Debug, Clone)]
 pub struct Procedure {
     pub name: String,
@@ -176,7 +167,6 @@ pub struct Procedure {
 }
 
 #[allow(dead_code)]
-//#[derive(Debug, Clone)]
 #[derive(Encode, Decode, Debug, Clone)]
 pub struct Function {
     pub name: String,
@@ -186,7 +176,6 @@ pub struct Function {
     pub body: Vec<Stmt>,
 }
 
-//#[derive(Debug, Clone)]
 #[derive(Encode, Decode, Debug, Clone)]
 pub struct Param {
     pub name: String,
