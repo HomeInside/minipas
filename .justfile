@@ -67,12 +67,14 @@ test:build
     ./target/debug/minipas run examples/date_time.mp
     ./target/debug/minipas run examples/euclides.mp
     ./target/debug/minipas run examples/fibonacci.mp
+    ./target/debug/minipas run examples/fizzbuzz.mp
     ./target/debug/minipas run examples/for_loop.mp
     ./target/debug/minipas run examples/functions.mp
     ./target/debug/minipas run examples/haversine.mp
     ./target/debug/minipas run examples/hello_world.mp
     ./target/debug/minipas run examples/procedures.mp
     ./target/debug/minipas run examples/program_full.mp
+    ./target/debug/minipas run examples/repeat_loop.mp
     ./target/debug/minipas run examples/recursion.mp
     ./target/debug/minipas run examples/showcase.mp
     ./target/debug/minipas run examples/std_lib.mp
@@ -107,12 +109,14 @@ test-rel:release
     ./target/release/minipas run examples/date_time.mp
     ./target/release/minipas run examples/euclides.mp
     ./target/release/minipas run examples/fibonacci.mp
+    ./target/release/minipas run examples/fizzbuzz.mp
     ./target/release/minipas run examples/for_loop.mp
     ./target/release/minipas run examples/functions.mp
     ./target/release/minipas run examples/haversine.mp
     ./target/release/minipas run examples/hello_world.mp
     ./target/release/minipas run examples/procedures.mp
     ./target/release/minipas run examples/program_full.mp
+    ./target/release/minipas run examples/repeat_loop.mp
     ./target/release/minipas run examples/recursion.mp
     ./target/release/minipas run examples/showcase.mp
     ./target/release/minipas run examples/std_lib.mp

@@ -86,6 +86,7 @@ begin
   writeln();
   writeln("while anidados");
   i := 1;
+
   while i <= 3 do
   begin
     j := 1;
@@ -118,7 +119,8 @@ begin
 
   writeln();
   writeln("tablas de multiplicar");
-  while i <= 5 do
+
+  while (i <= 5) do
   begin
     j := 1;
     while j <= 10 do
