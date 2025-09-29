@@ -100,3 +100,19 @@ pub fn exit_fn(args: Vec<Value>) {
 pub fn clear_screen_fn(_args: Vec<Value>) {
     print!("\x1B[2J \x1B[0;0f");
 }
+
+pub fn typeinfo_fn(args: Vec<Value>) -> Value {
+    if args.len() != 1 {
+        panic!("typeinfo() se necesita exactamente 1 argumento");
+    }
+
+    let result = match &args[0] {
+        Value::Integer(_) => "Integer",
+        Value::Real(_) => "Real",
+        Value::Str(_) => "String",
+        Value::Boolean(_) => "Boolean",
+        Value::Nil => "Nil",
+    };
+
+    Value::Str(result.to_string())
+}

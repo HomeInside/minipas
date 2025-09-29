@@ -73,6 +73,7 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("exit".to_string(), Builtin::Proc(exit_fn));
     //alias: clear(), clearscreen()
     builtin.insert("clrscr".to_string(), Builtin::Proc(clear_screen_fn));
+    builtin.insert("typeinfo".to_string(), Builtin::Func(typeinfo_fn));
 
     // === date_time ===
     builtin.insert("date".to_string(), Builtin::Func(date_fn));
