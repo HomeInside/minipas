@@ -50,8 +50,9 @@ impl RuntimeEnv {
         let default_val = match val {
             VarType::Integer => Value::Integer(0),
             VarType::Real => Value::Real(0.0),
-            VarType::Boolean => Value::Boolean(false),
             VarType::Str => Value::Str(String::new()),
+            VarType::Boolean => Value::Boolean(false),
+            VarType::Byte => Value::Byte(0),
             VarType::Nil => Value::Nil,
         };
 
@@ -128,8 +129,9 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
                     let default_val = match &local.ty {
                         VarType::Integer => Value::Integer(0),
                         VarType::Real => Value::Real(0.0),
-                        VarType::Boolean => Value::Boolean(false),
                         VarType::Str => Value::Str(String::new()),
+                        VarType::Boolean => Value::Boolean(false),
+                        VarType::Byte => Value::Byte(0),
                         VarType::Nil => Value::Nil,
                     };
                     // println!(
@@ -169,8 +171,9 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
                     let default_val = match &local.ty {
                         VarType::Integer => Value::Integer(0),
                         VarType::Real => Value::Real(0.0),
-                        VarType::Boolean => Value::Boolean(false),
                         VarType::Str => Value::Str(String::new()),
+                        VarType::Boolean => Value::Boolean(false),
+                        VarType::Byte => Value::Byte(0),
                         VarType::Nil => Value::Nil,
                     };
                     //println!("eval_expr Insertando variable local {} = {:?}", local.name, default_val);
@@ -237,11 +240,51 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             }
         }
         Stmt::Assign(name, expr) => {
-            let val = eval_expr(expr, env, builtins);
-            env.vars.insert(name.clone(), val.clone());
-            // TO FIX
-            //env.set(name, val); // usa set() para validar que exista
+            let rhs = eval_expr(expr, env, builtins);
+
+            let current = env
+                .vars
+                .get(name)
+                .unwrap_or_else(|| panic!("Variable '{}' no declarada", name));
+
+            // convertir según el tipo actual
+            let coerced = match current {
+                Value::Integer(_) => match rhs {
+                    Value::Integer(v) => Value::Integer(v),
+                    Value::Byte(v) => Value::Integer(v as i64),
+                    _ => panic!("{:?} cannot be assigned to Integer", rhs),
+                },
+                Value::Real(_) => match rhs {
+                    Value::Integer(v) => Value::Real(v as f64),
+                    Value::Byte(v) => Value::Real(v as f64),
+                    Value::Real(v) => Value::Real(v),
+                    _ => panic!("{:?} cannot be assigned to Real", rhs),
+                },
+                Value::Str(_) => match rhs {
+                    Value::Str(s) => Value::Str(s),
+                    _ => panic!("{:?} cannot be assigned to String", rhs),
+                },
+                Value::Boolean(_) => match rhs {
+                    Value::Boolean(b) => Value::Boolean(b),
+                    _ => panic!("{:?} cannot be assigned to Boolean", rhs),
+                },
+                Value::Byte(_) => match rhs {
+                    Value::Integer(v) => {
+                        if v >= u8::MIN.into() && v <= u8::MAX.into() {
+                            Value::Byte(v as u8)
+                        } else {
+                            panic!("Out of range for Byte: {}", v);
+                        }
+                    }
+                    Value::Byte(v) => Value::Byte(v),
+                    _ => panic!("{:?} cannot be assigned to Byte", rhs),
+                },
+                Value::Nil => rhs,
+            };
+
+            env.vars.insert(name.clone(), coerced);
         }
+
         Stmt::IfElse {
             cond,
             then_branch,
