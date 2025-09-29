@@ -158,6 +158,13 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     body: Box::new(body),
                 }));
             }
+            // repeat loop // 👈 NUEVO
+            Rule::repeat_stmt => {
+                //println!("============");
+                //println!("parse_program entro al match brazo Rule::repeat_stmt entro");
+                let stmt = parse_stmt(p, &sym_table);
+                stmts.push(stmt);
+            }
 
             _ => {}
         }
