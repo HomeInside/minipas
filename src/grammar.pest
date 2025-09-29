@@ -31,6 +31,8 @@ keyword_and       = { "and" }
 keyword_array     = { "array" }
 keyword_for       = { "for" }
 keyword_while     = { "while" }
+keyword_repeat     = { "repeat" }
+keyword_until     = { "until" }
 keyword_function  = { "function" }
 keyword_procedure = { "procedure" }
 keyword_nil       = { "nil" }
@@ -80,7 +82,7 @@ expr_stmt = { expr ~ semicolon }
 
 // Sentencias
 block = { "begin" ~ stmt* ~ "end" }
-stmt  = { comment* ~ (if_stmt | for_stmt | while_stmt | block | assignment | expr_stmt | return_stmt) }
+stmt  = { comment* ~ (if_stmt | for_stmt | while_stmt | repeat_stmt | block | assignment | expr_stmt | return_stmt) }
 
 if_stmt = { keyword_if ~ expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 
@@ -114,6 +116,11 @@ while_stmt   =  {
     keyword_while ~ expr_boolean ~ keyword_do ~ stmt
 }
 expr_boolean = _{ expr }
+
+// REPEAT LOOP
+repeat_stmt = {
+    keyword_repeat ~ stmt+ ~ keyword_until ~ expr ~ semicolon
+}
 
 //
 param_list   = { param ~ (semicolon ~ param)* }

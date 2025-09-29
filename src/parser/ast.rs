@@ -135,7 +135,6 @@ pub enum Stmt {
         return_type: VarType,
         body: Vec<Stmt>,
     },
-    // 👇 Nuevo
     For {
         var: String,       // variable de control
         start: Expr,       // expresión inicial
@@ -143,8 +142,12 @@ pub enum Stmt {
         direction: ForDir, // to o downto
         body: Box<Stmt>,   // cuerpo (una stmt o bloque)
     },
-    // 👇 Nuevo
     While(WhileStmt),
+    // 👇 Nuevo
+    Repeat {
+        body: Vec<Stmt>,
+        condition: Expr,
+    },
 }
 
 // 👇 Nuevo
