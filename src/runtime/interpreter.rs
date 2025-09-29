@@ -8,7 +8,7 @@ use crate::parser::ast::{Expr, ForDir, Stmt, Value};
 #[derive(Debug, Clone)]
 pub struct RuntimeEnv {
     pub vars: Environment,
-    pub funcs: HashMap<String, Function>, // 👈 nuevo
+    pub funcs: HashMap<String, Function>,
     pub procs: HashMap<String, Procedure>,
 }
 
@@ -345,7 +345,6 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             direction,
             body,
         } => {
-            // 👈 NUEVO
             // println!("============");
             // println!("execute_stmt entro al match brazo Stmt::For entro");
             // println!("var {:?}", var);
@@ -379,12 +378,31 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             }
         }
         Stmt::While(ws) => {
-            // 👈 NUEVO
             //println!("============");
             //println!("execute_stmt entro al match brazo Stmt::While entro");
             //println!("ws {:?}", ws);
             while eval_expr(&ws.condition, env, builtins).as_bool() {
                 execute_stmt(&ws.body, env, builtins)?;
+            }
+        }
+        Stmt::Repeat { body, condition } => {
+            // 👈 NUEVO
+            //println!("============");
+            //println!("execute_stmt entro al match brazo Stmt::Repeat entro");
+            //println!("body {:?}", body);
+            //println!("condition {:?}", condition);
+
+            loop {
+                // ejecutar cuerpo
+                for s in body {
+                    execute_stmt(s, env, builtins)?;
+                }
+
+                // evaluar condición al final
+                let cond_val = eval_expr(condition, env, builtins).as_bool();
+                if cond_val {
+                    break;
+                }
             }
         }
     }
