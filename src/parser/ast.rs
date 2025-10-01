@@ -78,6 +78,7 @@ impl Value {
 #[derive(Encode, Decode, Debug, Clone)]
 pub enum Expr {
     Number(f64), // integer o real
+    Real(f64),   // <--- nuevo
     Ident(String),
     StringLiteral(String),
     BooleanLiteral(bool),
@@ -107,6 +108,7 @@ pub enum Op {
     Equal,
     NotEqual,
     Mod,
+    Idiv,
 }
 
 #[derive(Encode, Decode, Debug, Clone)]
