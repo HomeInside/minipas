@@ -82,6 +82,9 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
                 Value::Real(*n)
             }
         }
+        //Expr::Number(n) => Value::Integer(*n),
+        Expr::Real(f) => Value::Real(*f),
+
         Expr::Ident(name) => {
             if let Some(b) = builtins.get(name) {
                 match b {
