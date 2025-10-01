@@ -51,7 +51,8 @@ add_op    = { "+" }
 sub_op    = { "-" }
 mul_op    = { "*" }
 div_op    = { "/" }
-mod_op    = { "%" }
+idiv_op   = { "div" }
+mod_op    = { "%" | "mod" }
 cmp_op    = { ">=" | "<=" | "<>" | ">" | "<" | "=" }
 
 semicolon = { ";" }
@@ -62,7 +63,7 @@ rparen    = { ")" }
 
 expr    = { sum ~ (cmp_op ~ sum)? }
 sum     = { product ~ ((add_op | sub_op) ~ product)* }
-product = { factor ~ ((mul_op | div_op | mod_op) ~ factor)* }
+product = { factor ~ ((mul_op | div_op | idiv_op |mod_op) ~ factor)* }
 //
 // llamadas a función/ procedimiento
 func_call = { ident ~ lparen ~ (expr_list)? ~ rparen }
