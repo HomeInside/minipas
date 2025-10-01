@@ -13,7 +13,13 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
                 if ri == 0 {
                     panic!("attempt to divide by zero");
                 }
-                //Value::Real(li as f64 / ri as f64)
+                Value::Real(li as f64 / ri as f64)
+                //Value::Integer(li / ri)
+            }
+            Op::Idiv => {
+                if ri == 0 {
+                    panic!("attempt to divide by zero");
+                }
                 Value::Integer(li / ri)
             }
             Op::Greater => Value::Boolean(li > ri),
@@ -41,6 +47,9 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
                     panic!("attempt to divide by zero");
                 }
                 Value::Real(lf / rf)
+            }
+            Op::Idiv => {
+                panic!("div operator is only allowed with Integer or Byte");
             }
             Op::Greater => Value::Boolean(lf > rf),
             Op::Less => Value::Boolean(lf < rf),
@@ -88,6 +97,12 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
                 Value::Byte(res as u8)
             }
             Op::Div => {
+                if ri == 0 {
+                    panic!("attempt to divide by zero");
+                }
+                Value::Byte(li / ri)
+            }
+            Op::Idiv => {
                 if ri == 0 {
                     panic!("attempt to divide by zero");
                 }
