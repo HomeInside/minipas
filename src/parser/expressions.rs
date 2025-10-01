@@ -8,7 +8,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     //println!("parse_expr: entro {:?}", pair.as_rule());
     match pair.as_rule() {
         //Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
-        # TO CHECK cambiar a Real/Integer
+        // TO CHECK cambiar a Real/Integer
         Rule::number => {
             let lit = pair.as_str();
             if lit.contains('.') {
@@ -108,7 +108,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                 }
 
                 //Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
-                # TO CHECK cambiar a Real/Integer
+                // TO CHECK cambiar a Real/Integer
                 Rule::number => {
                     let lit = inner.as_str();
                     if lit.contains('.') {
