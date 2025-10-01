@@ -1,4 +1,4 @@
-use super::ast::{Expr, Op};
+use super::ast::{Expr, Op, Value};
 use super::program::{check_ident, validate_identifier};
 use super::symbol_table::SymbolTable;
 use crate::Rule;
@@ -7,8 +7,16 @@ use pest::iterators::Pair;
 pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     //println!("parse_expr: entro {:?}", pair.as_rule());
     match pair.as_rule() {
-        Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
-
+        //Rule::number => Expr::Number(pair.as_str().parse().unwrap()),
+        # TO CHECK cambiar a Real/Integer
+        Rule::number => {
+            let lit = pair.as_str();
+            if lit.contains('.') {
+                Expr::Real(lit.parse::<f64>().unwrap())
+            } else {
+                Expr::Number(lit.parse::<i64>().unwrap() as f64)
+            }
+        }
         Rule::ident => {
             let name = pair.as_str().to_string();
             validate_identifier(&name);
@@ -31,6 +39,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     Rule::sub_op => Op::Sub,
                     Rule::mul_op => Op::Mul,
                     Rule::div_op => Op::Div,
+                    Rule::idiv_op => Op::Idiv, // <- nuevo
                     Rule::mod_op => Op::Mod,
                     Rule::cmp_op => match op_str {
                         "=" => Op::Equal,
@@ -98,7 +107,16 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     Expr::BooleanLiteral(val)
                 }
 
-                Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
+                //Rule::number => Expr::Number(inner.as_str().parse().unwrap()),
+                # TO CHECK cambiar a Real/Integer
+                Rule::number => {
+                    let lit = inner.as_str();
+                    if lit.contains('.') {
+                        Expr::Real(lit.parse::<f64>().unwrap())
+                    } else {
+                        Expr::Number(lit.parse::<i64>().unwrap() as f64)
+                    }
+                }
 
                 Rule::expr => parse_expr(inner, sym_table),
 
