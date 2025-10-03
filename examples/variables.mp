@@ -3,6 +3,7 @@ var a:integer;
 var b:real;
 var c:string;
 var d:boolean;
+var x:byte;
 
 var demo1,
 demo2,
@@ -13,7 +14,7 @@ DeMo3Es6: integer;
 
 var snake_case: string;
 var _snake_case: string;
-var __1_uno_: string;
+var __1_uno_: real;
 var _1234_: string;
 
 var func_tion: string;
@@ -37,20 +38,23 @@ var e:integer; f:real; g:string; h:boolean;
 var i:integer;
 begin
     writeln("dentro de la funcion");
-    writeln("e es:", e);
-    writeln("f es:", f);
-    writeln("g es:", g);
-    writeln("h es:", h);
-    writeln("i es:", i);
+    writeln("el valor de 'e' es:", e);
+    writeln("el valor de 'f' es:", f);
+    writeln("el valor de 'g' es:", g);
+    writeln("el valor de 'h' es:", h);
+    writeln("el valor de 'i' es:", i);
+    writeln("el valor de 'x' es:", x);
     return 0;
 end
 
 function sumar(a:integer; b: integer): integer;
 var c: integer;
 begin
+    writeln("dentro de la función sumar");
 	writeln("el valor de a es:", a);
 	writeln("el valor de b es:", b);
 	c := a + b;
+	writeln("el valor de c es:", c);
 	return c;
 end
 
@@ -59,19 +63,21 @@ var j:integer; k:real; l:string; m:boolean;
 var n:integer;
 begin
     writeln("dentro del procedimiento");
-    writeln("j es:", j);
-    writeln("k es:", k);
-    writeln("l es:", l);
-    writeln("m es:", m);
-    writeln("n es:", n);
+    writeln("el valor de 'j' es:", j);
+    writeln("el valor de 'k' es:", k);
+    writeln("el valor de 'l' es:", l);
+    writeln("el valor de 'm' es:", m);
+    writeln("el valor de 'n' es:", n);
 end
 
 begin
+    writeln();
     writeln("la suma es:", sumar(1,2));
-    writeln("'a' value is:", a);
-    writeln("'b' value is:", b);
-    writeln("'c' value is:", c);
-    writeln("'d' value is:", d);
+    writeln("el valor de 'a' value is:", a);
+    writeln("el valor de 'b' value is:", b);
+    writeln("el valor de 'c' value is:", c);
+    writeln("el valor de 'd' value is:", d);
+    writeln("el valor de 'x' value is:", x);
 
 	a:=47;
 	b:= (a*a);
@@ -112,6 +118,67 @@ begin
 	writeln("truesa: es", truesa);
 	writeln("falsea: es", falsea);
 	writeln("beging: es", beging);
+    writeln();
 	writeln("False es", FALSE, "ó es", False);
 	writeln("True es", TRUE, "ó es", True);
+
+    writeln();
+    writeln(typeinfo(a));
+    writeln(typeinfo(b));
+    writeln(typeinfo(c));
+    writeln(typeinfo(d));
+    writeln(typeinfo(demo1));
+    writeln(typeinfo(demo2));
+    writeln(typeinfo(demoEs3));
+    writeln(typeinfo(DemoEs4));
+    writeln(typeinfo(DEMOES5));
+    writeln(typeinfo(DeMo3Es6));
+    writeln(typeinfo(snake_case));
+    writeln(typeinfo(_snake_case));
+    writeln(typeinfo(__1_uno_));
+    writeln(typeinfo(_1234_));
+    writeln(typeinfo(func_tion));
+    writeln(typeinfo(integers));
+    writeln(typeinfo(nombre));
+    writeln(typeinfo(reals));
+    writeln(typeinfo(is_18));
+    writeln(typeinfo(trauesa));
+    writeln(typeinfo(btrues));
+    writeln(typeinfo(atruesa));
+    writeln(typeinfo(sina));
+    writeln(typeinfo(formato));
+    writeln(typeinfo(truesa));
+    writeln(typeinfo(falsea));
+    writeln(typeinfo(beging));
+    writeln(typeinfo(x));
+
+    writeln();
+    assert_equals(typeinfo(a), "Integer");
+    assert_equals(typeinfo(b), "Integer");
+    assert_equals(typeinfo(c), "Integer");
+    assert_equals(typeinfo(d), "Boolean");
+    assert_equals(typeinfo(demo1), "Integer");
+    assert_equals(typeinfo(demo2), "Integer");
+    assert_equals(typeinfo(demoEs3), "Integer");
+    assert_equals(typeinfo(DemoEs4), "Integer");
+    assert_equals(typeinfo(DEMOES5), "Integer");
+    assert_equals(typeinfo(DeMo3Es6), "Integer");
+    assert_equals(typeinfo(snake_case), "String");
+    assert_equals(typeinfo(_snake_case), "String");
+    assert_equals(typeinfo(__1_uno_), "Real");
+    assert_equals(typeinfo(_1234_), "String");
+    assert_equals(typeinfo(func_tion), "String");
+    assert_equals(typeinfo(integers), "String");
+    assert_equals(typeinfo(nombre), "String");
+    assert_equals(typeinfo(reals), "Real");
+    assert_equals(typeinfo(is_18), "Boolean");
+    assert_equals(typeinfo(trauesa), "Boolean");
+    assert_equals(typeinfo(btrues), "Boolean");
+    assert_equals(typeinfo(atruesa), "Boolean");
+    assert_equals(typeinfo(sina), "Boolean");
+    assert_equals(typeinfo(formato), "Boolean");
+    assert_equals(typeinfo(truesa), "Boolean");
+    assert_equals(typeinfo(falsea), "Boolean");
+    assert_equals(typeinfo(beging), "Boolean");
+    assert_equals(typeinfo(x), "Byte");
 end.
