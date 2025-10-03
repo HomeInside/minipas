@@ -74,8 +74,8 @@ test:build
     ./target/debug/minipas run examples/hello_world.mp
     ./target/debug/minipas run examples/procedures.mp
     ./target/debug/minipas run examples/program_full.mp
-    ./target/debug/minipas run examples/repeat_loop.mp
     ./target/debug/minipas run examples/recursion.mp
+    ./target/debug/minipas run examples/repeat_loop.mp
     ./target/debug/minipas run examples/showcase.mp
     ./target/debug/minipas run examples/std_lib.mp
     ./target/debug/minipas run examples/std_math.mp
@@ -116,8 +116,8 @@ test-rel:release
     ./target/release/minipas run examples/hello_world.mp
     ./target/release/minipas run examples/procedures.mp
     ./target/release/minipas run examples/program_full.mp
-    ./target/release/minipas run examples/repeat_loop.mp
     ./target/release/minipas run examples/recursion.mp
+    ./target/release/minipas run examples/repeat_loop.mp
     ./target/release/minipas run examples/showcase.mp
     ./target/release/minipas run examples/std_lib.mp
     ./target/release/minipas run examples/std_math.mp
