@@ -34,12 +34,12 @@ begin
     return x / y;
 end
 
-function cmp_str(a: string; b: string): string;
+function cmp_str(str_a: string; str_b: string): string;
 begin
     // devuelve una etiqueta según comparación lexicográfica
-    if a = b then
+    if str_a = str_b then
         return "equal";
-    else if a > b then
+    else if str_a > str_b then
         return "greater";
     else
         return "less";
@@ -48,12 +48,12 @@ end
 // -------------------------
 // Recursividad
 // -------------------------
-function mcd(a:integer; b:integer) : integer;
+function mcd(num1:integer; num2:integer) : integer;
 begin
-	if b = 0 then
-		return a;
+	if num2 = 0 then
+		return num1;
 	else
-		return mcd(b, a%b);
+		return mcd(num2, num1 % num2);
 end
 
 // -------------------------
@@ -76,8 +76,8 @@ end
 procedure mostrar_estadisticas();
 var t: integer;
 var result: integer;
-var num1: integer;
-var num2: integer;
+//var num1: integer;
+//var num2: integer;
 var resultado: real;
 
 begin
@@ -87,6 +87,7 @@ begin
     // operaciones aritméticas y modulo
     a := 7;
     b := 3;
+    writeln("aqui");
     writeln("a = ", a, ", b = ", b);
     writeln("a + b ->", a + b);
     writeln("a - b ->", a - b);
