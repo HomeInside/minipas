@@ -40,6 +40,12 @@ keyword_nil       = { "nil" }
 keyword_to     = { "to" }
 keyword_do     = { "do" }
 keyword_downto = { "downto" }
+// abbreviated operations
+assign_add = { "+=" }
+assign_sub = { "-=" }
+assign_mul = { "*=" }
+assign_div = { "/=" }
+assign_mod = { "%=" }
 
 ident = @{ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
@@ -87,7 +93,8 @@ if_stmt = { keyword_if ~ expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 
 var_decl = { ident ~ ("," ~ ident)* ~ ":" ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean | keyword_byte) ~ ";" }
 
-assignment = { ident ~ assign_op ~ expr ~ semicolon }
+//assignment = { ident ~ assign_op ~ expr ~ semicolon }
+assignment = {ident ~ (assign_op | assign_add | assign_sub | assign_mul | assign_div|assign_mod) ~ expr ~ semicolon}
 
 var_section = { ("var" ~ var_decl+)+ }
 
