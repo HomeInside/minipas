@@ -1,4 +1,4 @@
-use super::ast::{Expr, Op, Value};
+use super::ast::{Expr, Op};
 use super::program::{check_ident, validate_identifier};
 use super::symbol_table::SymbolTable;
 use crate::Rule;
