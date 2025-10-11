@@ -133,4 +133,34 @@ begin
     i := i + 1;
   end
 
+  writeln();
+  writeln("prueba con break");
+
+  i := 0;
+  while i < 5 do
+  begin
+    i := i + 1;
+    if i = 3 then
+    begin
+      writeln('saliendo en', i);
+      break;
+    end
+    writeln('i =', i);
+  end
+
+  writeln();
+  writeln("prueba con continue");
+
+  i := 0;
+  while i < 5 do
+  begin
+    i := i + 1;
+    if i = 3 then
+    begin
+      writeln('salta', i);
+      continue;
+    end
+    writeln('i =', i);
+  end
+
 end.

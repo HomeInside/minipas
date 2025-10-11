@@ -52,4 +52,33 @@ begin
 
   writeln('Final: x = ', x, ', suma = ', suma);
 
+  writeln();
+  writeln("test con break");
+
+  i := 0;
+  repeat
+    i := i + 1;
+    if i = 3 then
+    begin
+      writeln('saliendo en', i);
+      break;
+    end
+    writeln('i =', i);
+  until i >= 5;
+
+
+  writeln();
+  writeln("test con continue");
+
+  i := 0;
+  repeat
+    i := i + 1;
+    if i = 3 then
+    begin
+      writeln('salta', i);
+      continue;
+    end
+    writeln('i =', i);
+  until i >= 5;
+
 end.
