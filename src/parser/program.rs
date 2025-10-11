@@ -46,7 +46,7 @@ pub fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
     //println!("parse_program entro");
     let program_pair = pairs.next().expect("No se encontró program");
-    let mut sym_table = SymbolTable::with_builtins(); // 👈 nuevo
+    let mut sym_table = SymbolTable::with_builtins();
 
     let mut stmts: Vec<Stmt> = Vec::new();
     let mut block_pair_opt = None;
@@ -157,7 +157,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     body: Box::new(body),
                 }));
             }
-            // repeat loop // 👈 NUEVO
+            // repeat loop
             Rule::repeat_stmt => {
                 //println!("============");
                 //println!("parse_program entro al match brazo Rule::repeat_stmt entro");

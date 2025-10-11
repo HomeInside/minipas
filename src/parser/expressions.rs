@@ -39,7 +39,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                     Rule::sub_op => Op::Sub,
                     Rule::mul_op => Op::Mul,
                     Rule::div_op => Op::Div,
-                    Rule::idiv_op => Op::Idiv, // <- nuevo
+                    Rule::idiv_op => Op::Idiv,
                     Rule::mod_op => Op::Mod,
                     Rule::cmp_op => match op_str {
                         "=" => Op::Equal,

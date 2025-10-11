@@ -144,11 +144,12 @@ pub enum Stmt {
         body: Box<Stmt>,   // cuerpo (una stmt o bloque)
     },
     While(WhileStmt),
-    // 👇 Nuevo
     Repeat {
         body: Vec<Stmt>,
         condition: Expr,
     },
+    Break,    // 👈 NUEVO
+    Continue, // 👈 NUEVO
 }
 
 #[derive(Encode, Decode, Debug, Clone)]

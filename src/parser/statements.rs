@@ -98,7 +98,6 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
                         body: Box::new(body),
                     })
                 }
-                // repeat loop // 👈 NUEVO
                 Rule::repeat_stmt => {
                     //println!("============");
                     //println!("parse_stmt entro al match brazo Rule::repeat_stmt entro");
@@ -138,6 +137,9 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 
                     Stmt::Repeat { body, condition }
                 } //repeat_stmt
+
+                Rule::break_stmt => Stmt::Break,       // 👈 NUEVO
+                Rule::continue_stmt => Stmt::Continue, // 👈 NUEVO
 
                 Rule::return_stmt => parse_return_stmt(inner, sym_table),
                 other => panic!("Regla inesperada en stmt: {:?}", other),

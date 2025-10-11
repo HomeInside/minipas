@@ -14,7 +14,7 @@ pub fn parse_assignment(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     let op_pair = inner.next().unwrap();
     let expr = parse_expr(inner.next().unwrap(), sym_table);
     inner.next(); // skip ";"
-
+    // 👇 Nuevo
     match op_pair.as_rule() {
         Rule::assign_op => Stmt::Assign(ident, expr),
         Rule::assign_add => {
