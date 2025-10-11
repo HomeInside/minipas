@@ -5,6 +5,13 @@ pub type Environment = HashMap<String, Value>;
 use super::operators::apply_op;
 use crate::parser::ast::{Expr, ForDir, Stmt, Value};
 
+#[derive(Debug, Clone, PartialEq)]
+pub enum RuntimeFlow {
+    Return(Value),
+    Break,
+    Continue,
+}
+
 #[derive(Debug, Clone)]
 pub struct RuntimeEnv {
     pub vars: Environment,
@@ -146,8 +153,15 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
 
                 // ejecutar el cuerpo del procedimiento en el entorno local
                 for stmt in &proc.body {
-                    // ignoramos posibles ReturnError: procedimientos no deberían retornar valores
-                    let _ = execute_stmt(stmt, &mut local_env, builtins);
+                    match execute_stmt(stmt, &mut local_env, builtins) {
+                        Ok(_) => {}
+                        Err(RuntimeFlow::Return(_)) => {
+                            panic!("'return' no permitido en procedimientos");
+                        }
+                        Err(RuntimeFlow::Break | RuntimeFlow::Continue) => {
+                            panic!("'break' o 'continue' usados fuera de un ciclo");
+                        }
+                    }
                 }
 
                 Value::Nil
@@ -185,21 +199,17 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
 
                 // --- ejecutar el cuerpo hasta encontrar un Return ---
                 let mut result = Value::Nil;
-                for stmt in &func.body {
-                    match stmt {
-                        Stmt::Return(expr) => {
-                            result = eval_expr(expr, &mut local_env, builtins);
 
+                for stmt in &func.body {
+                    match execute_stmt(stmt, &mut local_env, builtins) {
+                        Ok(_) => {}
+                        Err(RuntimeFlow::Return(val)) => {
+                            result = val;
                             break;
                         }
-                        // _ => execute_stmt(stmt, &mut local_env, builtins),
-                        _ => match execute_stmt(stmt, &mut local_env, builtins) {
-                            Ok(_) => continue,
-                            Err(ReturnError(val)) => {
-                                result = val;
-                                break;
-                            }
-                        },
+                        Err(RuntimeFlow::Break) | Err(RuntimeFlow::Continue) => {
+                            panic!("'break' o 'continue' usados fuera de un ciclo");
+                        }
                     }
                 }
 
@@ -234,7 +244,7 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
     }
 }
 
-pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Result<(), ReturnError> {
+pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Result<(), RuntimeFlow> {
     //println!("execute_stmt: entro");
     match stmt {
         Stmt::Block(stmts) => {
@@ -382,7 +392,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
 
         Stmt::Return(expr) => {
             let val = eval_expr(expr, env, builtins);
-            return Err(ReturnError(val));
+            return Err(RuntimeFlow::Return(val));
         }
         Stmt::For {
             var,
@@ -406,18 +416,34 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 ForDir::To => {
                     while i <= end_val {
                         env.vars.insert(var.clone(), Value::Integer(i));
-                        // TO FIX
-                        // env.set(var, Value::Integer(i)); // valida existencia
-                        execute_stmt(body, env, builtins)?;
+
+                        match execute_stmt(body, env, builtins) {
+                            Ok(_) => {}
+                            Err(RuntimeFlow::Continue) => {
+                                i += 1;
+                                continue;
+                            }
+                            Err(RuntimeFlow::Break) => break,
+                            Err(RuntimeFlow::Return(v)) => return Err(RuntimeFlow::Return(v)),
+                        }
+
                         i += 1;
                     }
                 }
                 ForDir::DownTo => {
                     while i >= end_val {
                         env.vars.insert(var.clone(), Value::Integer(i));
-                        // TO FIX
-                        // env.set(var, Value::Integer(i)); // valida existencia
-                        execute_stmt(body, env, builtins)?;
+
+                        match execute_stmt(body, env, builtins) {
+                            Ok(_) => {}
+                            Err(RuntimeFlow::Continue) => {
+                                i -= 1;
+                                continue;
+                            }
+                            Err(RuntimeFlow::Break) => break,
+                            Err(RuntimeFlow::Return(v)) => return Err(RuntimeFlow::Return(v)),
+                        }
+
                         i -= 1;
                     }
                 }
@@ -427,12 +453,17 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             //println!("============");
             //println!("execute_stmt entro al match brazo Stmt::While entro");
             //println!("ws {:?}", ws);
+
             while eval_expr(&ws.condition, env, builtins).as_bool() {
-                execute_stmt(&ws.body, env, builtins)?;
+                match execute_stmt(&ws.body, env, builtins) {
+                    Ok(_) => {}
+                    Err(RuntimeFlow::Continue) => continue,
+                    Err(RuntimeFlow::Break) => break,
+                    Err(RuntimeFlow::Return(v)) => return Err(RuntimeFlow::Return(v)),
+                }
             }
         }
         Stmt::Repeat { body, condition } => {
-            // 👈 NUEVO
             //println!("============");
             //println!("execute_stmt entro al match brazo Stmt::Repeat entro");
             //println!("body {:?}", body);
@@ -441,7 +472,12 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             loop {
                 // ejecutar cuerpo
                 for s in body {
-                    execute_stmt(s, env, builtins)?;
+                    match execute_stmt(s, env, builtins) {
+                        Ok(_) => {}
+                        Err(RuntimeFlow::Continue) => break, // salta al eval cond
+                        Err(RuntimeFlow::Break) => return Ok(()), // rompe todo el repeat
+                        Err(RuntimeFlow::Return(v)) => return Err(RuntimeFlow::Return(v)),
+                    }
                 }
 
                 // evaluar condición al final
@@ -451,6 +487,9 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 }
             }
         }
+
+        Stmt::Break => return Err(RuntimeFlow::Break),       // 👈 NUEVO
+        Stmt::Continue => return Err(RuntimeFlow::Continue), // 👈 NUEVO
     }
     Ok(())
 }
