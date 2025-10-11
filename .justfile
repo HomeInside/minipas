@@ -60,6 +60,7 @@ dist-r:
     ./target/release/minipas
 
 test:build
+    ./target/debug/minipas run examples/abbr_ops.mp
     ./target/debug/minipas run examples/comments.mp
     ./target/debug/minipas run examples/conditionals.mp
     ./target/debug/minipas run examples/constants.mp
@@ -102,6 +103,7 @@ test:build
     rm -v examples/program_full.mpa
 
 test-rel:release
+    ./target/release/minipas run examples/abbr_ops.mp
     ./target/release/minipas run examples/comments.mp
     ./target/release/minipas run examples/conditionals.mp
     ./target/release/minipas run examples/constants.mp
