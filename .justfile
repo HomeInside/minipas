@@ -36,10 +36,10 @@ check:
 	clear && cargo fmt && cargo check
 
 clippy:
-	clear && cargo fmt && cargo clippy --no-deps
+	cargo clippy --no-deps -- -D clippy::style -D clippy::correctness
 
 fix:
-	clear && cargo fmt && cargo check && cargo clippy --no-deps
+	clear && cargo fmt && cargo check && cargo clippy --no-deps -- -D clippy::style -D clippy::correctness
 
 fix-all:
 	clear && cargo fmt && cargo fix --allow-dirty
@@ -81,6 +81,7 @@ test:build
     ./target/debug/minipas run examples/std_lib.mp
     ./target/debug/minipas run examples/std_math.mp
     ./target/debug/minipas run examples/strings.mp
+    ./target/debug/minipas run examples/syntax_methods.mp
     ./target/debug/minipas run examples/sys.mp
     ./target/debug/minipas run examples/testing.mp
     ./target/debug/minipas run examples/variables.mp
@@ -124,6 +125,7 @@ test-rel:release
     ./target/release/minipas run examples/std_lib.mp
     ./target/release/minipas run examples/std_math.mp
     ./target/release/minipas run examples/strings.mp
+    ./target/release/minipas run examples/syntax_methods.mp
     ./target/release/minipas run examples/sys.mp
     ./target/release/minipas run examples/testing.mp
     ./target/release/minipas run examples/variables.mp
