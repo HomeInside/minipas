@@ -1,29 +1,4 @@
 max_width = 120
 edition = "2024"
-
-# Run rustfmt with this config (it should be picked up automatically).
-# use_small_heuristics = "Max"
-merge_derives = false
-# by default we ignore everything in the repository
-# tidy only checks files which are not ignored, each entry follows gitignore style
-
-# wrap_comments = true
-# comment_width = 100
-# match_block_trailing_comma = true
-# version = "Two"
-# error_on_line_overflow = true
-
-# by default we ignore everything in the repository
-# tidy only checks files which are not ignored, each entry follows gitignore style
-# ignore = [
-    # "/test/",
-    # "/dist/",
-    # "/build/",
-    # "/*-build/",
-    # "/build-*/",
-    # "/vendor/",
-
-    # tests for now are not formatted, as they are sometimes pretty-printing constrained
-    # (and generally rustfmt can move around comments in UI-testing incompatible ways)
-    # "src/test",
-# ]
+use_field_init_shorthand = true
+# merge_derives = false
