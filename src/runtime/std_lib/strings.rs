@@ -1,3 +1,4 @@
+use super::utils::expect_arg_count;
 use crate::parser::ast::Value;
 
 pub fn len_fn(args: Vec<Value>) -> Value {
@@ -8,10 +9,16 @@ pub fn len_fn(args: Vec<Value>) -> Value {
 }
 
 pub fn upper_fn(args: Vec<Value>) -> Value {
-    if args.len() != 1 {
-        panic!("upper() necesita 1 argumento");
+    /*if args.len() != 1 {
+        //panic!("upper() necesita 1 argumento");
+        //panic!("upper() acepta como máximo 1 argumento");
+        panic!("str.upper() no toma más argumentos (se dio {})", args.len() - 1);
     }
-    Value::Str(args[0].to_string().to_uppercase())
+    //Value::Str(args[0].to_string().to_uppercase())
+    */
+    expect_arg_count("upper", &args, 0, true);
+    let s = args[0].as_str();
+    Value::Str(s.to_uppercase())
 }
 
 pub fn lower_fn(args: Vec<Value>) -> Value {
