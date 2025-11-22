@@ -21,6 +21,22 @@ pub enum Builtin {
     Proc(RuntimeProc),
 }
 
+/// Crea la biblioteca estandar
+///
+/// # Returns
+///
+/// un HashMap `HashMap<String, Builtin>`, con las
+///    funciones disponibles en tiempo de ejecución.
+///
+/// # Examples
+///
+/// ```rust,no_run,ignore
+/// use use crate::runtime::std_lib::default_builtins;
+/// ...
+///
+/// default_builtins();
+/// ```
+///
 pub fn default_builtins() -> HashMap<String, Builtin> {
     let mut builtin: HashMap<String, Builtin> = HashMap::new();
 
@@ -101,6 +117,16 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("assert".to_string(), Builtin::Proc(assert_fn));
     builtin.insert("assert_equals".to_string(), Builtin::Proc(assert_eq_fn));
     builtin.insert("panic".to_string(), Builtin::Proc(panic_fn));
+
+    // 👇 Nuevo
+    // === Aliases ===
+    let aliases = [("toString", "to_str"), ("length", "len"), ("truncate", "trunc")];
+
+    for (alias, target) in aliases {
+        if let Some(orig) = builtin.get(target).cloned() {
+            builtin.insert(alias.to_string(), orig);
+        }
+    }
 
     builtin
 }
