@@ -241,9 +241,61 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
             apply_op(l, op, r)
         }
         Expr::Nil => Value::Nil,
+        // 👇 Nuevo
+        Expr::MethodCall { target, method, args } => {
+            if !builtins.contains_key(method) {
+                panic!("Método '{}' no está registrado como builtin", method);
+            }
+
+            // 1. evalúa el objeto y los argumentos
+            let recv_val = eval_expr(target, env, builtins);
+            let mut arg_values: Vec<Value> = args.iter().map(|a| eval_expr(a, env, builtins)).collect();
+
+            // 2. inserta el "receptor" como primer argumento (igual que self)
+            // Ej: "hola".upper()  →  upper("hola")
+            arg_values.insert(0, recv_val.clone());
+
+            // 3. busca el builtin correspondiente
+            if let Some(builtin) = builtins.get(method) {
+                match builtin {
+                    Builtin::Func(f) => f(arg_values),
+                    Builtin::Proc(p) => {
+                        p(arg_values);
+                        Value::Nil
+                    }
+                    Builtin::Const(_) => panic!("No se puede invocar una constante como método"),
+                }
+            } else {
+                panic!("Método '{}' no definido (ni como builtin)", method);
+            }
+        }
     }
 }
 
+/// Ejecuta cada sentencia del programa.
+///
+/// # Arguments
+///
+/// * `stmt: &Stmt` - cada sentencia individual
+///   del programa.
+/// * `env: &mut RuntimeEnv` - el entorno donde se
+///   encuentra la tabla se simbolos
+/// * `builtins: &HashMap<String, Builtin>` - la biblioteca
+///   estandar
+///
+/// # Returns
+///
+/// un Result `Result<(), RuntimeFlow>`
+///
+/// # Examples
+///
+/// ```rust,no_run,ignore
+/// use crate::runtime::interpreter::execute_stmt;
+/// ...
+///
+/// execute_stmt(stmt, &mut env, &BUILTINS) {
+/// ```
+///
 pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Result<(), RuntimeFlow> {
     //println!("execute_stmt: entro");
     match stmt {
