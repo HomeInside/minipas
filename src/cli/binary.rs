@@ -1,42 +1,37 @@
 use crate::parser::ast::Stmt;
+use crate::parser::symbol_table::SymbolTable;
 use bincode::{Decode, Encode, config};
 use std::path::PathBuf;
 
+// pub struct BinAstFile(Vec<Stmt>);
 #[derive(Encode, Decode, Debug)]
-pub struct BinAstFile(Vec<Stmt>);
+pub struct BinAstFile {
+    code: Vec<Stmt>,
+    symbols: SymbolTable,
+}
 
-use pest::iterators::Pairs;
-
-use crate::Rule;
-
-// TODO
-// guardar la tabla de simbolos
-pub fn gen_bincode_from_ast(code: Vec<Stmt>, output: &PathBuf) {
+/// Serializa y Guarda el AST y la tabla de simbolos
+/// a un archivo en formato .mpc
+///
+pub fn gen_bincode_from_ast(code: Vec<Stmt>, symbols: SymbolTable, output: &PathBuf) {
     let config = config::standard();
 
-    let program = BinAstFile(code);
+    let program = BinAstFile { code, symbols };
 
     let encoded: Vec<u8> = bincode::encode_to_vec(program, config).expect("Error serializando AST");
 
     std::fs::write(output, encoded).expect("Error escribiendo binario");
 }
 
-// TODO
-// leer la tabla de simbolos
-pub fn read_ast_from_bincode(input: &PathBuf) -> Vec<Stmt> {
+/// Deserializa y obtiene de un archivo .mpc, el AST y
+/// la tabla de simbolos
+///
+pub fn read_ast_from_bincode(input: &PathBuf) -> (Vec<Stmt>, SymbolTable) {
     let bytes = std::fs::read(input).expect("No se pudo leer el archivo .mpc");
     let config = bincode::config::standard();
 
     let (program, _): (BinAstFile, usize) =
         bincode::decode_from_slice(&bytes, config).expect("Error decodificando binario");
 
-    program.0
-}
-
-pub fn save_pairs_as_text(pairs: &Pairs<Rule>, output: &PathBuf) {
-    std::fs::write(output, format!("{:#?}", pairs)).expect("No se pudo escribir archivo .mpp");
-}
-
-pub fn save_ast_as_text(code: Vec<Stmt>, output: &PathBuf) {
-    std::fs::write(output, format!("{:#?}", code)).expect("No se pudo escribir archivo .mpa");
+    (program.code, program.symbols)
 }
