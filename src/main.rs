@@ -38,7 +38,7 @@ Commands:
   build, b     Compila el archivo fuente y genera el AST en formato binario
   run, r       Ejecuta el archivo
   emit, e      Genera los Pairs y el AST
-  check, c     Verifica el codigo fuente archivo sin ejecutarlo
+  check, c     Verifica el codigo fuente de un archivo sin ejecutarlo
 
 EXAMPLES:
   minipas build hello_world.mp
