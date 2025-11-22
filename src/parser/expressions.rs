@@ -64,7 +64,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
 
         Rule::factor => {
             //println!("parse_expr: brazo Rule::factor entro");
-            let inner = pair.into_inner().next().unwrap();
+            let inner = pair.clone().into_inner().next().unwrap();
             match inner.as_rule() {
                 Rule::func_call => {
                     let mut ic = inner.into_inner();
@@ -119,11 +119,14 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                 }
 
                 Rule::expr => parse_expr(inner, sym_table),
+                // 👇 Nuevo
+                Rule::method_chain => parse_method_chain(pair, sym_table),
 
                 _ => panic!("Factor inesperado: {:?}", inner.as_rule()),
             }
         }
-
+        // 👇 Nuevo
+        Rule::method_chain => parse_method_chain(pair, sym_table),
         _ => panic!("parse_expr: Regla de expr no implementada: {:?}", pair.as_rule()),
     }
 }
@@ -142,4 +145,41 @@ pub fn parse_expr_item(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
         }
         other => panic!("parse_expr_item Nodo inesperado dentro de expr_item: {:?}", other),
     }
+}
+
+// 👇 Nuevo
+fn parse_method_chain(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
+    let mut inner = pair.into_inner();
+    let mut expr = parse_expr(inner.next().unwrap(), sym_table); // factor base
+
+    while let Some(next) = inner.next() {
+        if next.as_rule() == Rule::ident {
+            let method = next.as_str().to_string();
+            let mut args = Vec::new();
+
+            // intenta leer "(" expr_list? ")"
+            if let Some(maybe_paren) = inner.next() {
+                if maybe_paren.as_rule() == Rule::lparen {
+                    if let Some(arg_list) = inner.next() {
+                        if arg_list.as_rule() == Rule::expr_list {
+                            for item in arg_list.into_inner() {
+                                if item.as_rule() == Rule::expr_item {
+                                    args.push(parse_expr_item(item, sym_table));
+                                }
+                            }
+                            inner.next(); // consumir rparen
+                        }
+                    }
+                }
+            }
+
+            expr = Expr::MethodCall {
+                target: Box::new(expr),
+                method,
+                args,
+            };
+        }
+    }
+
+    expr
 }

@@ -93,6 +93,12 @@ pub enum Expr {
     },
     #[allow(dead_code)]
     Nil,
+    // 👇 Nuevo
+    MethodCall {
+        target: Box<Expr>,
+        method: String,
+        args: Vec<Expr>,
+    },
 }
 
 #[derive(Encode, Decode, Debug, Clone)]
