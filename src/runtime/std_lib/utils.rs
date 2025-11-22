@@ -72,3 +72,15 @@ pub fn unescape_string(s: &str) -> String {
     }
     result
 }
+
+pub fn expect_arg_count(fn_name: &str, args: &[Value], expected: usize, is_method: bool) {
+    let user_count = if is_method { args.len() - 1 } else { args.len() };
+    if user_count != expected {
+        let label = if is_method {
+            format!("{}() no toma argumentos (se dio {})", fn_name, user_count)
+        } else {
+            format!("{}() espera {} argumento(s), recibió {}", fn_name, expected, user_count)
+        };
+        panic!("{}", label);
+    }
+}
