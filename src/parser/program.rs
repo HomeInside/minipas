@@ -43,6 +43,27 @@ pub fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     Stmt::Return(expr)
 }
 
+/// Genera el AST y la tabla de simbolos del programa.
+///
+/// # Arguments
+///
+/// * `pairs: Pairs<Rule>` - los pairs(reglas) generados
+///   por MiniPasParser::parse.
+///
+/// # Returns
+///
+/// una tupla `(Vec<Stmt>, SymbolTable)`, la lista de
+///   sentencias(AST) y la tabla de simbolos.
+///
+/// # Examples
+///
+/// ```rust,no_run,ignore
+/// use crate::parser::program::parse_program;
+/// ...
+///
+/// parse_program(pairs);
+/// ```
+///
 pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
     //println!("parse_program entro");
     let program_pair = pairs.next().expect("No se encontró program");

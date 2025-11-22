@@ -23,13 +23,16 @@ use crate::parser::ast::Stmt;
 use crate::parser::program::parse_program;
 use crate::parser::symbol_table::SymbolTable;
 
+/// Genera la lista de reglas (`Pairs<Rule>`)
+///
 pub fn gen_pairs(source: &str) -> Pairs<'_, Rule> {
     MiniPasParser::parse(Rule::program, source).unwrap_or_else(|e| panic!("Error de parseo: {} {}", source, e))
 }
 
-/// Genera el AST completo a partir del código fuente (para `run`, `check`, `build`)
+/// Genera el AST completo(reglas y tabla de simbolos) a
+/// partir del código fuente (para `run`, `check`, `build`)
+///
 pub fn gen_ast(source: &str) -> (Vec<Stmt>, SymbolTable) {
     let pairs = gen_pairs(source);
-    //let (program, _) = parse_program(pairs);
     parse_program(pairs)
 }

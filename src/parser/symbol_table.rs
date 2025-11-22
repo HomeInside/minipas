@@ -1,7 +1,8 @@
 use crate::parser::ast::VarType;
+use bincode::{Decode, Encode};
 use std::collections::HashMap;
 
-#[derive(Clone, Debug)]
+#[derive(Encode, Decode, Clone, Debug)]
 pub struct SymbolTable {
     variables: HashMap<String, VarType>,
 }

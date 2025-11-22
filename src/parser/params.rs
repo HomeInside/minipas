@@ -3,7 +3,8 @@ use super::types::parse_type;
 use crate::Rule;
 use pest::iterators::Pair;
 
-// Parsea un parámetro individual: ident : tipo
+/// Parsea un parámetro individual
+/// `: ident : tipo`
 pub fn parse_param(pair: Pair<Rule>) -> Param {
     //println!("parse_param: entro");
     let mut inner = pair.into_inner();
@@ -20,7 +21,8 @@ pub fn parse_param(pair: Pair<Rule>) -> Param {
     Param { name, ty }
 }
 
-// Parsea la lista de parámetros: param (; param)*
+/// Parsea la lista de parámetros
+/// ` param (; param)*`
 pub fn parse_param_list(pair: Pair<Rule>) -> Vec<Param> {
     //println!("parse_param_list: entro");
     assert_eq!(pair.as_rule(), Rule::param_list);
