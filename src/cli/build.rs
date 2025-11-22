@@ -5,7 +5,7 @@ use crate::print_info;
 use std::path::PathBuf;
 
 pub fn build_cmd(input: Option<PathBuf>, output: Option<PathBuf>) {
-    println!("=========build==========");
+    //println!("=========build==========");
     let input = match input {
         Some(path) => path,
         None => {
@@ -35,12 +35,13 @@ pub fn build_cmd(input: Option<PathBuf>, output: Option<PathBuf>) {
 
     println!("building {:?}...", input.display());
     let src = read_source(&input);
-    let (ast, _) = gen_ast(&src);
+    let (ast, symbols) = gen_ast(&src);
 
     let stem = output.file_stem().unwrap().to_string_lossy();
     let output = output.with_file_name(format!("{}.mpc", stem)); // mp compile ast file
     println!("generating AST file (bin): {:?}", output.display());
 
-    gen_bincode_from_ast(ast, &output);
-    println!("build OK.");
+    gen_bincode_from_ast(ast, symbols, &output);
+    println!();
+    println!("OK.");
 }

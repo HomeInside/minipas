@@ -3,7 +3,7 @@ use crate::parser::{gen_ast, gen_pairs};
 use std::path::PathBuf;
 
 pub fn check_cmd(input: Option<PathBuf>) {
-    println!("=========check==========");
+    //println!("=========check==========");
     let input = match input {
         Some(path) => path,
         None => {
@@ -18,15 +18,15 @@ pub fn check_cmd(input: Option<PathBuf>) {
         std::process::exit(1);
     }
 
-    println!("leyendo codigo fuente...");
+    //println!("leyendo codigo fuente...");
     let src = read_source(&input);
 
-    println!("generando pairs...");
+    println!("validando pairs...");
     gen_pairs(&src);
 
-    println!("generando AST...");
+    println!("validando AST...");
     gen_ast(&src);
 
     println!();
-    println!("check OK.");
+    println!("OK.");
 }

@@ -1,10 +1,9 @@
-use super::binary::{save_ast_as_text, save_pairs_as_text};
-use super::core::read_source;
+use super::core::{read_source, save_ast_as_text, save_pairs_as_text};
 use crate::parser::{gen_ast, gen_pairs};
 use std::path::PathBuf;
 
 pub fn emit_cmd(input: Option<PathBuf>) {
-    println!("=========emit==========");
+    //println!("=========emit==========");
     let input = match input {
         Some(path) => path,
         None => {
