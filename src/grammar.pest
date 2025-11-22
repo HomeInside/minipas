@@ -74,7 +74,11 @@ rparen    = { ")" }
 
 expr    = { sum ~ (cmp_op ~ sum)? }
 sum     = { product ~ ((add_op | sub_op) ~ product)* }
-product = { factor ~ ((mul_op | div_op | idiv_op |mod_op) ~ factor)* }
+
+method_chain = { factor ~ ("." ~ ident ~ lparen ~ (expr_list)? ~ rparen)* }
+product = { method_chain ~ ((mul_op | div_op | idiv_op |mod_op) ~ method_chain)* }
+//product = { factor ~ ((mul_op | div_op | idiv_op |mod_op) ~ factor)* }
+
 //
 // llamadas a función/ procedimiento
 func_call = { ident ~ lparen ~ (expr_list)? ~ rparen }

@@ -2,7 +2,7 @@
 
 **MiniPas** es un lenguaje de programación interpretado **inspirado en Turbo Pascal V7**, diseñado para ser sencillo, educativo y fácil de usar.
 
-⚠️ **MiniPas** **no busca ser compatible** con [Pascal](https://es.wikipedia.org/wiki/Pascal_(lenguaje_de_programaci%C3%B3n)), [Turbo Pascal V7](https://es.wikipedia.org/wiki/Turbo_Pascal) ó [FreePascal](https://www.freepascal.org/): muchas características del Pascal clásico **no están soportadas**.
+⚠️ **MiniPas** **no busca ser compatible** con [Pascal](https://es.wikipedia.org/wiki/Pascal_(lenguaje_de_programaci%C3%B3n)), [Turbo Pascal V7](https://es.wikipedia.org/wiki/Turbo_Pascal) ó [FreePascal](https://www.freepascal.org/): muchas características de Pascal **no están soportadas**.
 
 Su objetivo principal es permitir experimentar con conceptos básicos de programación estructurada y scripting, ideal para aprendizaje ó pequeños proyectos.
 
@@ -19,7 +19,7 @@ begin
     // comentarios de una linea
     writeln("Hello World in minipas!");
     r := 2.0;
-    writeln(); // un espacio
+    writeln(); // un espacio en blanco
     writeln("Circunferencia:", 2 * PI * r);// usamos PI
     {   comentarios de
         varias lineas
