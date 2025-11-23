@@ -13,5 +13,5 @@ Las siguientes secciones proporcionan información detallada sobre los diferente
 
 - **.mp** archivo con código fuente de **minipas**.
 - **.mpc** archivo en formato binario (similar a [bytecode](https://es.wikipedia.org/wiki/Bytecode)) de un archivo con código fuente **.mp**.
-- **.mpa** archivo en formato JSON, que contiene las [Reglas](https://docs.rs/pest/latest/pest/iterators/struct.Pair.html) generadas por el parser, de un archivo con código fuente.
-- **.mpp** archivo en formato JSON, que contiende información del [AST](https://es.wikipedia.org/wiki/%C3%81rbol_de_sintaxis_abstracta) generado por el interprete, de un archivo con código fuente.
+- **.mpp** archivo en formato JSON, que contiene las [Reglas](https://docs.rs/pest/latest/pest/iterators/struct.Pair.html) generadas por el parser, de un archivo con código fuente.
+- **.mpa** archivo en formato JSON, que contiende información del [AST](https://es.wikipedia.org/wiki/%C3%81rbol_de_sintaxis_abstracta) generado por el interprete, de un archivo con código fuente.

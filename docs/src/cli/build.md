@@ -36,7 +36,7 @@ en caso contrarió obtendrá un error como este:
 
 ```
 minipas v.1.9.0
-minipas error: extensión de archivo de entrada no valida.
+minipas error: extensión de archivo de entrada, no valido.
 utilice '.mp', para las extensiones de archivo.
 
 try 'minipas --help' for more information
