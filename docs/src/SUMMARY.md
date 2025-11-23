@@ -13,3 +13,4 @@
 - [Hola mundo](guide/hello_world.md)
 - [Estructura de un programa](lang/program_structure.md)
 - [Comentarios](lang/comments.md)
+- [Operadores](lang/operators.md)
