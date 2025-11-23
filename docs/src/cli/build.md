@@ -31,3 +31,13 @@ Para más información sobre los archivos **.mpc**, consulte el comando [run](./
 **Importante:**
 
 el comando `build`/`b` solo acepta archivos con extensión **.mp**
+
+en caso contrarió obtendrá un error como este:
+
+```
+minipas v.1.9.0
+minipas error: extensión de archivo de entrada no valida.
+utilice '.mp', para las extensiones de archivo.
+
+try 'minipas --help' for more information
+```
