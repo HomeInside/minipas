@@ -27,6 +27,7 @@ site-url = "/book/"
 #
 # additional-css = ["css/styles.css"]  # Ruta a tu archivo CSS personalizado
 # additional-js = ["js/highlight.min.js", "js/highlightjs-line-numbers.min.js", "js/custom.js"]
+additional-js = ["js/mermaid.min.js", "js/mermaid-init.js"]
 
 # [output.html.print]
 # enable = true    # include support for printable output
@@ -42,3 +43,8 @@ editable = false         # allows editing the source code
 copyable = true          # include the copy button for copying code snippets
 copy-js = true           # includes the JavaScript for the code editor
 line-numbers = true     # displays line numbers for editable code
+
+[preprocessor]
+
+[preprocessor.mermaid]
+command = "mdbook-mermaid"
