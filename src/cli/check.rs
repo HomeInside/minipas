@@ -1,5 +1,6 @@
 use super::core::read_source;
 use crate::parser::{gen_ast, gen_pairs};
+use crate::print_info;
 use std::path::PathBuf;
 
 pub fn check_cmd(input: Option<PathBuf>) {
@@ -14,7 +15,9 @@ pub fn check_cmd(input: Option<PathBuf>) {
 
     let input_str = input.to_string_lossy();
     if !input_str.ends_with(".mp") {
-        eprintln!("minipas error: usa extensión '.mp'");
+        println!("minipas error: extensión de archivo de entrada, no valido.");
+        println!("utilice '.mp', para las extensiones de archivo.");
+        print_info();
         std::process::exit(1);
     }
 

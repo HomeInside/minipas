@@ -18,7 +18,7 @@ pub fn build_cmd(input: Option<PathBuf>, output: Option<PathBuf>) {
     let input_str = input.to_string_lossy(); // Convierte PathBuf a String
 
     if !input_str.ends_with(".mp") {
-        println!("minipas error: extensión de archivo de entrada no valida.");
+        println!("minipas error: extensión de archivo de entrada, no valido.");
         println!("utilice '.mp', para las extensiones de archivo.");
         print_info();
         std::process::exit(1);
@@ -26,7 +26,7 @@ pub fn build_cmd(input: Option<PathBuf>, output: Option<PathBuf>) {
 
     let output_str = output.to_string_lossy(); // Convierte PathBuf a String
     if !output_str.ends_with(".mpc") {
-        println!("minipas error: extensión de archivo de salida no valida.");
+        println!("minipas error: extensión de archivo de salida, no valido.");
         println!("utilice '.mpc', para los archivos de salida.");
         print_info();
 

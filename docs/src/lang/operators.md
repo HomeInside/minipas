@@ -3,6 +3,11 @@
 lista operadores soportandos en **minipas**.
 
 ```
+
+:=  asignación
+
+Operadores aritmeticos
+
 +    suma                    integer, real, strings
 -    diferencia              integer, real
 *    producto                integer, real
@@ -11,14 +16,14 @@ div  cociente                integer, real
 mod  residuo                 integer, real
 %    residuo                 integer, real
 
+Operadores relacionales
+
 >    mayor qué
 <    menor qué
 >=   mayor ó igual
 <=   menor ó igual
 <>   diferente de
-
-=   igualdad
-:=   asignación
+=    igualdad
 
 Operadores de asignación (abreviados)
 
@@ -26,5 +31,5 @@ Operadores de asignación (abreviados)
 -=   resta y asigna el resultado
 *=   multiplica y asigna el resultado
 /=   divide y asigna el resultado
-%=   calcula el residuo de la división y asigna el resultado.
+%=   calcula el residuo de la división y asigna el resultado
 ```

@@ -1,4 +1,5 @@
 # Estructura de un programa
+
 Un programa en **minipas**, sigue una estructura específica que incluye distintos componentes.
 
 A continuación, se detallan los elementos clave:
