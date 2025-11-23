@@ -167,3 +167,15 @@ clean:
 [doc('cleaning the house')]
 clean-all:clean
     cargo clean
+
+[doc('serve the docs using mdbook')]
+docs-serve:
+	clear && mdbook serve ./docs
+
+[doc('make website of docs using mdbook')]
+docs-build:
+	clear && mdbook build ./docs
+
+[doc('clean docs using mdbook')]
+docs-clean:
+	clear && mdbook clean ./docs
