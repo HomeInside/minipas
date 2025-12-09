@@ -80,7 +80,8 @@ nombre_funcion();
 ```
 
 <br>
-veamos con un ejemplo
+
+veamos un ejemplo
 
 ### Ejemplo
 
@@ -175,19 +176,20 @@ el resultado de la suma es: 11
 ```
 
 ## Consideraciones
+
 **Definición Clara**: Asegúrate de que la función tenga un propósito específico y bien definido.
 
-**Nombres Descriptivos**: Usa nombres significativos que reflejen la acción que realiza la función (por ejemplo, `sumar`).
+**Nombres descriptivos**: Usa nombres significativos que reflejen la acción que realiza la función (por ejemplo, `sumar`).
 
-**Número de Parámetros y Argumentos**: Los argumentos deben coincidir en número y tipo con los parámetros definidos en la función o procedimiento.
+**Número de parámetros y argumentos**: Los argumentos deben coincidir en número y tipo con los parámetros definidos en la función.
 
 Limita el número de parámetros para mantener la simplicidad.
 
-**Valor de Retorno**: Especifica el tipo de retorno de la función claramente y asegúrate de que devuelve un valor adecuado.
+**Valor de retorno**: Especifica el tipo de retorno de la función claramente y asegúrate de que devuelve un valor adecuado.
 
 **Documentación**: Comenta el código para explicar qué hace la función, sus parámetros y valor de retorno.
 
-**Evitando efectos Secundarios**:Trata de evitar modificar variables globales a menos que sea necesario; esto ayuda a mantener la función predecible.
+**Evitando efectos secundarios**: Trata de evitar modificar variables globales a menos que sea necesario; esto ayuda a mantener la función predecible.
 
 **Pruebas y validaciones**: Implementa pruebas para garantizar que la función produzca los resultados esperados con varios datos de entrada.
 
