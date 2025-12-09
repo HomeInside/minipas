@@ -12,4 +12,6 @@ Su objetivo principal es permitir experimentar con conceptos básicos de program
 
 - Pascal es un lenguaje que no distingue entre mayúsculas y minúsculas (Case Insensitive), lo que significa que puedes escribir tus variables, funciones y procedimientos con cualquiera de las dos. En **Minipas** no se acepta esto, todas las palabras claves deben escribirse en **minúsculas**, *salvo muy pequeñas excepciones*.
 
+- En **minipas**, cada sentencia **debe** terminar en **punto y coma** (`;`).
+
 - ☢️ **MiniPas** Es un lenguaje experimental y minimalista.
