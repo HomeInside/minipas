@@ -27,3 +27,8 @@
     - [sentencia if](lang/if_statement.md)
     - [funciones](lang/functions.md)
     - [procedimientos](lang/procedures.md)
+- [Ciclos](lang/loops.md)
+    - [for](lang/for_loop.md)
+    - [while](lang/while_loop.md)
+    - [repeat](lang/repeat_loop.md)
+    - [break y continue](lang/break_loops.md)
