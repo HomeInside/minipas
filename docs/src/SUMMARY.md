@@ -32,3 +32,4 @@
     - [while](lang/while_loop.md)
     - [repeat](lang/repeat_loop.md)
     - [break y continue](lang/break_loops.md)
+- [Funciones integradas](lang/builtin_functions.md)
