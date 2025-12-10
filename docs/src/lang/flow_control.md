@@ -24,7 +24,7 @@ flowchart TD
     linkStyle 3 stroke:#000,stroke-width:2px
 ```
 
-**minipas** proporciona los siguientes tipos de sentencias de toma de decisiones:
+**Minipas** proporciona los siguientes tipos de sentencias de toma de decisiones:
 
 - **Sentencia if-then**: Una sentencia if-then consta de una expresión booleana seguida de una o más sentencias.
 
@@ -34,4 +34,4 @@ flowchart TD
 
 - **sentencia case**:
 
-    ⚠️ **minipas** no admite case
+    ⚠️ **Minipas** no admite case

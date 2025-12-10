@@ -50,7 +50,7 @@ Hello World in minipas!
 
 el comando `run`/`r` solo acepta archivos con extensión **.mp** ó **.mpc**.
 
-en caso contrarió obtendrá un error como este:
+en caso contrario obtendrá un error como este:
 
 ```
 minipas v.1.9.0

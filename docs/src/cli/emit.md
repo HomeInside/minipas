@@ -300,7 +300,7 @@ esto creará dos archivos con formato JSON
 
 El comando `emit`/`e` solo acepta archivos con extensión **.mp**
 
-en caso contrarió obtendrá un error como este:
+en caso contrario obtendrá un error como este:
 
 ```
 minipas v.1.9.0

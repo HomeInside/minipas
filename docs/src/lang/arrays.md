@@ -1,3 +1,3 @@
 # arrays
 
- ⚠️ **minipas** no admite arreglos(Arrays)
+ ⚠️ **Minipas** no admite arreglos(Arrays)

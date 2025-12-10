@@ -1,6 +1,6 @@
 # Comentarios
 
-Los comentarios en **minipas** pueden ser de la siguiente forma:
+Los comentarios en **Minipas** pueden ser de la siguiente forma:
 - una sola linea, usando `//`
 
     ```mp

@@ -69,7 +69,7 @@ En las sentencias **if-then-else**, cuando la condición de prueba es **verdader
 
 **A tener en cuenta:**
 
-En **minipas**, cada sentencia **debe** terminar en **punto y coma** (`;`).
+En **Minipas**, cada sentencia **debe** terminar en **punto y coma** (`;`).
 
 ### Ejemplo
 

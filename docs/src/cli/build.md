@@ -32,7 +32,7 @@ Para más información sobre los archivos **.mpc**, consulte el comando [run](./
 
 el comando `build`/`b` solo acepta archivos con extensión **.mp**
 
-en caso contrarió obtendrá un error como este:
+en caso contrario obtendrá un error como este:
 
 ```
 minipas v.1.9.0

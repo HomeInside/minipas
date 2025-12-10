@@ -1,3 +1,3 @@
 # Constantes
 
- ⚠️ **minipas** no admite Constantes
+ ⚠️ **Minipas** no admite Constantes

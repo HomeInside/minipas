@@ -2,7 +2,7 @@
 
 Representan valores de verdad. Generalmente, un boleano puede tener solo dos posibles valores.
 
-En **minipas**, un valor boleano se representa de la siguiente manera, con la primera letra en Mayúscula:
+En **Minipas**, un valor boleano se representa de la siguiente manera, con la primera letra en Mayúscula:
 
 - **True** (verdadero)
 - **False** (falso)
