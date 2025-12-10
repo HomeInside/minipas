@@ -4,7 +4,6 @@
 
 La instrucción `if-then` es la forma más simple de instrucción de control, utilizada con frecuencia en la toma de decisiones y para cambiar el flujo de control de la ejecución del programa.
 
-Sintaxis
 La sintaxis de la instrucción `if-then` es:
 
 ```mp
@@ -55,7 +54,6 @@ a menor que 20
 
 Una instrucción `if-then` puede ir seguida de una instrucción `else` **opcional**, que se ejecuta cuando la expresión booleana es **falsa**.
 
-Sintaxis
 La sintaxis de la instrucción `if-then-else` es:
 
 ```mp
@@ -214,7 +212,6 @@ Se recomienda usar un bloque **begin**/**end**, cuando se tenga dos ó más inst
 
 Siempre es legal anidar sentencias `if-else`, lo que significa que se puede utilizar una sentencia if o `else if` dentro de otra sentencia `if` o `else if`. **Minipas** permite anidar hasta cualquier nivel, sin embargo, las sentencias anidadas pueden volverse complicadas, así que es importante mantener el código legible y organizado.
 
-Sintaxis
 La sintaxis de una instrucción `if` anidada es la siguiente:
 
 ```mp

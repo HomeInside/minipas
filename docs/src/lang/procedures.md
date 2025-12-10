@@ -14,8 +14,8 @@ procedure nombre_procedimiento(param1: tipo1; param2: tipo2; ...);
 // declaraciones locales usando `var`, si aplica
 
 begin // <- el cuerpo del procedimiento, comienza con 'begin'
-   sentencia1
-   sentencia2
+   sentencia1;
+   sentencia2;
    ...
 end // <- el cuerpo del procedimiento, finaliza con 'end'
 ```
@@ -29,8 +29,8 @@ procedure nombre_procedimiento();
 // declaraciones locales usando `var`, si aplica
 
 begin // <- el cuerpo del procedimiento, comienza con 'begin'
-   sentencia1
-   sentencia2
+   sentencia1;
+   sentencia2;
    ...
 end // <- el cuerpo del procedimiento, finaliza con 'end'
 ```

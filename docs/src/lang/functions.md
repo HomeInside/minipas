@@ -19,8 +19,8 @@ function nombre_funcion(param1: tipo1; param2: tipo2; ...): tipo_de_retorno;
 // declaraciones locales usando `var`, si aplica
 
 begin // <- el cuerpo de la funcion, comienza con 'begin'
-   sentencia1
-   sentencia2
+   sentencia1;
+   sentencia2;
    ...
    return valor, ó sentencia
 end // <- el cuerpo de la funcion, finaliza con 'end'
@@ -35,8 +35,8 @@ function nombre_funcion(): tipo_de_retorno;
 // declaraciones locales usando `var`, si aplica
 
 begin // <- el cuerpo de la funcion, comienza con 'begin'
-   sentencia1
-   sentencia2
+   sentencia1;
+   sentencia2;
    ...
    return valor, ó sentencia
 end // <- el cuerpo de la funcion, finaliza con 'end'
