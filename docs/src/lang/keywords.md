@@ -6,6 +6,7 @@
 integer
 real
 boolean
+byte
 begin
 div
 else
@@ -22,6 +23,8 @@ while
 True
 False
 writeln
+write
+readln
 do
 to
 downto

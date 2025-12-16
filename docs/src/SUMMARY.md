@@ -33,3 +33,6 @@
     - [repeat](lang/repeat_loop.md)
     - [break y continue](lang/break_loops.md)
 - [Funciones integradas](lang/builtin_functions.md)
+- [Testing](lang/testing.md)
+- [Apéndice I: Palabras clave](lang/keywords.md)
+- [Guía de estilo](lang/style_guide.md)
