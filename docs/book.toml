@@ -22,7 +22,7 @@ no-section-label = true
 git-repository-url = "https://github.com/HomeInside/minipas"
 git-repository-icon = "fab-github"
 # edit-url-template = "https://github.com/rust-lang/mdBook/edit/master/docs/guide/{path}"
-site-url = "/book/"
+site-url = "/projects/minipas/"
 # sidebar-header-nav = true
 #
 # additional-css = ["css/styles.css"]  # Ruta a tu archivo CSS personalizado
