@@ -35,7 +35,14 @@ writeln("hola mundo en minipas!");
 ```
 - **write**: Escribe un texto en la salida estándar sin añadir un salto de línea.
 ```
-write("esto", "va", "en", "la", "misma", "linea");
+write("esto");
+write("va");
+write("en");
+write("la");
+write("misma");
+write("linea");
+// la salida será algo como:
+esto va en la misma linea
 ```
 - **readln**: Lee una línea de texto de la entrada estándar y la asigna a una variable.
 ```

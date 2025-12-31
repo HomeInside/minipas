@@ -4,6 +4,7 @@
 
 # Guía del usuario
 
+- [Instalación (binarios)](guide/from_binaries.md)
 - [Instalación desde el código fuente](guide/from_source.md)
 - [Linea de comandos](cli/README.md)
     - [build](cli/build.md)
