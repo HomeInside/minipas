@@ -35,8 +35,6 @@ minipas v.1.9.0
 
 thread 'main' panicked at src\runtime\std_lib\testing.rs:11:13:
 Assertion failed: expected `true`, got `false`
-
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```
 
 <br>
@@ -72,5 +70,4 @@ el valor de PI es: 3.141592653589793
 
 thread 'main' panicked at src\runtime\std_lib\testing.rs:46:9:
 Assertion failed: expected left: `3.141592653589793`, got right: `3.141592`
-note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
 ```

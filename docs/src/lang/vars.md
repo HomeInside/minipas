@@ -12,7 +12,7 @@ La definición de una variable se coloca en un bloque que comienza con la palabr
 
 - ejemplo 2:
     ```mp
-    // si son del mimos tipo, pueden ir en una sola sentencia
+    // si son del mismo tipo, pueden ir en una sola sentencia
     var nombre, apellidos: string;
     ```
 

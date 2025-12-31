@@ -73,7 +73,7 @@ hello foor loop in minipas 5
 
 ## down-to
 
-La palabra clave **downto** se utiliza para iterar de manera decreciente, comenzando desde un `valor inicial` hasta un `valor final`, decrementando la variable de control en cada iteración.
+La palabra clave **downto** se utiliza para iterar de manera decreciente, comenzando desde un `valor final` hasta un `valor inicial`, decrementando la variable de control en cada iteración.
 
 
 ```mp

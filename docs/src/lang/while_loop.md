@@ -48,6 +48,8 @@ program test_loops;
 var i: integer;
 
 begin
+   i := 1; // inicializamos el valor de `i` en 1
+
    // este ejemplo causa un bucle infinito ⚠️
    while i <= 5 do writeln("el número es:", i); i := i + 1;
 end.
