@@ -1,0 +1,41 @@
+# Just task runner
+# sub tasks for internal testing and debug mode
+#
+EXAMPLE_NAME := "constants"
+#EXAMPLE_NAME := "for_loop"
+#EXAMPLE_NAME := "while_loop"
+#EXAMPLE_NAME := "repeat_loop"
+#EXAMPLE_NAME := "showcase"
+
+[group("Internal")]
+c:
+    $env:RUST_BACKTRACE = "full" ; cargo build && cls && .\target\debug\minipas check .\examples\{{EXAMPLE_NAME}}.mp
+[group("Internal")]
+e:
+    $env:RUST_BACKTRACE = "full" ; cargo build && cls && .\target\debug\minipas emit .\examples\{{EXAMPLE_NAME}}.mp
+[group("Internal")]
+r:
+    $env:RUST_BACKTRACE = "full" ; cargo build && cls && .\target\debug\minipas run .\examples\{{EXAMPLE_NAME}}.mp
+
+[group("Internal")]
+cc:
+    $env:RUST_BACKTRACE = "full" ; cls && .\target\debug\minipas check .\examples\{{EXAMPLE_NAME}}.mp
+[group("Internal")]
+ee:
+    $env:RUST_BACKTRACE = "full" ; cls && .\target\debug\minipas emit .\examples\{{EXAMPLE_NAME}}.mp
+[group("Internal")]
+rr:
+    cls && .\target\debug\minipas run .\examples\{{EXAMPLE_NAME}}.mp
+
+[group("Internal")]
+rb:
+    cls && .\target\debug\minipas build .\examples\{{EXAMPLE_NAME}}.mp -o {{EXAMPLE_NAME}}.mpc
+[group("Internal")]
+rc:
+    cls && .\target\debug\minipas run .\{{EXAMPLE_NAME}}.mpc
+
+[group("Internal")]
+cl:
+    rm -v .\{{EXAMPLE_NAME}}.mpc
+    rm -v .\examples\{{EXAMPLE_NAME}}.mpp
+    rm -v .\examples\{{EXAMPLE_NAME}}.mpa

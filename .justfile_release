@@ -1,0 +1,47 @@
+# Just task runner
+# sub tasks for release mode
+
+[group("Testing")]
+test-rel:release
+    ./target/release/minipas run examples/abbr_ops.mp
+    ./target/release/minipas run examples/comments.mp
+    ./target/release/minipas run examples/conditionals.mp
+    ./target/release/minipas run examples/constants.mp
+    ./target/release/minipas run examples/data_types.mp
+    ./target/release/minipas run examples/date_time.mp
+    ./target/release/minipas run examples/euclides.mp
+    ./target/release/minipas run examples/fibonacci.mp
+    ./target/release/minipas run examples/fizzbuzz.mp
+    ./target/release/minipas run examples/for_loop.mp
+    ./target/release/minipas run examples/functions.mp
+    ./target/release/minipas run examples/haversine.mp
+    ./target/release/minipas run examples/hello_world.mp
+    ./target/release/minipas run examples/procedures.mp
+    ./target/release/minipas run examples/program_full.mp
+    ./target/release/minipas run examples/recursion.mp
+    ./target/release/minipas run examples/repeat_loop.mp
+    #./target/release/minipas run examples/showcase.mp
+    ./target/release/minipas run examples/std_lib.mp
+    ./target/release/minipas run examples/std_math.mp
+    ./target/release/minipas run examples/strings.mp
+    ./target/release/minipas run examples/syntax_methods.mp
+    ./target/release/minipas run examples/sys.mp
+    ./target/release/minipas run examples/testing.mp
+    ./target/release/minipas run examples/variables.mp
+    ./target/release/minipas run examples/while_loop.mp
+    ./target/release/minipas run examples/writeln.mp
+    #
+    # crear un dump de varios archivos
+    #
+    ./target/release/minipas build examples/program_full.mp -o examples/program_full.mpc
+    test -f examples/program_full.mpc || (echo "Error: El archivo 'examples/program_full.mpc' no existe." && exit 1)
+    #
+    ./target/release/minipas emit examples/program_full.mp
+    test -f examples/program_full.mpp || (echo "Error: El archivo 'examples/program_full.mpp' no existe." && exit 1)
+    test -f examples/program_full.mpa || (echo "Error: El archivo 'examples/program_full.mpa' no existe." && exit 1)
+    #
+    ./target/release/minipas check examples/program_full.mp
+    #
+    rm -v examples/program_full.mpc
+    rm -v examples/program_full.mpp
+    rm -v examples/program_full.mpa
