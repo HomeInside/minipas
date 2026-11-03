@@ -12,7 +12,7 @@ string_literal = @{
   | ("'" ~ ("\\'" | "\\\\" | (!"'" ~ ANY))* ~ "'")
 }
 
-boolean_literal = { "True" | "False" | "TRUE" | "FALSE" }
+boolean_literal = { "True" | "False"}
 
 // Tokens
 keyword_var       = { "var" }

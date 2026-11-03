@@ -46,10 +46,14 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("readln".to_string(), Builtin::Func(readln_fn));
     builtin.insert("format".to_string(), Builtin::Func(format_fn));
 
-    // === Constantes ===
+    // === Constantes (deben estar en mayúsculas) ===
     builtin.insert("PI".to_string(), Builtin::Const(Value::Real(std::f64::consts::PI)));
     //número de Euler
     builtin.insert("E".to_string(), Builtin::Const(Value::Real(std::f64::consts::E)));
+    //verdadero
+    builtin.insert("TRUE".to_string(), Builtin::Const(Value::Boolean(true)));
+    //falso
+    builtin.insert("FALSE".to_string(), Builtin::Const(Value::Boolean(false)));
 
     // === Funciones matemáticas básicas ===
     builtin.insert("pow".to_string(), Builtin::Func(pow_fn));
@@ -118,7 +122,6 @@ pub fn default_builtins() -> HashMap<String, Builtin> {
     builtin.insert("assert_equals".to_string(), Builtin::Proc(assert_eq_fn));
     builtin.insert("panic".to_string(), Builtin::Proc(panic_fn));
 
-    // 👇 Nuevo
     // === Aliases ===
     let aliases = [("toString", "to_str"), ("length", "len"), ("truncate", "trunc")];
 
