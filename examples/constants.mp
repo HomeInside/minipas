@@ -12,6 +12,7 @@
 }
 
 program demoConstant;
+const MAX = 1;
 const
     MAX_INTENTOS = 3;
     DOUBLE_PI = 6.2830;
@@ -25,11 +26,14 @@ const
 var r: real;
 
 begin
+
+    writeln("el valor de MAX:", MAX);
     writeln("valor inicial de r:", r);
     r := 2.0;
     writeln("Circunferencia:", 2 * PI * r);
     r := 1.65;
     writeln("valor de r, después:", r);
+
     writeln();
     writeln("el valor de PI:", PI);
     writeln("el valor de E:", E);
@@ -40,9 +44,13 @@ begin
     writeln("el valor de DOUBLE_PI:", DOUBLE_PI);
     writeln("el valor de TITLE:", TITLE);
     writeln("el valor de MODO_DEBUG:", MODO_DEBUG);
-    writeln("el valor de IS_ACTIVE:", _IS_ACTIVE);
+    writeln("el valor de _IS_ACTIVE:", _IS_ACTIVE);
+    writeln("suma utilizando constantes:", MAX_INTENTOS + DOUBLE_PI);
+    writeln("resta utilizando constantes:", DOUBLE_PI - MAX);
+
     writeln();
     //MAX_INTENTOS := 1; // ❌ error, no se puede modificar la constante
+
     writeln("validando con 'assert'");
     assert(MAX_INTENTOS = 3);
     assert(DOUBLE_PI =  6.2830);
@@ -50,6 +58,7 @@ begin
     assert(MODO_DEBUG = True);
     assert(_IS_ACTIVE = False);
     writeln("validando con 'assert' OK");
+
     writeln();
     writeln("validando con 'assert_equals'");
     assert_equals(typeinfo(MAX_INTENTOS), "Integer");
