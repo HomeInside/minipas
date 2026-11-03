@@ -11,7 +11,7 @@ pub enum VarType {
     Nil,
 }
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Encode, Decode, Debug, Clone, PartialEq, PartialOrd)]
 pub enum Value {
     Integer(i64),
     Real(f64),
