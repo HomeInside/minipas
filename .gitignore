@@ -27,6 +27,7 @@ $RECYCLE.BIN/
 .idea/*
 .vscode/*
 test/*
+test
 dist/*
 
 ### Rust ###
