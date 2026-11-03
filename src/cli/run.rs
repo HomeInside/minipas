@@ -48,7 +48,12 @@ pub fn run_cmd(input: Option<PathBuf>) {
         // Crear el entorno y ejecutar el programa
         let mut env = RuntimeEnv::new();
 
-        // Cargar la tabla de simbolos
+        // Cargar la tabla de simbolos (constantes)
+        for (name, (_ty, val)) in program.1.global_constants() {
+            env.constants.insert(name, val);
+        }
+
+        // Cargar la tabla de simbolos (variables)
         for (name, ty) in program.1.global_vars() {
             env.declare(&name, ty);
         }
