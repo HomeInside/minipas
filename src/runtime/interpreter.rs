@@ -17,6 +17,7 @@ pub struct RuntimeEnv {
     pub vars: Environment,
     pub funcs: HashMap<String, Function>,
     pub procs: HashMap<String, Procedure>,
+    pub constants: HashMap<String, Value>,
 }
 
 impl RuntimeEnv {
@@ -25,6 +26,7 @@ impl RuntimeEnv {
             vars: Environment::new(),
             procs: HashMap::new(),
             funcs: HashMap::new(),
+            constants: HashMap::new(),
         }
     }
 
@@ -67,6 +69,7 @@ impl RuntimeEnv {
     }
 }
 
+// TO REMOVE `ReturnError``sin uso aparente
 #[derive(Debug)]
 pub struct ReturnError(pub Value); // wrapper para salir de la función
 
@@ -93,12 +96,17 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
         Expr::Real(f) => Value::Real(*f),
 
         Expr::Ident(name) => {
-            if let Some(b) = builtins.get(name) {
+            // constantes definidas por el usuario
+            if let Some(val) = env.constants.get(name) {
+                val.clone()
+            // constantes y func/proc del sistema (builtins)
+            } else if let Some(b) = builtins.get(name) {
                 match b {
                     Builtin::Const(val) => val.clone(),
                     Builtin::Func(_) => panic!("La función '{}' debe llamarse con argumentos", name),
                     Builtin::Proc(_) => panic!("El procedimiento '{}' debe llamarse con paréntesis", name),
                 }
+            // variables de entorno
             } else {
                 env.vars.get(name).cloned().unwrap_or(Value::Nil)
             }
@@ -122,6 +130,7 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
                     vars: HashMap::new(),
                     procs: env.procs.clone(),
                     funcs: env.funcs.clone(),
+                    constants: env.constants.clone(),
                 };
 
                 // inicializar parámetros (evaluar argumentos en el entorno actual `env`)
@@ -174,6 +183,7 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
                     vars: HashMap::new(), // 🔑 empieza vacío
                     procs: env.procs.clone(),
                     funcs: env.funcs.clone(),
+                    constants: env.constants.clone(),
                 };
 
                 // --- inicializar parámetros con los valores evaluados ---
@@ -306,6 +316,13 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         }
         Stmt::Assign(name, expr) => {
             let rhs = eval_expr(expr, env, builtins);
+
+            if env.constants.contains_key(name) {
+                panic!(
+                    "Error en tiempo de ejecución: intento de modificar la constante '{}'",
+                    name
+                );
+            }
 
             let current = env
                 .vars
