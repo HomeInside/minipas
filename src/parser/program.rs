@@ -6,7 +6,7 @@ use super::statements::parse_stmt;
 use super::symbol_table::SymbolTable;
 use crate::Rule;
 use crate::parser::ast::Value;
-use crate::parser::ast::{ForDir, Stmt, VarType, WhileStmt};
+use crate::parser::ast::{Stmt, VarType};
 use crate::runtime::std_lib::builtins::{BUILTINS, Builtin};
 use pest::iterators::{Pair, Pairs};
 
@@ -215,62 +215,6 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     return_type: func.return_type.clone(),                                        // 🟢 agregado
                     body: func.body.clone(),
                 });
-            }
-            // for loop
-            // TO REMOVE ya que los bucles `for` no viven fuera del bloque `begin..end`
-            Rule::for_stmt => {
-                //println!("parse_program: brazo Rule::for_stmt entro");
-                let mut inner = pairs.clone();
-
-                let var = inner.next().unwrap().as_str().to_string(); // ident
-                inner.next(); // := (assign_op)
-
-                let start = parse_expr(inner.next().unwrap(), &sym_table);
-                let dir_token = inner.next().unwrap(); // "to" o "downto"
-
-                let direction = if dir_token.as_rule() == Rule::keyword_to {
-                    ForDir::To
-                } else {
-                    ForDir::DownTo
-                };
-
-                let end = parse_expr(inner.next().unwrap(), &sym_table);
-                inner.next(); // "do"
-                let body = parse_stmt(inner.next().unwrap(), &sym_table);
-
-                stmts.push(Stmt::For {
-                    var,
-                    start,
-                    end,
-                    direction,
-                    body: Box::new(body),
-                })
-            }
-            // while loop
-            // TO REMOVE ya que los bucles `while` no viven fuera del bloque `begin..end`
-            Rule::while_stmt => {
-                //println!("parse_program: brazo Rule::while_stmt entro");
-                let mut inner = p.into_inner();
-
-                let cond_pair = inner.next().expect("Se esperaba condición en while");
-                let condition = parse_expr(cond_pair, &sym_table);
-
-                let body_pair = inner.next().expect("Se esperaba cuerpo del while");
-                let body = parse_stmt(body_pair, &sym_table);
-
-                stmts.push(Stmt::While(WhileStmt {
-                    condition,
-                    body: Box::new(body),
-                }));
-            }
-            // repeat loop
-            // TO REMOVE ya que los bucles `repeat` no viven fuera del bloque `begin..end`
-            Rule::repeat_stmt => {
-                //println!("============");
-                //println!("parse_program entro al match brazo Rule::repeat_stmt entro");
-                let stmt = parse_stmt(p, &sym_table);
-                //println!("parse_program stmt {:?}", stmt);
-                stmts.push(stmt);
             }
             _ => {}
         }
