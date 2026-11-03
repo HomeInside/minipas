@@ -1,4 +1,4 @@
-// Minipas grammar.pest 1.8.0
+// Minipas grammar.pest 1.9.1
 //
 WHITESPACE = _{ (" " | "\t" | NEWLINE | comment)+ }
 NEWLINE    = _{ "\n" | "\r\n" }
@@ -72,6 +72,9 @@ colon     = { ":" }
 lparen    = { "(" }
 rparen    = { ")" }
 
+// definicion de constantes
+const_literal = { number | string_literal | boolean_literal }
+
 expr    = { sum ~ (cmp_op ~ sum)? }
 sum     = { product ~ ((add_op | sub_op) ~ product)* }
 
@@ -101,11 +104,16 @@ stmt  = { comment* ~ (if_stmt | for_stmt | while_stmt | repeat_stmt | break_stmt
 
 if_stmt = { keyword_if ~ expr ~ keyword_then ~ stmt ~ (keyword_else ~ stmt)? }
 
+// declaración de constantes
+const_decl    = { ident ~ "=" ~ const_literal ~ semicolon }
+
+// declaración de variables
 var_decl = { ident ~ ("," ~ ident)* ~ ":" ~ (keyword_integer | keyword_real | keyword_string | keyword_boolean | keyword_byte) ~ ";" }
 
 //assignment = { ident ~ assign_op ~ expr ~ semicolon }
 assignment = {ident ~ (assign_op | assign_add | assign_sub | assign_mul | assign_div|assign_mod) ~ expr ~ semicolon}
 
+const_section = { (keyword_const ~ const_decl+)+ }
 var_section = { ("var" ~ var_decl+)+ }
 
 // procedures
@@ -142,7 +150,6 @@ param_list   = { param ~ (semicolon ~ param)* }
 param        = { ident ~ colon ~ type_keyword }
 type_keyword = { keyword_integer | keyword_real | keyword_string | keyword_boolean | keyword_byte }
 
-//
 program = {
-    SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ var_section? ~ (proc_decl | func_decl)* ~ block ~ "." ~ EOI
+    SOI ~ comment* ~ "program" ~ ident ~ semicolon ~ const_section? ~ var_section? ~ (proc_decl | func_decl)* ~ block ~ "." ~ EOI
 }
