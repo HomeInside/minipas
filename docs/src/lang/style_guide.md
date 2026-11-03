@@ -86,16 +86,20 @@ nombre_usuario
 
 ### 3.2 Constantes
 
-⚠️ **Minipas** no admite constantes, cuando llegue el momento...
+⚠️ Las Constantes están disponibles a partir de la versión **2.x**.
 
 * MAYÚSCULAS
 * separadas por `_`
+* pueden iniciar y terminar con `_`
 
 Ejemplo:
 
 ```
 MAX_INTENTOS = 3;
 PI = 3.14159;
+TITLE = "constantes en MiniPas";
+MODO_DEBUG = True;
+_IS_ACTIVE = False;
 ```
 
 ### 3.3 Funciones / procedimientos
@@ -344,7 +348,7 @@ end.
 
 * **Indentación:** 2 espacios
 * **Nombres:** snake_case
-* **Constantes:** cuando se soporten serán en MAYÚSCULAS
+* **Constantes:** en MAYÚSCULAS
 * **Bloques:** siempre multilínea
 * **Comentarios:** explicar el porqué
 * **Longitud de línea:** 120 caracteres

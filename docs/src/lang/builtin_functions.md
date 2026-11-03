@@ -62,7 +62,14 @@ writeln("el valor de PI es:", PI);
 ```
 writeln("el valor de E es:", E);
 ```
-
+- **TRUE**: Constante que representa el valor verdadero.
+```
+writeln("el valor de TRUE es:", TRUE);
+```
+- **FALSE**: Constante que representa el valor verdadero.
+```
+writeln("el valor de FALSE es:", FALSE);
+```
 
 ### funciones matemáticas básicas
 

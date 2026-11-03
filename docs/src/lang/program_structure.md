@@ -19,6 +19,18 @@ se acepta el guión bajo (_)
 program helloworld;
 ```
 
+### Declaraciones de Constantes 
+
+⚠️ Las Constantes están disponibles a partir de la versión **2.x**.
+
+Se declaran las constantes que se usarán en el programa, el tipo de dato se **infiere del valor literal**, no se declara.
+No se puede definir como Ej. `const X: integer = 3`.
+```mp
+const MAX_INTENTOS = 3;
+const _IS_ACTIVE = False;
+const TITLE = "constantes en MiniPas";
+```
+
 ### Declaraciones de Variables
 
 Se declaran las variables que se usarán en el programa, especificando su tipo de dato.
