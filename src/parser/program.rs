@@ -5,13 +5,28 @@ use super::procedures::parse_proc_decl;
 use super::statements::parse_stmt;
 use super::symbol_table::SymbolTable;
 use crate::Rule;
+use crate::parser::ast::Value;
 use crate::parser::ast::{ForDir, Stmt, VarType, WhileStmt};
-use crate::runtime::std_lib::builtins::BUILTINS;
+use crate::runtime::std_lib::builtins::{BUILTINS, Builtin};
 use pest::iterators::{Pair, Pairs};
 
+/// valida que no sea una palabra reservada
 pub fn validate_identifier(name: &str) {
     if KEYWORDS.contains(&name) {
         panic!("Identificador '{}' no permitido: es una palabra reservada", name);
+    }
+}
+
+/// valida constantes declaradas con `const`
+pub fn validate_const_name(name: &str) {
+    let ok = name
+        .chars()
+        .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_');
+    if !ok {
+        panic!(
+            "Nombre de constante inválido '{}': debe usar solo MAYÚSCULAS, dígitos y '_'",
+            name
+        );
     }
 }
 
@@ -29,7 +44,7 @@ pub fn parse_block(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 }
 
 pub fn check_ident(name: &str, sym_table: &SymbolTable) {
-    if !sym_table.exists(name) && !BUILTINS.contains_key(name) {
+    if !sym_table.exists(name) && !BUILTINS.contains_key(name) && !sym_table.is_constant(name) {
         panic!("check_ident Variable o constante '{}' no declarada", name);
     }
 }
@@ -41,6 +56,30 @@ pub fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     let expr_pair = pair.into_inner().next().expect("return sin expresión");
     let expr = parse_expr(expr_pair, sym_table);
     Stmt::Return(expr)
+}
+
+/// valida el tipo de dato de las constantes definidas por el usuario
+fn parse_const_literal(pair: Pair<Rule>) -> (VarType, Value) {
+    let inner = pair.into_inner().next().expect("const_literal vacío");
+    match inner.as_rule() {
+        Rule::number => {
+            let lit = inner.as_str();
+            if lit.contains('.') {
+                (VarType::Real, Value::Real(lit.parse::<f64>().unwrap()))
+            } else {
+                (VarType::Integer, Value::Integer(lit.parse::<i64>().unwrap()))
+            }
+        }
+        Rule::string_literal => {
+            let s = inner.as_str();
+            (VarType::Str, Value::Str(s[1..s.len() - 1].to_string()))
+        }
+        Rule::boolean_literal => {
+            let b = inner.as_str().to_lowercase() == "true";
+            (VarType::Boolean, Value::Boolean(b))
+        }
+        other => panic!("const_literal inesperado: {:?}", other),
+    }
 }
 
 /// Genera el AST y la tabla de simbolos del programa.
@@ -74,6 +113,52 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
 
     for p in program_pair.into_inner() {
         match p.as_rule() {
+            Rule::const_section => {
+                for decl in p.into_inner() {
+                    /*
+                    lista de declaraciones
+                    for q in decl.clone().into_inner() {
+                        eprintln!("const_decl child: {:?} = {:?}", q.as_rule(), q.as_str());
+                    }
+                    println!();
+                    */
+                    //en caso de que no sea una constante
+                    if decl.as_rule() != Rule::const_decl {
+                        continue;
+                    }
+
+                    let mut inner = decl.into_inner();
+                    let name = inner.next().unwrap().as_str().to_string();
+
+                    // no permite redefinir las builtins
+                    if let Some(b) = BUILTINS.get(&name) {
+                        let kind = match b {
+                            Builtin::Const(_) => "constant",
+                            Builtin::Func(_) => "function",
+                            Builtin::Proc(_) => "procedure",
+                        };
+                        panic!(
+                            "No se puede declarar '{}': ya existe como 'builtin {}'(uso interno del lenguaje) y no puede redefinirse.\n\
+                             Sugerencia: use otro nombre (p. ej. '{}_USER') o elimine esta declaración.",
+                            name, kind, name
+                        );
+                    }
+
+                    // el siguiente token es "=", saltamos
+                    let lit_pair = inner.next().unwrap();
+                    let (ty, val) = parse_const_literal(lit_pair);
+
+                    validate_identifier(&name);
+                    // validate que las constantes esten en mayusculas
+                    validate_const_name(&name);
+
+                    // agrega la constante a la tabla de simbolos
+                    sym_table
+                        .declare_const(&name, ty, val)
+                        .unwrap_or_else(|e| panic!("{}", e));
+                }
+            }
+            //
             Rule::var_section => {
                 // Parsear todas las declaraciones y llenar sym_table
                 for decl in p.into_inner() {
@@ -103,7 +188,6 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     }
                 }
             }
-
             Rule::block => block_pair_opt = Some(p),
             Rule::proc_decl => {
                 //println!("============");
@@ -119,7 +203,6 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     body: proc.body.clone(),
                 })
             }
-
             Rule::func_decl => {
                 //println!("============");
                 //println!("parse_program entro al match brazo Rule::func_decl entro");
@@ -134,6 +217,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                 });
             }
             // for loop
+            // TO REMOVE ya que los bucles `for` no viven fuera del bloque `begin..end`
             Rule::for_stmt => {
                 //println!("parse_program: brazo Rule::for_stmt entro");
                 let mut inner = pairs.clone();
@@ -163,6 +247,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                 })
             }
             // while loop
+            // TO REMOVE ya que los bucles `while` no viven fuera del bloque `begin..end`
             Rule::while_stmt => {
                 //println!("parse_program: brazo Rule::while_stmt entro");
                 let mut inner = p.into_inner();
@@ -179,6 +264,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                 }));
             }
             // repeat loop
+            // TO REMOVE ya que los bucles `repeat` no viven fuera del bloque `begin..end`
             Rule::repeat_stmt => {
                 //println!("============");
                 //println!("parse_program entro al match brazo Rule::repeat_stmt entro");
@@ -186,7 +272,6 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                 //println!("parse_program stmt {:?}", stmt);
                 stmts.push(stmt);
             }
-
             _ => {}
         }
     }
