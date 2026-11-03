@@ -69,18 +69,6 @@ impl RuntimeEnv {
     }
 }
 
-// TO REMOVE `ReturnError``sin uso aparente
-#[derive(Debug)]
-pub struct ReturnError(pub Value); // wrapper para salir de la función
-
-impl std::fmt::Display for ReturnError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Return: {}", self.0)
-    }
-}
-
-impl std::error::Error for ReturnError {}
-
 pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, Builtin>) -> Value {
     //println!("eval_expr entro a la funcion");
     //println!("eval_expr expr: {:?}", expr);
