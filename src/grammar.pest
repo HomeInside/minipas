@@ -1,4 +1,4 @@
-// Minipas grammar.pest 1.9.1
+// Minipas grammar.pest 2.0.0-alpha.0
 //
 WHITESPACE = _{ (" " | "\t" | NEWLINE | comment)+ }
 NEWLINE    = _{ "\n" | "\r\n" }

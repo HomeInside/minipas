@@ -18,6 +18,7 @@ repeat
 string
 then
 until
+const
 var
 while
 True

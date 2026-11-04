@@ -2,6 +2,8 @@
 
 **MiniPas** es un lenguaje de programación interpretado **inspirado en Turbo Pascal V7**, diseñado para ser sencillo, educativo y fácil de usar.
 
+Esta documentación asume que estás usando **MiniPas** [2.0.0-alpha.0](https://github.com/HomeInside/minipas/releases) (lanzado en fecha: **2026-11-03**).
+
 ⚠️ **MiniPas** **no busca ser compatible** con [Pascal](https://es.wikipedia.org/wiki/Pascal_(lenguaje_de_programaci%C3%B3n)), [Turbo Pascal V7](https://es.wikipedia.org/wiki/Turbo_Pascal) ó [FreePascal](https://www.freepascal.org/): muchas características de Pascal **no están soportadas**.
 
 Su objetivo principal es permitir experimentar con conceptos básicos de programación estructurada y scripting, ideal para aprendizaje ó pequeños proyectos.

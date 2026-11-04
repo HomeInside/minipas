@@ -1,6 +1,6 @@
 # Instalación desde el código fuente
 
-La mejor manera de obtener la última y mejor versión de **Minipas** es instalarla desde el código fuente. Es fácil y solo lleva unos segundos:
+La mejor manera de obtener la última y mejor versión de **Minipas**, es instalarla desde el código fuente [disponible en Github](https://github.com/HomeInside/minipas), Es fácil y solo lleva unos segundos:
 
 **Nota:**
 

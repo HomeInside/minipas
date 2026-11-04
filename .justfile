@@ -4,7 +4,7 @@ set dotenv-load := false
 just_home := justfile_directory()
 
 # for Windows
-set windows-shell := ["pwsh.exe", "-NoLogo", "-Command"]
+#set windows-shell := ["pwsh.exe", "-NoLogo", "-Command"]
 
 [doc("📋 Show all recipes")]
 [group("Help")]
@@ -76,8 +76,15 @@ clean:
 
 [group("Maintenance")]
 [doc('cleaning the house')]
+[windows]
 clean-all:clean
-    cargo clean
+    cargo clean && Remove-Item -LiteralPath .\Cargo.lock -Force -Verbose -ErrorAction Ignore && Remove-Item -LiteralPath .\docs\book -Recurse -Force -ErrorAction Ignore
+
+[group("Maintenance")]
+[doc('cleaning the house')]
+[unix]
+clean-all:clean
+    cargo clean && rm -fv Cargo.lock && rm -rf ./docs/book
 
 [group("Docs")]
 [doc('serve the docs using mdbook')]

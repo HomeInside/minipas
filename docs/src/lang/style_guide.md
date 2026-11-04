@@ -1,6 +1,6 @@
 # Guía de estilo
 
-**Minipas 1.9.0**
+**Minipas 1.9.x**
 
 Este documento define el **estilo oficial de código** para Minipas.
 Su objetivo es garantizar que todos los programas escritos en Minipas sean:
