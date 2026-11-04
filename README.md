@@ -35,16 +35,15 @@ end.
 proporciona una salida como la siguiente:
 
 ```bash
-welcome to minipas v0.9.0
-cargando archivo: 'example.mp'
-Hello, World in minipas!
+minipas v.2.0.0-alpha.0
+Hello World in minipas!
 
 Circunferencia: 12.566370614359172
 uso de pow: 8
-uso de sqrt 4
+uso de sqrt 4.0
 
 platform: linux
-version: 0.9.0 (MiniPas build, unknown, linux) [rustc]
+version: 2.0.0-alpha.0 (MiniPas build, unknown, linux) [rustc]
 ```
 
 

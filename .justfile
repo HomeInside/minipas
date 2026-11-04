@@ -4,7 +4,7 @@ set dotenv-load := false
 just_home := justfile_directory()
 
 # for Windows
-#set windows-shell := ["pwsh.exe", "-NoLogo", "-Command"]
+set windows-shell := ["pwsh.exe", "-NoLogo", "-Command"]
 
 [doc("📋 Show all recipes")]
 [group("Help")]
