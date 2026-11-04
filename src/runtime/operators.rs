@@ -6,19 +6,32 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
     //println!("r: {}", r);
     match (l, r) {
         (Value::Integer(li), Value::Integer(ri)) => match op {
-            Op::Add => Value::Integer(li + ri),
-            Op::Sub => Value::Integer(li - ri),
-            Op::Mul => Value::Integer(li * ri),
+            // TO TEST validar overflows
+            Op::Add => match li.checked_add(ri) {
+                Some(v) => Value::Integer(v),
+                None => panic!("overflow en Integer + Integer: {} + {}", li, ri),
+            },
+            // TO TEST validar overflows
+            Op::Sub => match li.checked_sub(ri) {
+                Some(v) => Value::Integer(v),
+                None => panic!("overflow en Integer - Integer: {} - {}", li, ri),
+            },
+            // TO TEST validar overflows
+            Op::Mul => match li.checked_mul(ri) {
+                Some(v) => Value::Integer(v),
+                None => panic!("overflow en Integer * Integer: {} * {}", li, ri),
+            },
             Op::Div => {
                 if ri == 0 {
-                    panic!("attempt to divide by zero");
+                    panic!("división por cero: {} / 0", li);
                 }
+                // la división entre enteros arroja como
+                // resultado un real
                 Value::Real(li as f64 / ri as f64)
-                //Value::Integer(li / ri)
             }
             Op::Idiv => {
                 if ri == 0 {
-                    panic!("attempt to divide by zero");
+                    panic!("división entera por cero: {} div 0", li);
                 }
                 Value::Integer(li / ri)
             }
@@ -30,7 +43,7 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
             Op::NotEqual => Value::Boolean(li != ri),
             Op::Mod => {
                 if ri == 0 {
-                    panic!("attempt to divide by zero");
+                    panic!("módulo por cero: {} mod 0", li);
                 }
                 //Value::Integer(li % ri)
                 // resto matemático no negativo
@@ -44,12 +57,12 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
             Op::Mul => Value::Real(lf * rf),
             Op::Div => {
                 if rf == 0.0 {
-                    panic!("attempt to divide by zero");
+                    panic!("división por cero: {} / 0.0", lf);
                 }
                 Value::Real(lf / rf)
             }
             Op::Idiv => {
-                panic!("div operator is only allowed with Integer or Byte");
+                panic!("el operador 'div' solo se permite con Integer o Byte");
             }
             Op::Greater => Value::Boolean(lf > rf),
             Op::Less => Value::Boolean(lf < rf),
@@ -59,7 +72,7 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
             Op::NotEqual => Value::Boolean(lf != rf),
             Op::Mod => {
                 if rf == 0.0 {
-                    panic!("attempt to divide by zero");
+                    panic!("módulo por cero: {} mod 0.0", lf);
                 }
                 // resto matemático no negativo
                 Value::Real(lf.rem_euclid(rf))
@@ -98,19 +111,19 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
             }
             Op::Div => {
                 if ri == 0 {
-                    panic!("attempt to divide by zero");
+                    panic!("división por cero: {} / 0", li);
                 }
                 Value::Byte(li / ri)
             }
             Op::Idiv => {
                 if ri == 0 {
-                    panic!("attempt to divide by zero");
+                    panic!("división por cero: {} / 0", li);
                 }
                 Value::Byte(li / ri)
             }
             Op::Mod => {
                 if ri == 0 {
-                    panic!("attempt to divide by zero");
+                    panic!("división por cero: {} / 0", li);
                 }
                 Value::Byte(li % ri)
             }
