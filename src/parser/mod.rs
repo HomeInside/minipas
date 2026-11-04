@@ -6,6 +6,7 @@ pub mod keywords;
 pub mod assignment;
 pub mod conditionals;
 pub mod declarations;
+mod errors;
 pub mod expressions;
 pub mod functions;
 pub mod params;
@@ -14,6 +15,7 @@ pub mod program;
 pub mod statements;
 pub mod symbol_table;
 pub mod types;
+
 use pest::Parser;
 use pest::iterators::Pairs;
 
@@ -24,9 +26,18 @@ use crate::parser::program::parse_program;
 use crate::parser::symbol_table::SymbolTable;
 
 /// Genera la lista de reglas (`Pairs<Rule>`)
+/// y valida que si se genera un error, salga
+/// el mensaje apropiado.
 ///
 pub fn gen_pairs(source: &str) -> Pairs<'_, Rule> {
-    MiniPasParser::parse(Rule::program, source).unwrap_or_else(|e| panic!("Error de parseo: {} {}", source, e))
+    match MiniPasParser::parse(Rule::program, source) {
+        Ok(pairs) => pairs,
+        Err(e) => {
+            let e = errors::rename_error(e);
+            eprintln!("minipas error de sintaxis:\n{}", e);
+            std::process::exit(1);
+        }
+    }
 }
 
 /// Genera el AST completo(reglas y tabla de simbolos) a
