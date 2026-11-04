@@ -64,6 +64,14 @@ fn parse_args() -> Result<AppArgs, pico_args::Error> {
         std::process::exit(0);
     }
     if pargs.contains(["-v", "--version"]) {
+        let version = env!("CARGO_PKG_VERSION"); // versión desde Cargo.toml
+        let build_time = option_env!("BUILD_TIME").unwrap_or("unknown");
+        let compiler = option_env!("RUSTC_VERSION").unwrap_or("rustc");
+        let target = env::consts::OS;
+
+        let formatted = format!("{} (MiniPas build, {}, {}) [{}]", version, build_time, target, compiler);
+
+        println!("minipas v.{}", formatted);
         std::process::exit(0);
     }
 
@@ -86,6 +94,7 @@ fn parse_args() -> Result<AppArgs, pico_args::Error> {
 }
 
 fn main() {
+    // TO CHECK revisar si se quita
     println!("minipas v.{}", env!("CARGO_PKG_VERSION"));
     match parse_args() {
         Ok(v) => match v.cmd.as_str() {
