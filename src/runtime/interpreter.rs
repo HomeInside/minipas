@@ -239,7 +239,6 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
             apply_op(l, op, r)
         }
         Expr::Nil => Value::Nil,
-        // 👇 Nuevo
         Expr::MethodCall { target, method, args } => {
             if !builtins.contains_key(method) {
                 panic!("Método '{}' no está registrado como builtin", method);
@@ -459,7 +458,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
             body,
         } => {
             // println!("============");
-            // println!("execute_stmt entro al match brazo Stmt::For entro");
+            // println!("execute_stmt entro al match brazo Stmt::For");
             // println!("var {:?}", var);
             // println!("start {:?}", start);
             // println!("end {:?}", end);
@@ -508,7 +507,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         }
         Stmt::While(ws) => {
             //println!("============");
-            //println!("execute_stmt entro al match brazo Stmt::While entro");
+            //println!("execute_stmt entro al match brazo Stmt::While");
             //println!("ws {:?}", ws);
 
             while eval_expr(&ws.condition, env, builtins).as_bool() {
@@ -522,7 +521,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         }
         Stmt::Repeat { body, condition } => {
             //println!("============");
-            //println!("execute_stmt entro al match brazo Stmt::Repeat entro");
+            //println!("execute_stmt entro al match brazo Stmt::Repeat");
             //println!("body {:?}", body);
             //println!("condition {:?}", condition);
 
@@ -531,8 +530,11 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 for s in body {
                     match execute_stmt(s, env, builtins) {
                         Ok(_) => {}
-                        Err(RuntimeFlow::Continue) => break, // salta al eval cond
-                        Err(RuntimeFlow::Break) => return Ok(()), // rompe todo el repeat
+                        // `continue` termina el bucle y reevalúa la condición
+                        // saltando al `cond_val`
+                        Err(RuntimeFlow::Continue) => break,
+                        // `break` sale del bucle completo, termina el bucle de repeat
+                        Err(RuntimeFlow::Break) => return Ok(()),
                         Err(RuntimeFlow::Return(v)) => return Err(RuntimeFlow::Return(v)),
                     }
                 }
@@ -544,9 +546,8 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 }
             }
         }
-
-        Stmt::Break => return Err(RuntimeFlow::Break),       // 👈 NUEVO
-        Stmt::Continue => return Err(RuntimeFlow::Continue), // 👈 NUEVO
+        Stmt::Break => return Err(RuntimeFlow::Break),
+        Stmt::Continue => return Err(RuntimeFlow::Continue),
     }
     Ok(())
 }
