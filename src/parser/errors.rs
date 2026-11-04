@@ -1,6 +1,17 @@
 use crate::Rule;
 use pest::error::Error;
 
+/// Pest usa `renamed_rules` para cambiar el nombre
+/// de todas las reglas si se trata de un «ParsingError».
+/// pero no realiza ninguna acción cuando se invoca
+/// sobre un «CustomError». útil para cambiar el nombre
+/// de reglas con descripciones detalladas o para aplicar
+/// un formato específico a cada regla.
+///
+pub fn rename_error(err: Error<Rule>) -> Error<Rule> {
+    err.renamed_rules(rename_msg_rule)
+}
+
 /// Traduce los nombres internos de las reglas de Pest
 /// para los mensajes de error de sintaxis.
 ///
@@ -59,8 +70,8 @@ pub fn rename_msg_rule(rule: &Rule) -> String {
         // literales/identificadores
         Rule::ident => "un identificador".to_string(),
         Rule::number => "un número".to_string(),
-        Rule::string_literal => "una cadena de caracteres".to_string(),
         //
+        Rule::string_literal => "una cadena de caracteres".to_string(),
         Rule::boolean_literal => "'True' o 'False'".to_string(),
         // declaraciones
         Rule::var_decl => "una declaración de variable".to_string(),
@@ -88,14 +99,4 @@ pub fn rename_msg_rule(rule: &Rule) -> String {
         // otros casos no cubiertos
         other => format!("{:?}", other),
     }
-}
-
-/// Pest usa `renamed_rules` para cambiar el nombre
-/// de todas las reglas si se trata de un «ParsingError».
-/// pero no realiza ninguna acción cuando se invoca
-/// sobre un «CustomError». útil para cambiar el nombre
-/// de reglas con descripciones detalladas o para aplicar
-/// un formato específico a cada regla.
-pub fn rename_error(err: Error<Rule>) -> Error<Rule> {
-    err.renamed_rules(rename_msg_rule)
 }
