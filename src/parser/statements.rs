@@ -138,8 +138,8 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
                     Stmt::Repeat { body, condition }
                 } //repeat_stmt
 
-                Rule::break_stmt => Stmt::Break,       // 👈 NUEVO
-                Rule::continue_stmt => Stmt::Continue, // 👈 NUEVO
+                Rule::break_stmt => Stmt::Break,
+                Rule::continue_stmt => Stmt::Continue,
 
                 Rule::return_stmt => parse_return_stmt(inner, sym_table),
                 other => panic!("Regla inesperada en stmt: {:?}", other),

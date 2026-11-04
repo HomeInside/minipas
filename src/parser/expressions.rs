@@ -119,13 +119,11 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                 }
 
                 Rule::expr => parse_expr(inner, sym_table),
-                // 👇 Nuevo
                 Rule::method_chain => parse_method_chain(pair, sym_table),
 
                 _ => panic!("Factor inesperado: {:?}", inner.as_rule()),
             }
         }
-        // 👇 Nuevo
         Rule::method_chain => parse_method_chain(pair, sym_table),
         _ => panic!("parse_expr: Regla de expr no implementada: {:?}", pair.as_rule()),
     }
@@ -147,7 +145,6 @@ pub fn parse_expr_item(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     }
 }
 
-// 👇 Nuevo
 fn parse_method_chain(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
     let mut inner = pair.into_inner();
     let mut expr = parse_expr(inner.next().unwrap(), sym_table); // factor base

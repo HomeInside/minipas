@@ -78,7 +78,7 @@ impl Value {
 #[derive(Encode, Decode, Debug, Clone)]
 pub enum Expr {
     Number(f64), // integer o real
-    Real(f64),   // <--- nuevo
+    Real(f64),
     Ident(String),
     StringLiteral(String),
     BooleanLiteral(bool),
@@ -93,7 +93,6 @@ pub enum Expr {
     },
     #[allow(dead_code)]
     Nil,
-    // 👇 Nuevo
     MethodCall {
         target: Box<Expr>,
         method: String,
@@ -154,8 +153,8 @@ pub enum Stmt {
         body: Vec<Stmt>,
         condition: Expr,
     },
-    Break,    // 👈 NUEVO
-    Continue, // 👈 NUEVO
+    Break,
+    Continue,
 }
 
 #[derive(Encode, Decode, Debug, Clone)]
