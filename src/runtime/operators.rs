@@ -22,9 +22,7 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
                 None => panic!("overflow en Integer * Integer: {} * {}", li, ri),
             },
             Op::Div => {
-                if ri == 0 {
-                    panic!("división por cero: {} / 0", li);
-                }
+                assert!(ri != 0, "división por cero: {} / 0", li);
                 // la división entre enteros arroja como
                 // resultado un real
                 Value::Real(li as f64 / ri as f64)
@@ -68,6 +66,7 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
             Op::Less => Value::Boolean(lf < rf),
             Op::GreaterEq => Value::Boolean(lf >= rf),
             Op::LessEq => Value::Boolean(lf <= rf),
+            #[allow(clippy::float_cmp)]
             Op::Equal => Value::Boolean(lf == rf),
             Op::NotEqual => Value::Boolean(lf != rf),
             Op::Mod => {
@@ -82,40 +81,28 @@ pub fn apply_op(l: Value, op: &Op, r: Value) -> Value {
         (Value::Integer(li), Value::Real(rf)) => apply_op(Value::Real(li as f64), op, Value::Real(rf)),
         (Value::Real(lf), Value::Integer(ri)) => apply_op(Value::Real(lf), op, Value::Real(ri as f64)),
 
-        (Value::Integer(lf), Value::Byte(ri)) => apply_op(Value::Integer(lf), op, Value::Integer(ri as i64)),
-        (Value::Byte(lf), Value::Integer(ri)) => apply_op(Value::Integer(lf as i64), op, Value::Integer(ri)),
-        (Value::Byte(lf), Value::Real(ri)) => apply_op(Value::Real(lf as f64), op, Value::Real(ri)),
-        (Value::Real(lf), Value::Byte(ri)) => apply_op(Value::Real(lf), op, Value::Real(ri as f64)),
+        (Value::Integer(lf), Value::Byte(ri)) => apply_op(Value::Integer(lf), op, Value::Integer(i64::from(ri))),
+        (Value::Byte(lf), Value::Integer(ri)) => apply_op(Value::Integer(i64::from(lf)), op, Value::Integer(ri)),
+        (Value::Byte(lf), Value::Real(ri)) => apply_op(Value::Real(f64::from(lf)), op, Value::Real(ri)),
+        (Value::Real(lf), Value::Byte(ri)) => apply_op(Value::Real(lf), op, Value::Real(f64::from(ri))),
 
         (Value::Byte(li), Value::Byte(ri)) => match op {
-            Op::Add => {
-                let res = li as i16 + ri as i16;
-                if res > u8::MAX as i16 {
-                    panic!("overflow en operación Byte + Byte: {} + {}", li, ri);
-                }
-                Value::Byte(res as u8)
-            }
-            Op::Sub => {
-                let res = li as i16 - ri as i16;
-                if res < 0 {
-                    panic!("underflow en operación Byte - Byte: {} - {}", li, ri);
-                }
-                Value::Byte(res as u8)
-            }
-            Op::Mul => {
-                let res = li as i16 * ri as i16;
-                if res > u8::MAX as i16 {
-                    panic!("overflow en operación Byte * Byte: {} * {}", li, ri);
-                }
-                Value::Byte(res as u8)
-            }
-            Op::Div => {
-                if ri == 0 {
-                    panic!("división por cero: {} / 0", li);
-                }
-                Value::Byte(li / ri)
-            }
-            Op::Idiv => {
+            // TO TEST validar overflows
+            Op::Add => match li.checked_add(ri) {
+                Some(v) => Value::Byte(v),
+                None => panic!("overflow en Byte + Byte: {} + {}", li, ri),
+            },
+            // TO TEST validar overflows
+            Op::Sub => match li.checked_sub(ri) {
+                Some(v) => Value::Byte(v),
+                None => panic!("overflow en Byte - Byte: {} - {}", li, ri),
+            },
+            // TO TEST validar overflows
+            Op::Mul => match li.checked_mul(ri) {
+                Some(v) => Value::Byte(v),
+                None => panic!("overflow en Byte * Byte: {} * {}", li, ri),
+            },
+            Op::Div | Op::Idiv => {
                 if ri == 0 {
                     panic!("división por cero: {} / 0", li);
                 }
