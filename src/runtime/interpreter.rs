@@ -44,17 +44,13 @@ impl RuntimeEnv {
     // Asignar valor a variable, falla si no existe
     #[allow(dead_code)]
     pub fn set(&mut self, name: &str, val: Value) {
-        if !self.vars.contains_key(name) {
-            panic!("Variable '{}' no declarada", name);
-        }
+        assert!(self.vars.contains_key(name), "Variable '{}' no declarada", name);
         self.vars.insert(name.to_string(), val);
     }
 
     // Declarar una variable nueva (por ejemplo en var_decl)
     pub fn declare(&mut self, name: &str, val: VarType) {
-        if self.vars.contains_key(name) {
-            panic!("Variable '{}' ya declarada", name);
-        }
+        assert!(!self.vars.contains_key(name), "Variable '{}' ya declarada", name);
 
         let default_val = match val {
             VarType::Integer => Value::Integer(0),
@@ -73,6 +69,7 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
     //println!("eval_expr entro a la funcion");
     //println!("eval_expr expr: {:?}", expr);
     match expr {
+        #[allow(clippy::cast_lossless)]
         Expr::Number(n) => {
             if n.fract() == 0.0 {
                 Value::Integer(*n as i64)
@@ -104,14 +101,13 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
             if let Some(proc) = env.procs.get(name).cloned() {
                 // --- procedimiento definido por el usuario ---
                 //println!("eval_expr: entrando al bloque de procedures");
-                if proc.params.len() != args.len() {
-                    panic!(
-                        "El procedimiento '{}' esperaba {} argumentos, pero recibió {}",
-                        name,
-                        proc.params.len(),
-                        args.len()
-                    );
-                }
+                assert!(
+                    proc.params.len() == args.len(),
+                    "El procedimiento '{}' esperaba {} argumentos, pero recibió {}",
+                    name,
+                    proc.params.len(),
+                    args.len()
+                );
 
                 // crear un entorno local (vacío) que herede las funciones/procedimientos
                 let mut local_env = RuntimeEnv {
@@ -151,7 +147,7 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
                 // ejecutar el cuerpo del procedimiento en el entorno local
                 for stmt in &proc.body {
                     match execute_stmt(stmt, &mut local_env, builtins) {
-                        Ok(_) => {}
+                        Ok(()) => {}
                         Err(RuntimeFlow::Return(_)) => {
                             panic!("'return' no permitido en procedimientos");
                         }
@@ -200,12 +196,12 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
 
                 for stmt in &func.body {
                     match execute_stmt(stmt, &mut local_env, builtins) {
-                        Ok(_) => {}
+                        Ok(()) => {}
                         Err(RuntimeFlow::Return(val)) => {
                             result = val;
                             break;
                         }
-                        Err(RuntimeFlow::Break) | Err(RuntimeFlow::Continue) => {
+                        Err(RuntimeFlow::Break | RuntimeFlow::Continue) => {
                             panic!("'break' o 'continue' usados fuera de un ciclo");
                         }
                     }
@@ -240,9 +236,11 @@ pub fn eval_expr(expr: &Expr, env: &mut RuntimeEnv, builtins: &HashMap<String, B
         }
         Expr::Nil => Value::Nil,
         Expr::MethodCall { target, method, args } => {
-            if !builtins.contains_key(method) {
-                panic!("Método '{}' no está registrado como builtin", method);
-            }
+            assert!(
+                builtins.contains_key(method),
+                "Método '{}' no está registrado como builtin",
+                method
+            );
 
             // 1. evalúa el objeto y los argumentos
             let recv_val = eval_expr(target, env, builtins);
@@ -304,12 +302,11 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
         Stmt::Assign(name, expr) => {
             let rhs = eval_expr(expr, env, builtins);
 
-            if env.constants.contains_key(name) {
-                panic!(
-                    "Error en tiempo de ejecución: intento de modificar la constante '{}'",
-                    name
-                );
-            }
+            assert!(
+                !env.constants.contains_key(name),
+                "Error en tiempo de ejecución: intento de modificar la constante '{}'",
+                name
+            );
 
             let current = env
                 .vars
@@ -318,11 +315,13 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
 
             // convertir según el tipo actual
             let coerced = match current {
+                #[allow(clippy::cast_lossless)]
                 Value::Integer(_) => match rhs {
                     Value::Integer(v) => Value::Integer(v),
                     Value::Byte(v) => Value::Integer(v as i64),
                     _ => panic!("{:?} cannot be assigned to Integer", rhs),
                 },
+                #[allow(clippy::cast_lossless)]
                 Value::Real(_) => match rhs {
                     Value::Integer(v) => Value::Real(v as f64),
                     Value::Byte(v) => Value::Real(v as f64),
@@ -340,7 +339,11 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 Value::Byte(_) => match rhs {
                     Value::Integer(v) => {
                         if v >= u8::MIN.into() && v <= u8::MAX.into() {
-                            Value::Byte(v as u8)
+                            if let Ok(x) = u8::try_from(v) {
+                                Value::Byte(x)
+                            } else {
+                                panic!("Out of range for Byte: {}", v);
+                            }
                         } else {
                             panic!("Out of range for Byte: {}", v);
                         }
@@ -474,7 +477,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                         env.vars.insert(var.clone(), Value::Integer(i));
 
                         match execute_stmt(body, env, builtins) {
-                            Ok(_) => {}
+                            Ok(()) => {}
                             Err(RuntimeFlow::Continue) => {
                                 i += 1;
                                 continue;
@@ -491,7 +494,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                         env.vars.insert(var.clone(), Value::Integer(i));
 
                         match execute_stmt(body, env, builtins) {
-                            Ok(_) => {}
+                            Ok(()) => {}
                             Err(RuntimeFlow::Continue) => {
                                 i -= 1;
                                 continue;
@@ -512,7 +515,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
 
             while eval_expr(&ws.condition, env, builtins).as_bool() {
                 match execute_stmt(&ws.body, env, builtins) {
-                    Ok(_) => {}
+                    Ok(()) => {}
                     Err(RuntimeFlow::Continue) => continue,
                     Err(RuntimeFlow::Break) => break,
                     Err(RuntimeFlow::Return(v)) => return Err(RuntimeFlow::Return(v)),
@@ -529,7 +532,7 @@ pub fn execute_stmt(stmt: &Stmt, env: &mut RuntimeEnv, builtins: &HashMap<String
                 // ejecutar cuerpo
                 for s in body {
                     match execute_stmt(s, env, builtins) {
-                        Ok(_) => {}
+                        Ok(()) => {}
                         // `continue` termina el bucle y reevalúa la condición
                         // saltando al `cond_val`
                         Err(RuntimeFlow::Continue) => break,
