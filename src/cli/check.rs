@@ -5,12 +5,9 @@ use std::path::PathBuf;
 
 pub fn check_cmd(input: Option<PathBuf>) {
     //println!("=========check==========");
-    let input = match input {
-        Some(path) => path,
-        None => {
-            eprintln!("check error: expected input file");
-            std::process::exit(1);
-        }
+    let Some(input) = input else {
+        eprintln!("check error: expected input file");
+        std::process::exit(1);
     };
 
     let input_str = input.to_string_lossy();

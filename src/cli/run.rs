@@ -13,13 +13,10 @@ use std::path::PathBuf;
 pub fn run_cmd(input: Option<PathBuf>) {
     //println!("=========run==========");
     //parsea y ejecuta el programa
-    let input = match input {
-        Some(path) => path,
-        None => {
-            eprintln!("run Error: expected input file");
-            print_info();
-            std::process::exit(1);
-        }
+    let Some(input) = input else {
+        eprintln!("run Error: expected input file");
+        print_info();
+        std::process::exit(1);
     };
 
     if let Some(ext) = input.extension() {

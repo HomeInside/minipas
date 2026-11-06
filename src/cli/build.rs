@@ -6,12 +6,9 @@ use std::path::PathBuf;
 
 pub fn build_cmd(input: Option<PathBuf>, output: Option<PathBuf>) {
     //println!("=========build==========");
-    let input = match input {
-        Some(path) => path,
-        None => {
-            eprintln!("build error: expected input file");
-            std::process::exit(1);
-        }
+    let Some(input) = input else {
+        eprintln!("build error: expected input file");
+        std::process::exit(1);
     };
     let output = output.unwrap_or_else(|| PathBuf::from("a.mpc"));
 

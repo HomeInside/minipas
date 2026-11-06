@@ -5,12 +5,9 @@ use std::path::PathBuf;
 
 pub fn emit_cmd(input: Option<PathBuf>) {
     //println!("=========emit==========");
-    let input = match input {
-        Some(path) => path,
-        None => {
-            eprintln!("emit error: expected input file");
-            std::process::exit(1);
-        }
+    let Some(input) = input else {
+        eprintln!("emit error: expected input file");
+        std::process::exit(1);
     };
 
     let input_str = input.to_string_lossy();
@@ -31,11 +28,11 @@ pub fn emit_cmd(input: Option<PathBuf>) {
     let pairs_file = input.with_file_name(format!("{}.mpp", stem)); // mp pairs file
     let ast_file = input.with_file_name(format!("{}.mpa", stem)); // mp ast file
 
-    println!("generating Pairs file: {:?}", pairs_file);
+    println!("generating Pairs file: '{}'", pairs_file.display());
     save_pairs_as_text(&pairs, &pairs_file);
 
-    println!("generating AST file (text): {:?}", ast_file);
-    save_ast_as_text(ast, &ast_file);
+    println!("generating AST file (text): '{}'", ast_file.display());
+    save_ast_as_text(&ast, &ast_file);
 
     println!();
     println!("OK.");
