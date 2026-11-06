@@ -42,6 +42,7 @@ impl fmt::Display for Value {
 
 impl Value {
     pub fn as_int(&self) -> i64 {
+        #![allow(clippy::cast_possible_truncation)]
         match self {
             Value::Integer(i) => *i,
             Value::Real(f) => *f as i64,
@@ -51,6 +52,7 @@ impl Value {
 
     #[allow(dead_code)]
     pub fn as_real(&self) -> f64 {
+        #![allow(clippy::cast_possible_truncation)]
         match self {
             Value::Real(f) => *f,
             Value::Integer(i) => *i as f64,

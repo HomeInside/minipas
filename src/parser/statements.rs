@@ -8,6 +8,8 @@ use super::symbol_table::SymbolTable;
 use crate::Rule;
 use pest::iterators::Pair;
 
+// TODO revisa el paso de `pair: Pair<Rule>` a `pair: `&Pair<Rule>`
+#[allow(clippy::needless_pass_by_value)]
 pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
     //println!("parse_stmt entro");
     match pair.as_rule() {
@@ -131,9 +133,9 @@ pub fn parse_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 
                     // consumir ';'
                     //let _semicolon = inner.next();
-                    let _semicolon = inner.next().expect("Se esperaba ';' en repeat");
+                    let semicolon = inner.next().expect("Se esperaba ';' en repeat");
                     //println!("parse_stmt Rule::repeat_stmt _semicolon: {:?}", _semicolon);
-                    assert_eq!(_semicolon.as_rule(), Rule::semicolon);
+                    assert_eq!(semicolon.as_rule(), Rule::semicolon);
 
                     Stmt::Repeat { body, condition }
                 } //repeat_stmt

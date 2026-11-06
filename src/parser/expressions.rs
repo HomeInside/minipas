@@ -11,6 +11,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
         // TO CHECK cambiar a Real/Integer
         Rule::number => {
             let lit = pair.as_str();
+            #[allow(clippy::cast_precision_loss)]
             if lit.contains('.') {
                 Expr::Real(lit.parse::<f64>().unwrap())
             } else {
@@ -74,6 +75,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
 
                     let mut args: Vec<Expr> = Vec::new();
                     for node in ic {
+                        #[allow(clippy::single_match)]
                         match node.as_rule() {
                             Rule::expr_list => {
                                 for item in node.into_inner() {
@@ -82,8 +84,7 @@ pub fn parse_expr(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
                                     }
                                 }
                             }
-                            Rule::comma => {} // ignorar comas
-                            _ => {}           // ignorar otros nodos (lparen, rparen)
+                            _ => {} // ignorar otros nodos (comma, lparen, rparen)
                         }
                     }
                     Expr::Call { name, args }
@@ -155,6 +156,7 @@ fn parse_method_chain(pair: Pair<Rule>, sym_table: &SymbolTable) -> Expr {
             let mut args = Vec::new();
 
             // intenta leer "(" expr_list? ")"
+            #[allow(clippy::collapsible_if)]
             if let Some(maybe_paren) = inner.next() {
                 if maybe_paren.as_rule() == Rule::lparen {
                     if let Some(arg_list) = inner.next() {

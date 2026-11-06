@@ -2,9 +2,9 @@ use crate::Rule;
 use pest::error::Error;
 
 /// Pest usa `renamed_rules` para cambiar el nombre
-/// de todas las reglas si se trata de un «ParsingError».
+/// de todas las reglas si se trata de un `ParsingError`.
 /// pero no realiza ninguna acción cuando se invoca
-/// sobre un «CustomError». útil para cambiar el nombre
+/// sobre un `CustomError`. útil para cambiar el nombre
 /// de reglas con descripciones detalladas o para aplicar
 /// un formato específico a cada regla.
 ///
@@ -64,8 +64,10 @@ pub fn rename_msg_rule(rule: &Rule) -> String {
         Rule::lparen => "'('".to_string(),
         Rule::rparen => "')'".to_string(),
         // expresiones
-        Rule::expr | Rule::sum | Rule::product | Rule::method_chain | Rule::expr_item => "una expresión".to_string(),
-        Rule::factor => "una expresión".to_string(),
+        Rule::factor | Rule::expr | Rule::sum | Rule::product | Rule::method_chain | Rule::expr_item => {
+            "una expresión".to_string()
+        }
+        //Rule::factor => "una expresión".to_string(),
         Rule::expr_list => "una lista de expresiones".to_string(),
         // literales/identificadores
         Rule::ident => "un identificador".to_string(),

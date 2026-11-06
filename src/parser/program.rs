@@ -12,9 +12,11 @@ use pest::iterators::{Pair, Pairs};
 
 /// valida que no sea una palabra reservada
 pub fn validate_identifier(name: &str) {
-    if KEYWORDS.contains(&name) {
-        panic!("Identificador '{}' no permitido: es una palabra reservada", name);
-    }
+    assert!(
+        !KEYWORDS.contains(&name),
+        "Identificador '{}' no permitido: es una palabra reservada",
+        name
+    );
 }
 
 /// valida constantes declaradas con `const`
@@ -22,12 +24,11 @@ pub fn validate_const_name(name: &str) {
     let ok = name
         .chars()
         .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_');
-    if !ok {
-        panic!(
-            "Nombre de constante inválido '{}': debe usar solo MAYÚSCULAS, dígitos y '_'",
-            name
-        );
-    }
+    assert!(
+        ok,
+        "Nombre de constante inválido '{}': debe usar solo MAYÚSCULAS, dígitos y '_'",
+        name
+    );
 }
 
 //solo debería validar variables globales y builtins.
@@ -44,9 +45,11 @@ pub fn parse_block(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
 }
 
 pub fn check_ident(name: &str, sym_table: &SymbolTable) {
-    if !sym_table.exists(name) && !BUILTINS.contains_key(name) && !sym_table.is_constant(name) {
-        panic!("check_ident Variable o constante '{}' no declarada", name);
-    }
+    assert!(
+        !(!sym_table.exists(name) && !BUILTINS.contains_key(name) && !sym_table.is_constant(name)),
+        "check_ident Variable o constante '{}' no declarada",
+        name
+    );
 }
 
 pub fn parse_return_stmt(pair: Pair<Rule>, sym_table: &SymbolTable) -> Stmt {
@@ -87,7 +90,7 @@ fn parse_const_literal(pair: Pair<Rule>) -> (VarType, Value) {
 /// # Arguments
 ///
 /// * `pairs: Pairs<Rule>` - los pairs(reglas) generados
-///   por MiniPasParser::parse.
+///   por `MiniPasParser::parse`
 ///
 /// # Returns
 ///
@@ -201,7 +204,7 @@ pub fn parse_program(mut pairs: Pairs<Rule>) -> (Vec<Stmt>, SymbolTable) {
                     params: proc.params.iter().map(|p| (p.name.clone(), p.ty.clone())).collect(), // Vec<(String, VarType)>
                     locals: proc.locals.iter().map(|p| (p.name.clone(), p.ty.clone())).collect(), // Vec<(String, VarType)>
                     body: proc.body.clone(),
-                })
+                });
             }
             Rule::func_decl => {
                 //println!("============");
