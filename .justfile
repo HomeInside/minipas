@@ -19,20 +19,20 @@ fmt:
 	cargo fmt
 
 [group("Dev")]
-check:
-	clear && cargo fmt && cargo check
+check: fmt
+	clear && cargo check
 
 [group("Dev")]
 clippy:
 	cargo clippy --no-deps -- -D clippy::style -D clippy::correctness
 
 [group("Dev")]
-fix:
-	clear && cargo fmt && cargo check && cargo clippy --no-deps -- -D clippy::style -D clippy::correctness
+fix: fmt
+	clear && cargo clippy --no-deps
 
 [group("Dev")]
-fix-all:
-	clear && cargo fmt && cargo fix --allow-dirty
+fix-all: fmt
+	clear && cargo fix --allow-dirty --allow-no-vcs
 
 [group("Dev")]
 run:
@@ -74,11 +74,11 @@ clean:
     rm -fv test/*.mpp
     rm -fv test/*.mpa
 
-[group("Maintenance")]
-[doc('cleaning the house')]
-[windows]
-clean-all:clean
-    cargo clean && Remove-Item -LiteralPath .\Cargo.lock -Force -Verbose -ErrorAction Ignore && Remove-Item -LiteralPath .\docs\book -Recurse -Force -ErrorAction Ignore
+# [group("Maintenance")]
+# [doc('cleaning the house')]
+# [windows]
+# clean-all:clean
+#     cargo clean && Remove-Item -LiteralPath .\Cargo.lock -Force -Verbose -ErrorAction Ignore && Remove-Item -LiteralPath .\docs\book -Recurse -Force -ErrorAction Ignore
 
 [group("Maintenance")]
 [doc('cleaning the house')]
