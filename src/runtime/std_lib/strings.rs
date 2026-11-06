@@ -7,6 +7,14 @@ pub fn len_fn(args: Vec<Value>) -> Value {
     }
     Value::Integer(args[0].to_string().len() as i64)
 }
+/* TO CHECK
+pub fn len_fn(args: &[Value]) -> Value {
+    match &args[0] {
+        Value::Str(s) => Value::Integer(s.len() as i64),
+        _ => panic!("Se esperaba un String"),
+    }
+}
+*/
 
 pub fn upper_fn(args: Vec<Value>) -> Value {
     /*if args.len() != 1 {

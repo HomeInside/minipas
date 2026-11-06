@@ -23,9 +23,8 @@ pub fn get_input_default<U: std::str::FromStr>(prompt: &str) -> U {
         // Convert to another type.
         // If successful, bind to a new variable named input.
         // If failed, restart the loop.
-        let input = match input_trimmed.parse::<U>() {
-            Ok(parsed_input) => parsed_input,
-            Err(_) => continue,
+        let Ok(input) = input_trimmed.parse::<U>() else {
+            continue;
         };
 
         return input;
@@ -39,11 +38,8 @@ pub fn unescape_string(s: &str) -> String {
     while let Some(c) = chars.next() {
         if c == '\\' {
             match chars.peek() {
-                Some('n') => {
-                    result.push('\n');
-                    chars.next();
-                }
-                Some('r') => {
+                //Some('n') | Some('r') => {
+                Some('n' | 'r') => {
                     result.push('\n');
                     chars.next();
                 }

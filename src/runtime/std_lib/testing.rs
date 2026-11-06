@@ -31,13 +31,21 @@ pub fn assert_eq_fn(args: Vec<Value>) {
         (Value::Byte(x), Value::Byte(y)) => x == y,
         (Value::Nil, Value::Nil) => true,
 
+        // TO TEST
         // validación entre tipos numéricos
-        (Value::Integer(x), Value::Byte(y)) => *x == *y as i64,
-        (Value::Byte(x), Value::Integer(y)) => *x as i64 == *y,
+        //(Value::Integer(x), Value::Byte(y)) => *x == *y as i64,
+        (Value::Integer(x), Value::Byte(y)) => *x == i64::from(*y),
+
+        //(Value::Byte(x), Value::Integer(y)) => *x as i64 == *y,
+        (Value::Byte(x), Value::Integer(y)) => i64::from(*x) == *y,
+
         (Value::Integer(x), Value::Real(y)) => (*x as f64 - *y).abs() < f64::EPSILON,
         (Value::Real(x), Value::Integer(y)) => (*x - *y as f64).abs() < f64::EPSILON,
-        (Value::Byte(x), Value::Real(y)) => (*x as f64 - *y).abs() < f64::EPSILON,
-        (Value::Real(x), Value::Byte(y)) => (*x - *y as f64).abs() < f64::EPSILON,
+        //(Value::Byte(x), Value::Real(y)) => (*x as f64 - *y).abs() < f64::EPSILON,
+        (Value::Byte(x), Value::Real(y)) => (f64::from(*x) - *y).abs() < f64::EPSILON,
+        //
+        //(Value::Real(x), Value::Byte(y)) => (*x - *y as f64).abs() < f64::EPSILON,
+        (Value::Real(x), Value::Byte(y)) => (*x - f64::from(*y)).abs() < f64::EPSILON,
 
         _ => false,
     };

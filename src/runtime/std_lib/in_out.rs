@@ -30,12 +30,12 @@ pub fn readln_fn(args: Vec<Value>) -> Value {
 
 pub fn format_fn(args: Vec<Value>) -> Value {
     if args.is_empty() {
-        return Value::Str("".to_string());
+        return Value::Str(String::new());
     }
 
     let template = match &args[0] {
         Value::Str(s) => s.clone(),
-        _ => return Value::Str("".to_string()), // o RuntimeError
+        _ => return Value::Str(String::new()), // o RuntimeError
     };
 
     let mut result = String::new();

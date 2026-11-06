@@ -1,16 +1,24 @@
 use crate::parser::ast::Value;
-use crate::runtime::std_lib::conv::*;
-use crate::runtime::std_lib::date_time::*;
-use crate::runtime::std_lib::in_out::*;
-use crate::runtime::std_lib::math::*;
-use crate::runtime::std_lib::strings::*;
-use crate::runtime::std_lib::sys::*;
-use crate::runtime::std_lib::testing::*;
+use crate::runtime::std_lib::conv::{to_int_fn, to_real_fn, to_str_fn};
+use crate::runtime::std_lib::date_time::{date_fn, date_time_fn, time_fn};
+use crate::runtime::std_lib::in_out::{format_fn, readln_fn, write_fn, writeln_fn};
+use crate::runtime::std_lib::math::{
+    abs_fn, acos_fn, asin_fn, atan_fn, ceil_fn, cos_fn, cot_fn, exp_fn, floor_fn, fract_fn, ln_fn, log10_fn, max_fn,
+    min_fn, pow_fn, round_fn, sign_fn, sin_fn, sqrt_fn, tan_fn, trunc_fn,
+};
+use crate::runtime::std_lib::strings::{concat_fn, len_fn, lower_fn, trim_fn, upper_fn};
+use crate::runtime::std_lib::sys::{
+    clear_screen_fn, exit_fn, platform_fn, random_fn, sleep_fn, typeinfo_fn, version_fn,
+};
+use crate::runtime::std_lib::testing::{assert_eq_fn, assert_fn, panic_fn};
 
 use std::collections::HashMap;
 use std::sync::LazyLock;
 pub static BUILTINS: LazyLock<HashMap<String, Builtin>> = LazyLock::new(default_builtins);
 
+// TO CHECK
+//pub type RuntimeFn = fn(&[Value]) -> Value;
+//pub type RuntimeProc = fn(&[Value]);
 pub type RuntimeFn = fn(Vec<Value>) -> Value;
 pub type RuntimeProc = fn(Vec<Value>) -> ();
 
@@ -25,7 +33,7 @@ pub enum Builtin {
 ///
 /// # Returns
 ///
-/// un HashMap `HashMap<String, Builtin>`, con las
+/// un `HashMap` `HashMap<String, Builtin>`, con las
 ///    funciones disponibles en tiempo de ejecución.
 ///
 /// # Examples

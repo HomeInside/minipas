@@ -40,7 +40,8 @@ pub fn sleep_fn(args: Vec<Value>) {
     match args.len() {
         0 => {
             // Let's sleep for 1 second:
-            let millis = time::Duration::from_millis(1000);
+            //let millis = time::Duration::from_millis(1000);
+            let millis = time::Duration::from_secs(1);
             thread::sleep(millis);
         }
         1 => {
@@ -88,7 +89,13 @@ pub fn exit_fn(args: Vec<Value>) {
     let code = match args.len() {
         0 => 0, // si no hay argumento, salir con 0
         1 => match &args[0] {
-            Value::Integer(i) => *i as i32,
+            Value::Integer(i) => {
+                if let Ok(x) = i32::try_from(*i) {
+                    x
+                } else {
+                    panic!("Out of range for Integer: {}", i);
+                }
+            }
             _ => panic!("exit(N) solo acepta valores enteros"),
         },
         _ => panic!("exit() acepta como máximo 1 argumento"),
