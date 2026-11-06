@@ -26,7 +26,7 @@ struct AppArgs {
 
 fn print_help() {
     println!(
-        r#"
+        r"
 Usage: minipas [OPTIONS] [COMMANDS] <archivo.mp>
 
 Options:
@@ -46,7 +46,7 @@ EXAMPLES:
   minipas build hello_world.mp -o a.mpc
   minipas emit hello_world.mp
   minipas check hello_world.mp
-"#
+"
     );
 }
 
